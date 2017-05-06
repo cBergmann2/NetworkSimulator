@@ -7,7 +7,7 @@
  */
 public class Knoten {
 
-	private int ID;
+	protected int ID;
 
 	int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;

@@ -1,4 +1,4 @@
-
+import java.util.LinkedList;
 
 /**
  * @author Christoph Bergmann
@@ -13,7 +13,11 @@ public class OLSR_Knoten extends Knoten {
 	private int anzahlSendeoperationenTcNachrichten;
 	
 	private int[][] zweiSrpuengeNachbarschaft;
-	private int[] mprSet;
+	
+	private LinkedList<ZweiSprungNachbar> zweiSprungNachbarn;
+	private LinkedList<MoeglicherMPR> mprSet;
+	
+	//private int[] mprSet;
 
 	public OLSR_Knoten(int id){
 		super(id);
@@ -25,10 +29,16 @@ public class OLSR_Knoten extends Knoten {
 			}
 		}
 		
-		mprSet = new int[8];
+		zweiSprungNachbarn = new LinkedList<ZweiSprungNachbar>();
+		
+		/*mprSet = new int[8];
 		for(int i=0; i<mprSet.length;i++){
 			mprSet[i] = -1;
 		}
+		*/
+		mprSet = new LinkedList<MoeglicherMPR>();
+		
+		
 	}
 
 	public void finalize() throws Throwable {
@@ -37,6 +47,54 @@ public class OLSR_Knoten extends Knoten {
 	
 	public void bestimmeMprSet(){
 		
+		LinkedList<MoeglicherMPR> moeglicheMPRs = new LinkedList<MoeglicherMPR>();
+		for(int i=0; i<anzahlVerbundenerKnoten; i++){
+			MoeglicherMPR moeglicherMPR = new MoeglicherMPR(verbundeneKnoten[i].getID());
+			for(int j=0; j<verbundeneKnoten[i].anzahlVerbundenerKnoten;j++){
+				moeglicherMPR.addNachbar(verbundeneKnoten[i].verbundeneKnoten[j].getID());
+			}
+			moeglicheMPRs.add(moeglicherMPR);
+		}
+		
+		LinkedList<ZweiSprungNachbar> zweiSprungNachbarnTemp = new LinkedList<ZweiSprungNachbar>();
+		for(ZweiSprungNachbar zweiSprungNachbar: zweiSprungNachbarn){
+			zweiSprungNachbarnTemp.add(zweiSprungNachbar);
+		}
+		
+		//1. Knoten in 2-Sprung-Nachbarschaft finden, die nur über einen direkten Nachbarn erreicht werden können
+		LinkedList<ZweiSprungNachbar> zuLoeschendeZweiSprungNachbarn = new LinkedList<ZweiSprungNachbar>();
+		for(ZweiSprungNachbar zweiSprungNachbar: zweiSprungNachbarnTemp){
+			if(zweiSprungNachbar.getErreichbarVonKnoten().size() == 1){
+				
+				MoeglicherMPR zuLoeschenderMpr = null;
+				
+				for(MoeglicherMPR mpr: moeglicheMPRs){
+					if(mpr.getKnotenID() == zweiSprungNachbar.getErreichbarVonKnoten().get(0).intValue()){
+						zuLoeschenderMpr = mpr;
+						this.mprSet.add(mpr);
+						
+						//Abgedeckte Knoten des MPR aus zweiSprungNachbarnTemp entfernen
+						for(Integer nachbar: mpr.getNachbarn()){
+							for(ZweiSprungNachbar zweiSprungNachbarTemp: zweiSprungNachbarnTemp){
+								if(zweiSprungNachbarTemp.getID() == nachbar){
+									zuLoeschendeZweiSprungNachbarn.add(zweiSprungNachbarTemp);
+								}
+							}
+						}
+						
+					}
+				}
+				
+				moeglicheMPRs.remove(zuLoeschenderMpr);
+				
+			}
+		}
+		for(ZweiSprungNachbar zweiSprungNachbarTemp: zuLoeschendeZweiSprungNachbarn){
+			zweiSprungNachbarnTemp.remove(zweiSprungNachbarTemp);
+		}
+		
+		
+		/*
 		int[][] moeglicheMPRs = new int[8][3];
 		for(int i=0; i<8; i++){
 			if(verbundeneKnoten[i] != null){
@@ -93,6 +151,7 @@ public class OLSR_Knoten extends Knoten {
 		}
 		
 		//2. Abdeckung der restlichen Knoten bestimmen
+		*/
 		
 		
 	}
@@ -113,7 +172,7 @@ public class OLSR_Knoten extends Knoten {
 			
 			if(!isDirekterNachbar){
 				
-				//Zwei-Sprung Nachbarschaftstabelle aufbauen
+/*				//Zwei-Sprung Nachbarschaftstabelle aufbauen
 				int j=0;
 				while((zweiSrpuengeNachbarschaft[j][0] != -1) || (zweiSrpuengeNachbarschaft[j][0] == zweiSprungNachbarID)){
 					if(zweiSrpuengeNachbarschaft[j][0] == zweiSprungNachbarID){
@@ -131,6 +190,20 @@ public class OLSR_Knoten extends Knoten {
 				if(zweiSrpuengeNachbarschaft[j][0] == -1){
 					zweiSrpuengeNachbarschaft[j][0] = zweiSprungNachbarID;
 					zweiSrpuengeNachbarschaft[j][1] = nachricht.getKnotenID();
+				}*/
+				
+				boolean knotenInListeEnthalten = false;
+				for(ZweiSprungNachbar zweiSprungNachbar: zweiSprungNachbarn){
+					if(zweiSprungNachbar.getID() == zweiSprungNachbarID){
+						zweiSprungNachbar.addVerbindungsknoten(nachricht.getKnotenID());
+						knotenInListeEnthalten = true;
+						break;
+					}
+				}
+				if(!knotenInListeEnthalten){
+					ZweiSprungNachbar zweiSprungNachbar = new ZweiSprungNachbar(zweiSprungNachbarID);
+					zweiSprungNachbar.addVerbindungsknoten(nachricht.getKnotenID());
+					zweiSprungNachbarn.add(zweiSprungNachbar);
 				}
 			}
 		}
@@ -152,4 +225,17 @@ public class OLSR_Knoten extends Knoten {
 		
 		anzahlSendeoperationenHelloNachrichten++;
 	}
+	
+	public String toString(){
+		String returnString = "KnotenID:" + this.ID + "; Nachbarn: ";
+		for(int i= 0; i<this.anzahlVerbundenerKnoten; i++){
+			returnString = returnString + verbundeneKnoten[i].getID() + " ";
+		}
+		returnString = returnString + " MPR-Set: ";
+		for(MoeglicherMPR mpr: mprSet){
+			returnString = returnString + mpr.getKnotenID() + " ";
+		}
+		return returnString;
+	}
+	
 }//end OLSR_Knoten
