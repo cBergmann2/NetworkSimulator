@@ -36,13 +36,47 @@ public class OLSR_Graph extends Graph {
 	}
 
 	public void TcNachrichtenSenden(){
-
+		for(int i=0; i<knoten.length; i++){
+			((OLSR_Knoten)knoten[i]).sendeTcNachricht();
+		}
 	}
 
 	public void mprSetsBestimmen(){
 		for(int i=0; i<knoten.length; i++){
 			((OLSR_Knoten)knoten[i]).bestimmeMprSet();
 		}
+	}
+	
+	public int getAnzahlGesendeterHelloNachrichten(){
+		int anzahl = 0;
+		for(int i=0; i<this.knoten.length; i++){
+			anzahl += ((OLSR_Knoten)knoten[i]).getAnzahlSendeoperationenHelloNachrichten();
+		}
+		return anzahl;
+	}
+	
+	public int getAnzahlEmpfangenerHelloNachrichten(){
+		int anzahl = 0;
+		for(int i=0; i<this.knoten.length; i++){
+			anzahl += ((OLSR_Knoten)knoten[i]).getAnzahlEmpfangsoperationenHelloNachrichten();
+		}
+		return anzahl;
+	}
+	
+	public int getAnzahlGesendeterTcNachrichten(){
+		int anzahl = 0;
+		for(int i=0; i<this.knoten.length; i++){
+			anzahl += ((OLSR_Knoten)knoten[i]).getAnzahlSendeoperationenTcNachrichten();
+		}
+		return anzahl;
+	}
+	
+	public int getAnzahlEmpfangenerTcNachrichten(){
+		int anzahl = 0;
+		for(int i=0; i<this.knoten.length; i++){
+			anzahl += ((OLSR_Knoten)knoten[i]).getAnzahlEmpfangsoperationenTcNachrichten();
+		}
+		return anzahl;
 	}
 	
 }//end OLSR_Graph

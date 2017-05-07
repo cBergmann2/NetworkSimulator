@@ -5,15 +5,20 @@ import java.util.LinkedList;
  * @version 1.0
  * @created 05-Mai-2017 11:06:30
  */
-public class TC_Nachricht {
+public class TC_Nachricht extends OlsrNachricht{
 	
 	private int originatorID;
+	private int senderID;
+
 	private LinkedList<Integer> advertisedNeighbors;
 
-	public TC_Nachricht(int originatorID){
+	public TC_Nachricht(int originatorID, int hopCount){
 		this.originatorID = originatorID;
+		this.hopCount = hopCount;
 		this.advertisedNeighbors = new LinkedList<Integer>();
 	}
+	
+	
 	
 	public void addAdvertisedNeighbor(int advertisedNeighborID){
 		if(!advertisedNeighbors.contains(advertisedNeighborID)){
@@ -27,6 +32,16 @@ public class TC_Nachricht {
 	
 	public LinkedList<Integer> getAdvertisedNeighbors(){
 		return this.advertisedNeighbors;
+	}
+
+	public int getSenderID() {
+		return senderID;
+	}
+	
+	
+	
+	public void setSenderID(int senderID) {
+		this.senderID = senderID;
 	}
 
 	public void finalize() throws Throwable {

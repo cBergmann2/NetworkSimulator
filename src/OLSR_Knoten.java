@@ -16,6 +16,8 @@ public class OLSR_Knoten extends Knoten {
 	
 	private LinkedList<NachbarKnoten> zweiSprungNachbarn;
 	private LinkedList<MoeglicherMPR> mprSet;
+	private LinkedList<Integer> mprSelectorSet;
+	private LinkedList<TC_Nachricht> empfangeneTcNachrichte;
 	
 	//private int[] mprSet;
 
@@ -37,8 +39,8 @@ public class OLSR_Knoten extends Knoten {
 		}
 		*/
 		mprSet = new LinkedList<MoeglicherMPR>();
-		
-		
+		mprSelectorSet = new LinkedList<Integer>();
+		empfangeneTcNachrichte = new LinkedList<TC_Nachricht>();
 	}
 
 	public void finalize() throws Throwable {
@@ -129,6 +131,12 @@ public class OLSR_Knoten extends Knoten {
 	public void empfangeHelloNachricht(HELLO_Nachricht nachricht){
 		anzahlEmpfangsoperationenHelloNachrichten++;
 		
+		for(int mpr: nachricht.getMprSet()){
+			if(mpr == this.ID){
+				this.mprSelectorSet.add(nachricht.getSenderKnotenID());
+			}
+		}
+		
 		for(int i=0; i<nachricht.getNachbarschaft().length; i++){
 			int zweiSprungNachbarID = nachricht.getNachbarschaft()[i];
 
@@ -168,14 +176,14 @@ public class OLSR_Knoten extends Knoten {
 				boolean knotenInListeEnthalten = false;
 				for(NachbarKnoten zweiSprungNachbar: zweiSprungNachbarn){
 					if(zweiSprungNachbar.getID() == zweiSprungNachbarID){
-						zweiSprungNachbar.addVerbindungsknoten(nachricht.getKnotenID());
+						zweiSprungNachbar.addVerbindungsknoten(nachricht.getSenderKnotenID());
 						knotenInListeEnthalten = true;
 						break;
 					}
 				}
 				if(!knotenInListeEnthalten){
 					NachbarKnoten zweiSprungNachbar = new NachbarKnoten(zweiSprungNachbarID);
-					zweiSprungNachbar.addVerbindungsknoten(nachricht.getKnotenID());
+					zweiSprungNachbar.addVerbindungsknoten(nachricht.getSenderKnotenID());
 					zweiSprungNachbarn.add(zweiSprungNachbar);
 				}
 			}
@@ -190,13 +198,58 @@ public class OLSR_Knoten extends Knoten {
 			nachbarn[i] = verbundeneKnoten[i].getID();
 		}
 		
-		HELLO_Nachricht nachricht = new HELLO_Nachricht(this.getID(), anzahlVerbundenerKnoten, nachbarn);
+		HELLO_Nachricht nachricht = new HELLO_Nachricht(this.getID(), anzahlVerbundenerKnoten, nachbarn, 1);
 		
+		for(MoeglicherMPR mpr: mprSet){
+			nachricht.addMpr(mpr.getKnotenID());
+		}
+		
+		
+		//Hello-Nachricht senden
 		for(int i=0; i<anzahlVerbundenerKnoten; i++){
 			((OLSR_Knoten)verbundeneKnoten[i]).empfangeHelloNachricht(nachricht);
 		}
 		
 		anzahlSendeoperationenHelloNachrichten++;
+	}
+	
+	public void empfangeTcNachricht(TC_Nachricht nachricht){
+		this.anzahlEmpfangsoperationenTcNachrichten++;
+		if(!empfangeneTcNachrichte.contains(nachricht)){
+			empfangeneTcNachrichte.add(nachricht);
+			this.tcNachrichtWeiterleiten(nachricht);
+		}
+	}
+	
+	public void tcNachrichtWeiterleiten(TC_Nachricht nachricht){
+		if(this.mprSelectorSet.contains(nachricht.getSenderID())){
+			
+			nachricht.setSenderID(this.ID);							//Sender der Nachricht ändern
+			
+			for(int i=0; i<anzahlVerbundenerKnoten; i++){			//Nachricht an Nachbarn senden
+				((OLSR_Knoten)verbundeneKnoten[i]).empfangeTcNachricht(nachricht);
+			}
+
+			this.anzahlSendeoperationenTcNachrichten++;
+		}
+	}
+	
+	public void sendeTcNachricht(){
+		
+		TC_Nachricht tcNachricht = new TC_Nachricht(this.ID, 255);	//TC-Nachricht erstellen
+		
+		tcNachricht.setSenderID(this.ID);								//Sender der Nachricht ändern
+		
+		for(MoeglicherMPR mpr: mprSet){								//mprSet hinzufügen
+			tcNachricht.addAdvertisedNeighbor(mpr.getKnotenID());
+		}
+		
+		
+		for(int i=0; i<anzahlVerbundenerKnoten; i++){				//Nachricht an Nachbarn senden
+			((OLSR_Knoten)verbundeneKnoten[i]).empfangeTcNachricht(tcNachricht);
+		}
+		
+		this.anzahlSendeoperationenTcNachrichten++;
 	}
 	
 	public String toString(){
@@ -210,5 +263,43 @@ public class OLSR_Knoten extends Knoten {
 		}
 		return returnString;
 	}
+	
+	public int getAnzahlEmpfangsoperationenHelloNachrichten() {
+		return anzahlEmpfangsoperationenHelloNachrichten;
+	}
+
+	public void setAnzahlEmpfangsoperationenHelloNachrichten(int anzahlEmpfangsoperationenHelloNachrichten) {
+		this.anzahlEmpfangsoperationenHelloNachrichten = anzahlEmpfangsoperationenHelloNachrichten;
+	}
+
+
+	public int getAnzahlEmpfangsoperationenTcNachrichten() {
+		return anzahlEmpfangsoperationenTcNachrichten;
+	}
+
+	
+	
+	public void setAnzahlEmpfangsoperationenTcNachrichten(int anzahlEmpfangsoperationenTcNachrichten) {
+		this.anzahlEmpfangsoperationenTcNachrichten = anzahlEmpfangsoperationenTcNachrichten;
+	}
+
+	
+	public int getAnzahlSendeoperationenHelloNachrichten() {
+		return anzahlSendeoperationenHelloNachrichten;
+	}
+
+	
+	public void setAnzahlSendeoperationenHelloNachrichten(int anzahlSendeoperationenHelloNachrichten) {
+		this.anzahlSendeoperationenHelloNachrichten = anzahlSendeoperationenHelloNachrichten;
+	}
+
+	public int getAnzahlSendeoperationenTcNachrichten() {
+		return anzahlSendeoperationenTcNachrichten;
+	}
+
+	public void setAnzahlSendeoperationenTcNachrichten(int anzahlSendeoperationenTcNachrichten) {
+		this.anzahlSendeoperationenTcNachrichten = anzahlSendeoperationenTcNachrichten;
+	}
+
 	
 }//end OLSR_Knoten
