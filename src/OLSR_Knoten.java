@@ -301,5 +301,17 @@ public class OLSR_Knoten extends Knoten {
 		this.anzahlSendeoperationenTcNachrichten = anzahlSendeoperationenTcNachrichten;
 	}
 
+	@Override
+	public void nachrichtSenden() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nachrichtEmpfangen() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }//end OLSR_Knoten

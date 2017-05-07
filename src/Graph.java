@@ -4,7 +4,7 @@
  * @version 1.0
  * @created 05-Mai-2017 11:06:00
  */
-public class Graph {
+public abstract class Graph {
 
 	/**
 	 * Beschreibt die Breite, Höhe und Anzahl Knoten des Netzwerks. Das Netzwerk
@@ -16,6 +16,7 @@ public class Graph {
 
 	public Graph(){}
 	
+	/*
 	public Graph(int netzwerkBreite) {
 		this.netzwerkBreite = netzwerkBreite; // Netzwerkbreite festlegen
 
@@ -27,6 +28,7 @@ public class Graph {
 
 		this.netzwerkInitialisieren();
 	}
+	*/
 
 	public void finalize() throws Throwable {
 

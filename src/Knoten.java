@@ -5,12 +5,17 @@
  * @version 1.0
  * @created 05-Mai-2017 11:06:15
  */
-public class Knoten {
+public abstract class Knoten {
 
 	protected int ID;
 
 	int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;
+	
+	private double energiebedarfProEmpfangemByte;
+	private double zusaetzlicherEnergiebedarfProEmpfangsaktion;
+	private double energiebedarfProGesendetemByte;
+	private double zustaetlicherEnergiebedarProSendeaktion;
 
 	private Knoten(){
 		anzahlVerbundenerKnoten = 0;
@@ -54,6 +59,10 @@ public class Knoten {
 	public void setID(int iD) {
 		ID = iD;
 	}
+	
+	public abstract void nachrichtSenden();
+	
+	public abstract void nachrichtEmpfangen();
 	
 	public String toString(){
 		String returnString = "KnotenID:" + this.ID + "; Nachbarn: ";
