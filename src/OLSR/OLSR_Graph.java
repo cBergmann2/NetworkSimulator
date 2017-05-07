@@ -1,4 +1,5 @@
-
+package OLSR;
+import BasisGraphStruktur.Graph;
 
 /**
  * @author Christoph Bergmann

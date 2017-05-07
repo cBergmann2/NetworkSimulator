@@ -1,3 +1,4 @@
+package BasisGraphStruktur;
 
 /**
  * @author Christoph Bergmann

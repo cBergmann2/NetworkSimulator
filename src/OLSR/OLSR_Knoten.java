@@ -1,4 +1,9 @@
+package OLSR;
+
 import java.util.LinkedList;
+
+import BasisGraphStruktur.Knoten;
+import BasisGraphStruktur.Nachricht;
 
 /**
  * @author Christoph Bergmann
@@ -52,8 +57,8 @@ public class OLSR_Knoten extends Knoten {
 			LinkedList<MoeglicherMPR> moeglicheMPRs = new LinkedList<MoeglicherMPR>();
 			for(int i=0; i<anzahlVerbundenerKnoten; i++){
 				MoeglicherMPR moeglicherMPR = new MoeglicherMPR(verbundeneKnoten[i].getID());
-				for(int j=0; j<verbundeneKnoten[i].anzahlVerbundenerKnoten;j++){
-					moeglicherMPR.addNachbar(verbundeneKnoten[i].verbundeneKnoten[j].getID());
+				for(int j=0; j<verbundeneKnoten[i].getAnzahlVerbundenerKnoten();j++){
+					moeglicherMPR.addNachbar(verbundeneKnoten[i].getVerbundeneKnoten()[j].getID());
 				}
 				moeglicheMPRs.add(moeglicherMPR);
 			}
@@ -302,13 +307,13 @@ public class OLSR_Knoten extends Knoten {
 	}
 
 	@Override
-	public void nachrichtSenden() {
+	public void nachrichtSenden(Nachricht nachricht) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void nachrichtEmpfangen() {
+	public void nachrichtEmpfangen(Nachricht nachricht) {
 		// TODO Auto-generated method stub
 		
 	}

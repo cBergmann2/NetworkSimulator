@@ -1,3 +1,4 @@
+package OLSR;
 import java.util.LinkedList;
 
 public class MoeglicherMPR implements Comparable{

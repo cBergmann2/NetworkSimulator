@@ -1,9 +1,12 @@
+package Simulator;
+import MatlabChart.MatlabChart;
+import OLSR.OLSR_Graph;
 
 public class Main {
 
 	
 	public static void main(String args[]){
-		int anzahlExperimente = 30;
+		int anzahlExperimente = 10;
 		
 		int[] netzwerkBreite = new int[anzahlExperimente];
 		double[] anzahlGesendeterHelloNachrichten = new double[anzahlExperimente];

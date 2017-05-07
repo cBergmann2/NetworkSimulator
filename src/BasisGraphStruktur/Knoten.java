@@ -1,3 +1,4 @@
+package BasisGraphStruktur;
 
 
 /**
@@ -9,13 +10,13 @@ public abstract class Knoten {
 
 	protected int ID;
 
-	int anzahlVerbundenerKnoten;
+	protected int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;
 	
 	private double energiebedarfProEmpfangemByte;
 	private double zusaetzlicherEnergiebedarfProEmpfangsaktion;
 	private double energiebedarfProGesendetemByte;
-	private double zustaetlicherEnergiebedarProSendeaktion;
+	private double zustaetlicherEnergiebedarfProSendeaktion;
 
 	private Knoten(){
 		anzahlVerbundenerKnoten = 0;
@@ -60,9 +61,9 @@ public abstract class Knoten {
 		ID = iD;
 	}
 	
-	public abstract void nachrichtSenden();
+	public abstract void nachrichtSenden(Nachricht nachricht);
 	
-	public abstract void nachrichtEmpfangen();
+	public abstract void nachrichtEmpfangen(Nachricht nachricht);
 	
 	public String toString(){
 		String returnString = "KnotenID:" + this.ID + "; Nachbarn: ";
@@ -70,6 +71,14 @@ public abstract class Knoten {
 			returnString = returnString + verbundeneKnoten[i].getID() + " ";
 		}
 		return returnString;
+	}
+
+	public int getAnzahlVerbundenerKnoten() {
+		return anzahlVerbundenerKnoten;
+	}
+
+	public Knoten[] getVerbundeneKnoten() {
+		return verbundeneKnoten;
 	}
 	
 	

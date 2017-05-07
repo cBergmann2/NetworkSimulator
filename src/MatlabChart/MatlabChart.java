@@ -1,3 +1,4 @@
+package MatlabChart;
 /*
  * Klasse übernommen von: 
  * 		http://stackoverflow.com/questions/38931111/how-to-make-plots-in-java-like-in-matlab-same-syntax
