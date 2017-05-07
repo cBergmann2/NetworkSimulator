@@ -1,13 +1,13 @@
 import java.util.LinkedList;
 import java.util.List;
 
-public class ZweiSprungNachbar {
+public class NachbarKnoten {
 	
 	int ID;
 	List<Integer> erreichbarVonKnoten;
 	
 	
-	public ZweiSprungNachbar(int knotenID){
+	public NachbarKnoten(int knotenID){
 		this.ID = knotenID;
 		this.erreichbarVonKnoten = new LinkedList<Integer>();
 	}
