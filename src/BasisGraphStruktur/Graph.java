@@ -15,7 +15,7 @@ public abstract class Graph {
 
 	protected Knoten[] knoten; // Speichert alle Knoten des Netzwerks
 
-	public Graph(){}
+
 	
 	/*
 	public Graph(int netzwerkBreite) {
@@ -35,12 +35,21 @@ public abstract class Graph {
 
 	}
 
-	public void getAnzahlSendeoperationenImNetzwerk() {
-
+	public int getAnzahlSendeoperationenImNetzwerk() {
+		int anzSendeoperationen = 0;
+		for(int i=0; i<knoten.length; i++){
+			anzSendeoperationen += knoten[i].getAnzahlSendeoperationen();
+		}
+		
+		return anzSendeoperationen;
 	}
 
-	public void getEmpfangsoperationenImNetzwerk() {
-
+	public int getEmpfangsoperationenImNetzwerk() {
+		int anzEmpfangsoperationen = 0;
+		for(int i=0; i<knoten.length; i++){
+			anzEmpfangsoperationen += knoten[i].getAnzahlEmpfangsoperationen();
+		}
+		return anzEmpfangsoperationen;
 	}
 
 	public void netzwerkInitialisieren() {

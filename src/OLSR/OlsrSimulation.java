@@ -43,7 +43,7 @@ public class OlsrSimulation {
 		fig.plot(netzwerkBreiteDouble, anzahlEmpfangenerHelloNachrichten, "-b", (float) 2.0, "Empfangene HELLO Nachrichten");
 		fig.RenderPlot();
 		fig.grid("on", "on");
-		fig.saveas("MyPlot.jpeg",640,480);
+		fig.saveas("Output/OLSR/HELLO_Nachrichten.jpeg",640,480);
 	}
 	
 }

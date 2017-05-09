@@ -17,6 +17,9 @@ public abstract class Knoten {
 	private double zusaetzlicherEnergiebedarfProEmpfangsaktion;
 	private double energiebedarfProGesendetemByte;
 	private double zustaetlicherEnergiebedarfProSendeaktion;
+	
+	private int anzahlSendeoperationen;
+	private int anzahlEmpfangsoperationen;
 
 	private Knoten(){
 		anzahlVerbundenerKnoten = 0;
@@ -79,6 +82,14 @@ public abstract class Knoten {
 
 	public Knoten[] getVerbundeneKnoten() {
 		return verbundeneKnoten;
+	}
+
+	public int getAnzahlSendeoperationen() {
+		return anzahlSendeoperationen;
+	}
+
+	public int getAnzahlEmpfangsoperationen() {
+		return anzahlEmpfangsoperationen;
 	}
 	
 	
