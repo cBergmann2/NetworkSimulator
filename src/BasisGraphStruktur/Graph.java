@@ -44,7 +44,7 @@ public abstract class Graph {
 		return anzSendeoperationen;
 	}
 
-	public int getEmpfangsoperationenImNetzwerk() {
+	public int getAnzahlEmpfangsoperationenImNetzwerk() {
 		int anzEmpfangsoperationen = 0;
 		for(int i=0; i<knoten.length; i++){
 			anzEmpfangsoperationen += knoten[i].getAnzahlEmpfangsoperationen();

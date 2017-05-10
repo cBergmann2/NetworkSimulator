@@ -13,13 +13,13 @@ public abstract class Knoten {
 	protected int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;
 	
-	private double energiebedarfProEmpfangemByte;
-	private double zusaetzlicherEnergiebedarfProEmpfangsaktion;
-	private double energiebedarfProGesendetemByte;
-	private double zustaetlicherEnergiebedarfProSendeaktion;
+	protected double energiebedarfProEmpfangemByte;
+	protected double zusaetzlicherEnergiebedarfProEmpfangsaktion;
+	protected double energiebedarfProGesendetemByte;
+	protected double zustaetlicherEnergiebedarfProSendeaktion;
 	
-	private int anzahlSendeoperationen;
-	private int anzahlEmpfangsoperationen;
+	protected int anzahlSendeoperationen;
+	protected int anzahlEmpfangsoperationen;
 
 	private Knoten(){
 		anzahlVerbundenerKnoten = 0;

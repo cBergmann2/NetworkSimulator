@@ -6,7 +6,7 @@ import MatlabChart.MatlabChart;
 
 public class FlutenSimulation {
 	public void simulation(){
-		int anzahlExperimente = 10;
+		int anzahlExperimente = 4;
 		
 		int[] netzwerkBreite = new int[anzahlExperimente];
 		double[] anzahlGesendeterNachrichten = new double[anzahlExperimente];
@@ -20,19 +20,19 @@ public class FlutenSimulation {
 		for(int i=0; i<anzahlExperimente; i++){
 			FlutenGraph graph = new FlutenGraph(netzwerkBreite[i]);
 			
-			Nachricht nachricht = new Nachricht(3);
+			Nachricht nachricht = new Nachricht(netzwerkBreite.length * netzwerkBreite.length -1);
 			
 			graph.getKnoten(0).nachrichtSenden(nachricht);
 			
 			anzahlGesendeterNachrichten[i] = (double)graph.getAnzahlSendeoperationenImNetzwerk();
-			
+			anzahlEmpfangenerNachrichten[i] = (double)graph.getAnzahlEmpfangsoperationenImNetzwerk();
 			
 		}
 		
 		MatlabChart fig = new MatlabChart();
 		double[] netzwerkBreiteDouble = new double[netzwerkBreite.length];
 		for(int i=0; i<netzwerkBreite.length; i++){
-			netzwerkBreiteDouble[i] = (double)netzwerkBreite[i];
+			netzwerkBreiteDouble[i] = (double)(netzwerkBreite[i] * netzwerkBreite[i]);
 		}
 		fig.plot(netzwerkBreiteDouble, anzahlGesendeterNachrichten, "-r", (float) 2.0, "Gesendete Nachrichten");
 		fig.plot(netzwerkBreiteDouble, anzahlEmpfangenerNachrichten, "-b", (float) 2.0, "Empfangene Nachrichten");

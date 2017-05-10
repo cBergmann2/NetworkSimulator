@@ -7,35 +7,40 @@ import BasisGraphStruktur.Nachricht;
 public class FlutenKnoten extends Knoten{
 	
 	private LinkedList<Nachricht> empfangeneNachrichten;
-	private int anzahlEmpfangenerNachrichten;
-	private int anzahlGesendeterNachrichten;
+	//private int anzahlEmpfangenerNachrichten;
+	//private int anzahlGesendeterNachrichten;
 
 	public FlutenKnoten(int id) {
 		super(id);
 		
 		empfangeneNachrichten = new LinkedList<Nachricht>();
-		anzahlEmpfangenerNachrichten = 0;
-		anzahlGesendeterNachrichten = 0;
+		anzahlSendeoperationen = 0;
+		anzahlEmpfangsoperationen = 0;
 	}
 
 	@Override
 	public void nachrichtSenden(Nachricht nachricht) {
-		anzahlGesendeterNachrichten++;
+		anzahlSendeoperationen++;
 		for(Knoten knoten: verbundeneKnoten){
-			((FlutenKnoten)knoten).nachrichtEmpfangen(nachricht);
+			if(knoten != null){
+				((FlutenKnoten)knoten).nachrichtEmpfangen(nachricht);
+			}
 		}
 		
 	}
 
 	@Override
 	public void nachrichtEmpfangen(Nachricht nachricht) {
-		anzahlEmpfangenerNachrichten++;
+		anzahlEmpfangsoperationen++;
 		if(!empfangeneNachrichten.contains(nachricht)){
+			empfangeneNachrichten.add(nachricht);
 			//Nachricht weiterleiten
 			for(Knoten knoten: verbundeneKnoten){
-				((FlutenKnoten)knoten).nachrichtEmpfangen(nachricht);
+				if(knoten != null){
+					((FlutenKnoten)knoten).nachrichtEmpfangen(nachricht);
+				}
 			}
-			anzahlGesendeterNachrichten++;
+			anzahlSendeoperationen++;
 		}
 		
 	}
