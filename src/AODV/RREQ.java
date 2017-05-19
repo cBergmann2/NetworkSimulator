@@ -2,12 +2,15 @@ package AODV;
 
 public class RREQ  implements Cloneable{
 	
+	public static final int RREQ_UEBERTRAGUNGSZEIT = 450535; //Übertragungszeit in µsec
+	
 	private int source_addr;
 	private int source_sequence_number;
 	private int broadcast_id;
 	private int dest_addr;
 	private int dest_sequenc_number;
 	private int hop_cnt;
+	private int uebertragungszeit;
 	
 	public RREQ(int source_addr, int source_sequence_number, int broadcast_id, int dest_addr, int dest_sequence_number){
 		this.source_addr = source_addr;
@@ -16,6 +19,7 @@ public class RREQ  implements Cloneable{
 		this.dest_addr = dest_addr;
 		this.dest_sequenc_number = dest_sequence_number;
 		this.hop_cnt = 0;
+		this.uebertragungszeit = 0;
 	}
 	
 	public int getSource_addr() {
@@ -43,6 +47,14 @@ public class RREQ  implements Cloneable{
 	
 	public RREQ clone(){
 		return new RREQ(this.source_addr, this.source_sequence_number, this.broadcast_id, this.dest_addr, this.dest_sequenc_number);
+	}
+	
+	public int getUebertragungszeit() {
+		return uebertragungszeit;
+	}
+
+	public void addUebertragungszeit(int uebertragungszeit) {
+		this.uebertragungszeit += uebertragungszeit;
 	}
 
 }

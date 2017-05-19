@@ -7,8 +7,9 @@ public class RoutingTableEntry {
 	int routeRequestExpirationTime;
 	int tableEntryExpirationTime;
 	int lifetime;
+	int numberOfHops;
 	
-	public RoutingTableEntry(int zielknotenID, int dest_sequence_number, int nextHop){
+	public RoutingTableEntry(int zielknotenID, int dest_sequence_number, int nextHop, int numberOfHops){
 		this.zielknotenID = zielknotenID;
 		this.dest_sequence_number = dest_sequence_number;
 		this.nextHop = nextHop;
@@ -37,6 +38,10 @@ public class RoutingTableEntry {
 	
 	public int getNextHop(){
 		return nextHop;
+	}
+
+	public int getNumberOfHops() {
+		return numberOfHops;
 	}
 	
 }

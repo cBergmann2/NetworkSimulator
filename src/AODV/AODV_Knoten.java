@@ -47,6 +47,8 @@ public class AODV_Knoten extends Knoten{
 			this.startRouteDiscoveryProcess(nachricht.getZielknotenID(), entry);
 		}
 		else{
+			//Übertragungszeit zur Nachricht hinzufügen
+			nachricht.addUebertragungszeit(nachricht.getDatenmenge()*nachricht.UEBERTRAGUNGSZEIT_PRO_BIT);
 			
 			//Nachricht an Next-Hop Nachbarn senden
 			for(Knoten knoten: verbundeneKnoten){
@@ -67,7 +69,7 @@ public class AODV_Knoten extends Knoten{
 			this.nachrichtSenden(nachricht);
 		}
 		else{
-			System.out.println("Knoten " +  this.ID + ": Nachricht von Knoten " + nachricht.getStartknotenID() + " empfangen." );
+			System.out.println("Knoten " +  this.ID + ": Nachricht von Knoten " + nachricht.getStartknotenID() + " empfangen nach :"+ nachricht.getUebertragungszeit() +" µsec." );
 		}
 	}
 	
@@ -79,6 +81,7 @@ public class AODV_Knoten extends Knoten{
 		
 		//RREQ-Nachricht generieren
 		RREQ rreq = new RREQ(this.ID,this.sequenceNumber, this.broadcastID, zielknoten, destinationSequenceNumber);
+		rreq.addUebertragungszeit(RREQ.RREQ_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
 		
 		for(Knoten knoten: this.verbundeneKnoten){
 			if(knoten != null){
@@ -109,10 +112,14 @@ public class AODV_Knoten extends Knoten{
 			if(routeRequest.getDest_addr() == this.ID){
 				RREP rrep;
 				if(routeRequest.getDest_sequenc_number() > this.sequenceNumber){
-					rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),routeRequest.getDest_sequenc_number(), Integer.MAX_VALUE);
+					rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),routeRequest.getDest_sequenc_number(), Integer.MAX_VALUE, routeRequest.getHop_cnt());
+					rrep.addUebertragungszeit(routeRequest.getUebertragungszeit());
+					rrep.addUebertragungszeit(RREP.RREP_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
 				}
 				else{
-					rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),this.sequenceNumber, Integer.MAX_VALUE);					
+					rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),this.sequenceNumber, Integer.MAX_VALUE, routeRequest.getHop_cnt());
+					rrep.addUebertragungszeit(routeRequest.getUebertragungszeit());
+					rrep.addUebertragungszeit(RREP.RREP_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
 				}
 
 				for(Knoten knoten: verbundeneKnoten){
@@ -138,13 +145,16 @@ public class AODV_Knoten extends Knoten{
 					entry.getDest_sequence_number() < routeRequest.getDest_sequenc_number()){
 				//Keine Route zum Ziel bekannt -> RREQ-Nachricht an Nachbarn weiterleiten
 				
-				//Kopie der Nachricht erstellen und Hop-Count erhöhen
-				RREQ copyOfRREQ = routeRequest.clone();
-				copyOfRREQ.incrementHopCount();
 				
 				//RREQ an alle Nachbarn weiterleiten
 				for(Knoten knoten: verbundeneKnoten){
 					if(knoten != null){
+						//Kopie der Nachricht erstellen und Hop-Count erhöhen
+						RREQ copyOfRREQ = routeRequest.clone();
+						copyOfRREQ.incrementHopCount();
+						copyOfRREQ.addUebertragungszeit(RREQ.RREQ_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
+						
+						//RREQ-Kopie an Nachbarn senden
 						((AODV_Knoten)knoten).receiveRREQ(copyOfRREQ, this.ID);
 					}
 				}
@@ -152,7 +162,9 @@ public class AODV_Knoten extends Knoten{
 			}
 			else{
 				//Route für Zielknoten bekannt -> RREP an Startknoten senden
-				RREP rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),entry.getDest_sequence_number(), entry.getLifetime());
+				RREP rrep = new RREP(routeRequest.getSource_addr(),routeRequest.getDest_addr(),entry.getDest_sequence_number(), entry.getLifetime(), entry.getNumberOfHops());
+				rrep.addUebertragungszeit(routeRequest.getUebertragungszeit());
+				rrep.addUebertragungszeit(RREP.RREP_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
 				
 				for(Knoten knoten: verbundeneKnoten){
 					if(knoten.getID() == entry.nextHop){
@@ -191,14 +203,14 @@ public class AODV_Knoten extends Knoten{
 			recivedRREPs.remove(tableEntryToReplace);
 			recivedRREPs.add(routeReply);
 			
-			RoutingTableEntry routingTableEntry = new RoutingTableEntry(routeReply.getDest_addr(), routeReply.getDest_sequence_number(), senderId);
+			RoutingTableEntry routingTableEntry = new RoutingTableEntry(routeReply.getDest_addr(), routeReply.getDest_sequence_number(), senderId, routeReply.getHop_cnt());
 			routingTable.add(routingTableEntry);
 		}
 		
 		if(newRREP){
 			//neuen RREP speichern
 			recivedRREPs.add(routeReply);
-			RoutingTableEntry routingTableEntry = new RoutingTableEntry(routeReply.getDest_addr(), routeReply.getDest_sequence_number(), senderId);
+			RoutingTableEntry routingTableEntry = new RoutingTableEntry(routeReply.getDest_addr(), routeReply.getDest_sequence_number(), senderId, routeReply.getHop_cnt());
 			routingTable.add(routingTableEntry);
 		}
 		
@@ -219,6 +231,7 @@ public class AODV_Knoten extends Knoten{
 					for(Knoten knoten: verbundeneKnoten){
 						if(knoten != null){
 							if(knoten.getID() == nextHop){
+								routeReply.addUebertragungszeit(RREP.RREP_UEBERTRAGUNGSZEIT + 10000 + this.ID * 50000);
 								((AODV_Knoten)knoten).receiveRREP(routeReply, this.ID);
 							}
 						}
@@ -244,6 +257,7 @@ public class AODV_Knoten extends Knoten{
 				//Überprüfen ob Nachricht für Ziel im Sendebuffer enthalten ist
 				for(Nachricht tempNachricht: sendeBuffer){
 					if(tempNachricht.getZielknotenID() == routeReply.getDest_addr()){
+						tempNachricht.addUebertragungszeit(routeReply.getUebertragungszeit());
 						this.nachrichtSenden(tempNachricht);
 						keineNachrichtZuSenden = false;
 					}
@@ -258,6 +272,15 @@ public class AODV_Knoten extends Knoten{
 	public int getCurrentTime(){
 		//TODO: get current time from simulation system
 		return Integer.MAX_VALUE;
+	}
+	
+	public RoutingTableEntry getRoutingTableEntry(int zielknotenID){
+		for(RoutingTableEntry tableEntry: routingTable){
+			if(tableEntry.getZielknotenID() == zielknotenID){
+				return tableEntry;
+			}
+		}
+		return null;
 	}
 
 }

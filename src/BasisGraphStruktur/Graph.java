@@ -149,5 +149,9 @@ public abstract class Graph {
 
 		return returnString;
 	}
+	
+	public Knoten getKnoten(int knotenID){
+		return this.knoten[knotenID];
+	}
 
 }// end Graph
