@@ -11,6 +11,7 @@ public class RREQ  implements Cloneable{
 	private int dest_sequenc_number;
 	private int hop_cnt;
 	private int uebertragungszeit;
+	private int sender;
 	
 	public RREQ(int source_addr, int source_sequence_number, int broadcast_id, int dest_addr, int dest_sequence_number){
 		this.source_addr = source_addr;
@@ -21,6 +22,13 @@ public class RREQ  implements Cloneable{
 		this.hop_cnt = 0;
 		this.uebertragungszeit = 0;
 	}
+	
+	public RREQ(int source_addr, int source_sequence_number, int broadcast_id, int dest_addr, int dest_sequence_number, int hop_cnt, int uebertragungszeit){
+		this(source_addr, source_sequence_number, broadcast_id, dest_addr, dest_sequence_number);
+		this.hop_cnt = hop_cnt;
+		this.uebertragungszeit = uebertragungszeit;
+	}
+		
 	
 	public int getSource_addr() {
 		return source_addr;
@@ -46,7 +54,7 @@ public class RREQ  implements Cloneable{
 	}
 	
 	public RREQ clone(){
-		return new RREQ(this.source_addr, this.source_sequence_number, this.broadcast_id, this.dest_addr, this.dest_sequenc_number);
+		return new RREQ(this.source_addr, this.source_sequence_number, this.broadcast_id, this.dest_addr, this.dest_sequenc_number, this.hop_cnt, this.uebertragungszeit);
 	}
 	
 	public int getUebertragungszeit() {
@@ -55,6 +63,14 @@ public class RREQ  implements Cloneable{
 
 	public void addUebertragungszeit(int uebertragungszeit) {
 		this.uebertragungszeit += uebertragungszeit;
+	}
+
+	public int getSender() {
+		return sender;
+	}
+
+	public void setSender(int sender) {
+		this.sender = sender;
 	}
 
 }

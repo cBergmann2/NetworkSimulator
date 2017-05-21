@@ -1,5 +1,7 @@
 package BasisGraphStruktur;
 
+import java.util.LinkedList;
+
 public class Nachricht {
 	
 	public static final int UEBERTRAGUNGSZEIT_PRO_BIT = 4475; //Übertragungszeit in µsec
@@ -8,12 +10,14 @@ public class Nachricht {
 	private int startknotenID;
 	private int datenmenge;
 	private int uebertragungszeit;
+	private LinkedList<Integer> zwischenKnoten;
 
 	public Nachricht(int zielknotenID){
 		this.zielknotenID = zielknotenID;
 		this.startknotenID = -1;
 		this.datenmenge = 0;
 		this.uebertragungszeit = 0;
+		this.zwischenKnoten = new LinkedList<Integer>();
 	}
 	
 	public Nachricht(int zielknotenID, int datenmenge){
@@ -21,6 +25,7 @@ public class Nachricht {
 		this.datenmenge = datenmenge;
 		this.startknotenID = -1;
 		this.uebertragungszeit = 0;
+		this.zwischenKnoten = new LinkedList<Integer>();
 	}
 	
 	public int getZielknotenID() {
@@ -45,5 +50,13 @@ public class Nachricht {
 	
 	public int getUebertragungszeit() {
 		return uebertragungszeit;
+	}
+
+	public LinkedList<Integer> getZwischenKnoten() {
+		return zwischenKnoten;
+	}
+
+	public void addZwischenKnoten(int zwischenKnoten) {
+		this.zwischenKnoten.add(zwischenKnoten);
 	}
 }
