@@ -58,4 +58,14 @@ public class AODV_Graph extends Graph{
 		
 		knoten[startknoten].nachrichtSenden(nachricht);
 	}
+	
+	public double getEnergiekostenRREQs(){
+		double energiekosten = 0;
+		
+		for(int i=0; i<knoten.length; i++){
+			energiekosten += ((AODV_Knoten)knoten[i]).getEnergiekostenRREQs();
+		}
+		
+		return energiekosten;
+	}
 }

@@ -13,6 +13,7 @@ public class AODV_Knoten extends Knoten{
 	private LinkedList<RREP> recivedRREPs;
 	private LinkedList<RREQ> recivedRREQs;
 	private LinkedList<RREQ> eingangsBufferRREQs;
+	private LinkedList<Nachricht> recivedNachrichten;
 	private int sequenceNumber;
 	private int broadcastID;
 	int routeRequestExpirationTime;
@@ -23,6 +24,7 @@ public class AODV_Knoten extends Knoten{
 	
 	private AODV_Graph graph;
 
+	private double energiekostenRREQs;
 
 	public AODV_Knoten(int id, int routeRequestExpirationTime, AODV_Graph graph) {
 		super(id);
@@ -37,6 +39,9 @@ public class AODV_Knoten extends Knoten{
 		this.sendeBufferRREQs = new LinkedList<RREQ>();
 		this.eingangsBufferRREQs = new LinkedList<RREQ>();
 		this.graph = graph;
+		this.recivedNachrichten = new LinkedList<Nachricht>();
+		
+		this.energiekostenRREQs = 0;
 	}
 
 	@Override
@@ -74,6 +79,13 @@ public class AODV_Knoten extends Knoten{
 				}
 			}
 			
+			//Energiekosten hinzufügen
+			double energiekosten = this.energiekostenStartsignal + this.energiekostenStoppsignal + nachricht.getDatenmenge() * this.energiebedarfProGesendetemBit;
+			this.energiekosten += energiekosten;
+			this.energiekostenRREQs += energiekosten;
+			
+			//this.sendeBufferPayloadNachrichten.removeFirst();
+			
 			
 			//this.sendeBufferPayloadNachrichten.add(nachricht);
 			//graph.requestToSend(this.ID, nachricht);
@@ -101,7 +113,6 @@ public class AODV_Knoten extends Knoten{
 			}
 		}
 		
-		this.sendeBufferPayloadNachrichten.removeFirst();
 	}
 
 
@@ -113,7 +124,7 @@ public class AODV_Knoten extends Knoten{
 		}
 		else{
 			System.out.print("Knoten " +  this.ID + ": Nachricht von Knoten " + nachricht.getStartknotenID() + " empfangen nach :"+ nachricht.getUebertragungszeit() +" µsec. Zwischenknoten: ");
-			
+			this.recivedNachrichten.add(nachricht);
 			for(int i: nachricht.getZwischenKnoten()){
 				System.out.print(""+ i + ",");
 			}
@@ -265,6 +276,10 @@ public class AODV_Knoten extends Knoten{
 			}
 		}
 		
+		this.energiekosten += this.energiekostenStartsignal; //Startsignal
+		this.energiekosten += this.energiekostenStoppsignal; //Startsignal
+		this.energiekosten += 80* this.energiebedarfProGesendetemBit;
+		
 		this.sendeBufferRREPs.removeFirst();
 	}
 	
@@ -291,6 +306,11 @@ public class AODV_Knoten extends Knoten{
 				((AODV_Knoten)knoten).processRecivedRREQ();
 			}
 		}
+		
+		//Energiekosten hinzufügen
+		this.energiekosten += this.energiekostenStartsignal; //Startsignal
+		this.energiekosten += this.energiekostenStoppsignal; //Startsignal
+		this.energiekosten += 96 * this.energiebedarfProGesendetemBit;
 		
 		sendeBufferRREQs.remove(rreq);
 	}
@@ -519,4 +539,11 @@ public class AODV_Knoten extends Knoten{
 		graph.transmissionCompleted(this.ID);
 	}
 
+	public Nachricht getLetzteNachricht(){
+		return this.recivedNachrichten.getLast();
+	}
+	
+	public double getEnergiekostenRREQs(){
+		return this.energiekostenRREQs;
+	}
 }

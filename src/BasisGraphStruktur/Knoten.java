@@ -13,10 +13,14 @@ public abstract class Knoten {
 	protected int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;
 	
-	protected double energiebedarfProEmpfangemByte;
+	protected double energiebedarfProEmpfangemBit;
 	protected double zusaetzlicherEnergiebedarfProEmpfangsaktion;
-	protected double energiebedarfProGesendetemByte;
+	protected double energiebedarfProGesendetemBit;
 	protected double zustaetlicherEnergiebedarfProSendeaktion;
+	protected double energiekostenStartsignal;
+	protected double energiekostenStoppsignal;
+	
+	protected double energiekosten; //in A Sekunden
 	
 	protected int anzahlSendeoperationen;
 	protected int anzahlEmpfangsoperationen;
@@ -27,11 +31,17 @@ public abstract class Knoten {
 		for(int i= 0; i<8; i++){
 			verbundeneKnoten[i] = null;
 		}
+		
+		energiekosten = 0.0;
 	}
 	
 	public Knoten(int id){
 		this();
 		this.ID = id;
+		this.energiekosten = 0.0;
+		this.energiebedarfProEmpfangemBit = 0.000077858;
+		this.energiekostenStartsignal = 0.000150705;
+		this.energiekostenStoppsignal = 0.00020094;
 	}
 
 	public void finalize() throws Throwable {
@@ -90,6 +100,10 @@ public abstract class Knoten {
 
 	public int getAnzahlEmpfangsoperationen() {
 		return anzahlEmpfangsoperationen;
+	}
+	
+	public double getEneriekosten(){
+		return this.energiekosten;
 	}
 	
 	

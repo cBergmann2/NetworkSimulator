@@ -153,5 +153,15 @@ public abstract class Graph {
 	public Knoten getKnoten(int knotenID){
 		return this.knoten[knotenID];
 	}
+	
+	public double getNetzwerkEnergiekosten(){
+		double energiekosten = 0;
+		
+		for(int i=0; i<knoten.length; i++){
+			energiekosten += knoten[i].getEneriekosten();
+		}
+		
+		return energiekosten;
+	}
 
 }// end Graph
