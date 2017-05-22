@@ -66,6 +66,7 @@ public class AODV_Graph extends Graph{
 			energiekosten += ((AODV_Knoten)knoten[i]).getEnergiekostenRREQs();
 		}
 		
+		
 		return energiekosten;
 	}
 }

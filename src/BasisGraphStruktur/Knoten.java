@@ -39,7 +39,7 @@ public abstract class Knoten {
 		this();
 		this.ID = id;
 		this.energiekosten = 0.0;
-		this.energiebedarfProEmpfangemBit = 0.000077858;
+		this.energiebedarfProGesendetemBit = 0.000077858;		
 		this.energiekostenStartsignal = 0.000150705;
 		this.energiekostenStoppsignal = 0.00020094;
 	}

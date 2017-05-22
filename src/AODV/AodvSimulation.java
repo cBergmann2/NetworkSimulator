@@ -63,29 +63,37 @@ public class AodvSimulation {
 		fig.RenderPlot();
 		
 		fig.xlabel("Anzahl Knoten");
-		fig.ylabel("Energiekosten im Netzwerk [As]");
+		fig.ylabel("Energiekosten [As]");
 		fig.grid("on", "on");
 		fig.legend("northeast");
 		fig.saveas("Output/AODV/AODV_Uebertragungskosten.jpeg",640,480);
 		
 		//Konstante Energiekosten
 		anzahlKnoten = new double[32];
-		double konstanteKosten[] = new double[32];
+		double konstanteKostenRREQ[] = new double[32];
+		double nachrichtenEmpfangen[] = new double[32];
+		double gesamtKosten[] = new double[32];
 		for(int i=2; i<33; i++){
-			anzahlKnoten[i-1] = Math.pow(i, 2);
+			anzahlKnoten[i-2] = Math.pow(i, 2);
 			
-			konstanteKosten[i-1] = kostenanalyseHelloNachrichten(i);
+			konstanteKostenRREQ[i-2] = kostenanalyseHelloNachrichten(i);
+			
+			nachrichtenEmpfangen[i-2] = Math.pow(i, 2)*0.0054*(AODV_Knoten.HELLO_INTERVAL-Math.pow(RREQ.RREQ_UEBERTRAGUNGSZEIT,-6));
+		
+			gesamtKosten[i-2] = konstanteKostenRREQ[i-2] + nachrichtenEmpfangen[i-2];
 		}
 		fig = new MatlabChart();
 		
-		fig.plot(anzahlKnoten, konstanteKosten, "-r", (float) 2.0, "");
-
+		fig.plot(anzahlKnoten, konstanteKostenRREQ, "-r", (float) 2.0, "Energiekosten HELLO-Nachricht");
+		fig.plot(anzahlKnoten, nachrichtenEmpfangen, "-g", (float) 2.0, "Energiekosten Empfangsmodus");
+		fig.plot(anzahlKnoten, gesamtKosten, "-b", (float) 2.0, "Gesamtkosten");
+		
 		fig.RenderPlot();
 		
 		fig.xlabel("Anzahl Knoten");
-		fig.ylabel("Energiekosten im Netzwerk [As]");
+		fig.ylabel("Energiekosten [As]");
 		fig.grid("on", "on");
-		//fig.legend("northeast");
+		fig.legend("northeast");
 		fig.saveas("Output/AODV/AODV_KonstanteUebertragungskosten.jpeg",640,480);
 	}
 	

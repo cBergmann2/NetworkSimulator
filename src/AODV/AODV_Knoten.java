@@ -7,6 +7,7 @@ import BasisGraphStruktur.Nachricht;
 
 public class AODV_Knoten extends Knoten{
 	
+	public static final double HELLO_INTERVAL = 10;
 	//Routing Tabelle
 	private LinkedList<RoutingTableEntry> routingTable;
 	private LinkedList<ReversePathRoutingTableEntry> reversePathRoutingTable;
@@ -41,7 +42,7 @@ public class AODV_Knoten extends Knoten{
 		this.graph = graph;
 		this.recivedNachrichten = new LinkedList<Nachricht>();
 		
-		this.energiekostenRREQs = 0;
+		this.energiekostenRREQs = 0.0;
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class AODV_Knoten extends Knoten{
 			//Energiekosten hinzufügen
 			double energiekosten = this.energiekostenStartsignal + this.energiekostenStoppsignal + nachricht.getDatenmenge() * this.energiebedarfProGesendetemBit;
 			this.energiekosten += energiekosten;
-			this.energiekostenRREQs += energiekosten;
+			//this.energiekostenRREQs += energiekosten;
 			
 			//this.sendeBufferPayloadNachrichten.removeFirst();
 			
@@ -308,9 +309,9 @@ public class AODV_Knoten extends Knoten{
 		}
 		
 		//Energiekosten hinzufügen
-		this.energiekosten += this.energiekostenStartsignal; //Startsignal
-		this.energiekosten += this.energiekostenStoppsignal; //Startsignal
-		this.energiekosten += 96 * this.energiebedarfProGesendetemBit;
+		double energiekosten = this.energiekostenStartsignal + this.energiekostenStoppsignal + 96 * this.energiebedarfProGesendetemBit;
+		this.energiekosten += energiekosten;
+		this.energiekostenRREQs += energiekosten;
 		
 		sendeBufferRREQs.remove(rreq);
 	}
