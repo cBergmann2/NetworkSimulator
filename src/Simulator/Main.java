@@ -1,8 +1,5 @@
 package Simulator;
-import AODV.AodvSimulation;
-import Fluten.FlutenSimulation;
-import MatlabChart.MatlabChart;
-import OLSR.OLSR_Graph;
+import SimulationNetwork.Simulator;
 
 public class Main {
 
@@ -12,8 +9,11 @@ public class Main {
 		//FlutenSimulation flutenSimulation = new FlutenSimulation();
 		//flutenSimulation.simulation();
 		
-		AodvSimulation aodvSimulation = new AodvSimulation();
-		aodvSimulation.simulation();
+		/*AodvSimulation aodvSimulation = new AodvSimulation();
+		aodvSimulation.simulation();*/
+		
+		Simulator simulator = new Simulator();
+		simulator.lifetimeAnalysis(2);
 		
 	}
 }
