@@ -6,20 +6,21 @@ import SimulationNetwork.Message;
 
 public class RREP extends Message {
 	
-	public static final int RREP_UEBERTRAGUNGSZEIT = 378927; //Übertragungszeit in µsec
+	public static final int RREP_UEBERTRAGUNGSZEIT = 378927000; //Übertragungszeit in nsec
 	
 	private int source_addr;
 	private int dest_addr;
 	private int dest_sequence_number;
 	private int hop_cnt;
-	private int lifetime;
+	private long lifetime;
 	private int uebertragungszeit;
+	
 	
 	private RREP(int senderID, int destinationID, long remainingTransmissionTime, int dataVolume){
 		super(senderID, destinationID, remainingTransmissionTime, dataVolume);
 	}
 	
-	public RREP(int senderID, int destinationID, int source_addr, int dest_addr, int dest_sequence_number, int lifetime, int hop_cnt){
+	public RREP(int senderID, int destinationID, int source_addr, int dest_addr, int dest_sequence_number, long lifetime, int hop_cnt){
 		this(senderID, destinationID, RREP_UEBERTRAGUNGSZEIT, 80);
 		this.source_addr = source_addr;
 		this.dest_addr = dest_addr;
@@ -46,7 +47,7 @@ public class RREP extends Message {
 	public int getHop_cnt() {
 		return hop_cnt;
 	}
-	public int getLifetime() {
+	public long getLifetime() {
 		return lifetime;
 	}
 
@@ -60,6 +61,14 @@ public class RREP extends Message {
 	
 	public RREP clone(){
 		return new RREP(senderID, destinationID, source_addr, dest_addr, dest_sequence_number, lifetime, hop_cnt);
+	}
+
+	public void setLifetime(long lifetime) {
+		this.lifetime = lifetime;
+	}
+	
+	public void decrementLifetime(long decrement){
+		this.lifetime -= decrement;
 	}
 
 }

@@ -17,6 +17,7 @@ public class AodvNetworkNode extends NetworkNode {
 	private LinkedList<ReversePathRoutingTableEntry> reversePathRoutingTable;
 	private int sequenceNumber;
 	private int broadcastID;
+	private int numberRecivedPayloadMsg;
 
 	public AodvNetworkNode(int id) {
 		super(id);
@@ -25,6 +26,7 @@ public class AodvNetworkNode extends NetworkNode {
 		//recivedRREQs = new LinkedList<RREQ>();
 		recivedRREPs = new LinkedList<RREP>();
 		reversePathRoutingTable = new LinkedList<ReversePathRoutingTableEntry>();
+		numberRecivedPayloadMsg = 0;
 	}
 
 	public void processRecivedMessage() {
@@ -47,17 +49,20 @@ public class AodvNetworkNode extends NetworkNode {
 		if(msg.getDestinationID() == this.id){
 			if(msg.getPayloadDestinationAdress() != this.id){
 				//forward message to next hop
-				System.out.println("Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
-				this.addMessageToSent(msg);
+				System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
+				this.sendPayloadMessage(msg);
 			}
 			else{
-				System.out.println("Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived.");
+				System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived.");
+				numberRecivedPayloadMsg++;
 			}
 		}
 	}
 
 	private void reciveRREQ(RREQ rreq) {
 
+		//System.out.println(""+simulator.getNetworkLifetime() +": Node: " + this.id + " recive RREQ from node: " + rreq.getSenderID() + "-> Requested path to node: " + rreq.getDest_addr());
+		
 		if (rreq.getSource_addr() != this.id) {
 			boolean firstRREQ = true;
 
@@ -72,7 +77,7 @@ public class AodvNetworkNode extends NetworkNode {
 
 			if (firstRREQ) {
 
-				System.out.println("Node: " + this.id + " recive RREQ from node: " + rreq.getSenderID() + "-> Requested path to node: " + rreq.getDest_addr());
+				System.out.println(""+simulator.getNetworkLifetime() +": Node: " + this.id + " recive RREQ from node: " + rreq.getSenderID() + "-> Requested path to node: " + rreq.getDest_addr());
 
 				// Save rreq message
 				this.reversePathRoutingTable.add(new ReversePathRoutingTableEntry(rreq.getSource_addr(),
@@ -121,8 +126,9 @@ public class AodvNetworkNode extends NetworkNode {
 						// senden
 						RREP rrep = new RREP(this.id, rreq.getSenderID(), rreq.getSource_addr(), rreq.getDest_addr(),
 								entry.getDest_sequence_number(), entry.getLifetime(), entry.getNumberOfHops());
-
+						rrep.setLifetime(30000);
 						this.outputBuffer.add(rrep);
+						//System.out.println(""+simulator.getNetworkLifetime() +": Node " + this.id + ": Route found for sourcenode " + rrep.getSource_addr() + " to destnode " + rrep.getDest_addr() + " -> send RREP");
 					}
 				}
 			}
@@ -138,7 +144,7 @@ public class AodvNetworkNode extends NetworkNode {
 
 		if (rrep.getDestinationID() == this.id) {
 			
-			System.out.println("Node: "+ this.id + "recived RREP from node " + rrep.getSenderID());
+			System.out.println(""+simulator.getNetworkLifetime() +": Node: "+ this.id + " recived RREP from node " + rrep.getSenderID());
 			
 			// Überprüfen ob bereits RREP zum Route-Discovery-Prozess empfangen
 			// wurde
@@ -197,6 +203,7 @@ public class AodvNetworkNode extends NetworkNode {
 						RREP rrepCopy = rrep.clone();
 						rrepCopy.setSenderID(this.id);
 						rrepCopy.setDestinationID(nextHop);
+						rrepCopy.setLifetime(30000);
 						this.outputBuffer.add(rrepCopy);
 
 					} else {
@@ -212,23 +219,34 @@ public class AodvNetworkNode extends NetworkNode {
 				// Nachrichten die in Sendebuffer liegen senden
 
 				// Überprüfen ob Nachricht für Ziel im Sendebuffer enthalten ist
+				PayloadMessage toDeleteMsg = null;
 				LinkedList<Nachricht> zuSendendeNachrichten = new LinkedList<Nachricht>();
 				for (PayloadMessage msg : messagesToBeSent) {
 					if (msg.getPayloadDestinationAdress() == rrep.getDest_addr()) {
 						
 						msg.setDestinationID(rrep.getSenderID());
 						msg.setSenderID(this.id);
+						//System.out.println("Calculated transmission time: " + Message.calculateTransmissionTime(msg.getPayload().length) + " ns");
 						msg.setRemainingTransmissionTime(Message.calculateTransmissionTime(msg.getPayload().length));
 						outputBuffer.add(msg);
-						System.out.println("Route from node " + this.id + " to destination " + msg.getPayloadDestinationAdress()
-								+ " discovered -> Send message");
+						System.out.println(""+simulator.getNetworkLifetime() +": Route from node " + this.id + " to destination " + msg.getPayloadDestinationAdress() + " discovered -> Send message");
+						
+						toDeleteMsg = msg;
 					}
+				}
+				if(toDeleteMsg != null){
+					//messagesToBeSent.remove(toDeleteMsg);
 				}
 			}
 		}
 	}
+	
+	public void sendMessage(PayloadMessage msg){
+		//System.out.println("Node " + id + ": start transmission process for message to destination node " + msg.getPayloadDestinationAdress());
+		sendPayloadMessage(msg);
+	}
 
-	public void addMessageToSent(PayloadMessage msg) {
+	private void sendPayloadMessage(PayloadMessage msg) {
 		// Search destination in routing table
 		RoutingTableEntry entry = null;
 		for (RoutingTableEntry tempEntry : routingTable) {
@@ -238,12 +256,16 @@ public class AodvNetworkNode extends NetworkNode {
 			}
 		}
 
+		System.out.println("Node " + id + ": start transmission process for message to destination node " + msg.getPayloadDestinationAdress() );
+		
 		if (entry == null || entry.isExpired()) {
 			// No route to destination available
 
 			// safe msg in messagesToBeSent buffer
 			messagesToBeSent.add(msg);
 
+			//System.out.print(" -> no routing table entry found: start route discovery process\n");
+			
 			// start route discovery process
 			this.startRouteDiscoveryProcess(msg.getPayloadDestinationAdress(), entry);
 		} else {
@@ -251,12 +273,14 @@ public class AodvNetworkNode extends NetworkNode {
 			// msg.setRemainingTransmissionTime(msg.getDataVolume() * msg.TRANSMISSION_TIME_PER_BIT);
 			// nachricht.addZwischenKnoten(this.ID);
 
+			//System.out.print(" -> routing table entry found: send message\n");
 			msg.setDestinationID(entry.getNextHop());
 			msg.setSenderID(this.id);
 			msg.setRemainingTransmissionTime(Message.calculateTransmissionTime(msg.getPayload().length));
 			
 			// send message to next hop
 			this.outputBuffer.add(msg);
+			//System.out.println("Node " + this.id + " send message to node " + msg.getPayloadDestinationAdress());
 		}
 	}
 
@@ -277,11 +301,42 @@ public class AodvNetworkNode extends NetworkNode {
 	}
 
 	protected void performeTimeDependentTasks(){
+		//Clear memory of node
 		/*
-		LinkedList<RREQ> toDeleteRREQs = new LinkedList<RREQ>();
-		for(RREQ rreq: recivedRREQs){
-			if(rreq.get)
+		
+		//ReversePathRoutingTable
+		if(reversePathRoutingTable.size() > 0){
+			LinkedList<ReversePathRoutingTableEntry> toDeleteReversePathEntrys = new LinkedList<ReversePathRoutingTableEntry>();
+			for(ReversePathRoutingTableEntry entry: reversePathRoutingTable){
+				entry.decrementExpirationTime(1);
+				if(entry.getExpirationTime() <= 0 ){
+					toDeleteReversePathEntrys.add(entry);
+				}
+			}
+			
+			for(ReversePathRoutingTableEntry entry: toDeleteReversePathEntrys){
+				reversePathRoutingTable.remove(entry);
+			}
+		}
+		
+		//recivedRREPs
+		if(recivedRREPs.size() > 0){
+			LinkedList<RREP> toRemoveRREPs = new LinkedList<RREP>();
+			for(RREP rrep: recivedRREPs){
+				rrep.decrementLifetime(1);
+				if(rrep.getLifetime() <= 0){
+					toRemoveRREPs.add(rrep);
+				}
+			}
+			
+			for(RREP rrep: toRemoveRREPs){
+				recivedRREPs.remove(rrep);
+			}
 		}
 		*/
+	}
+	
+	public int getNumberOfRecivedPayloadMessages(){
+		return this.numberRecivedPayloadMsg;
 	}
 }

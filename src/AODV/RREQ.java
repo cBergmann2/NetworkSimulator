@@ -4,7 +4,7 @@ import SimulationNetwork.Message;
 
 public class RREQ extends Message{
 	
-	public static final long RREQ_UEBERTRAGUNGSZEIT = 450535; //Übertragungszeit in µsec
+	public static final long RREQ_UEBERTRAGUNGSZEIT = 450535000; //Übertragungszeit in nsec
 	
 	private int source_addr;
 	private int source_sequence_number;

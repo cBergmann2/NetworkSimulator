@@ -18,6 +18,7 @@ public abstract class NetworkNode {
 	protected LinkedList<Message> outputBuffer;
 	protected long availableEnery;				//Available energy in nAs
 	
+	protected Simulator simulator;
 	
 	public NetworkNode(int id){
 		this.id = id;
@@ -86,7 +87,7 @@ public abstract class NetworkNode {
 							//Transmission still takes at least 1 ms
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
 						}
-						outgoingMsg.decreaseRemainingTransmissionTime(1);
+						outgoingMsg.decreaseRemainingTransmissionTime(1000000L);
 					}
 				}
 				else{
@@ -162,9 +163,14 @@ public abstract class NetworkNode {
 		this.id = id;
 	}
 
-
 	public boolean isNodeAlive() {
 		return nodeAlive;
 	}
 
+
+	public abstract int getNumberOfRecivedPayloadMessages();
+
+	public void setSimulator(Simulator simulator){
+		this.simulator = simulator;
+	}
 }

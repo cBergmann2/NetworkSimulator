@@ -9,6 +9,7 @@ public class ReversePathRoutingTableEntry {
 	private int dest_addr;
 	private int route_request_expiration_timer;
 	private int nextHop;
+	private long expirationTime;							//expiration time in ms
 	
 	public ReversePathRoutingTableEntry(int source_addr, int source_sequence_number, int broadcast_id, int dest_addr, int route_request_expiration_timer, int nextHop){
 		this.source_addr = source_addr;
@@ -41,5 +42,17 @@ public class ReversePathRoutingTableEntry {
 
 	public int getNextHop() {
 		return nextHop;
+	}
+
+	public long getExpirationTime() {
+		return expirationTime;
+	}
+
+	public void setExpirationTime(long expirationTime) {
+		this.expirationTime = expirationTime;
+	}
+	
+	public void decrementExpirationTime(int decrement){
+		this.expirationTime -= decrement;
 	}
 }
