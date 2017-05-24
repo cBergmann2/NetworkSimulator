@@ -35,6 +35,9 @@ public abstract class NetworkNode {
 	 */
 	public void performAction(){
 		if(nodeAlive){
+			
+			performeTimeDependentTasks();
+			
 			if(incommingMsg != null){
 				//Currently resiving a message
 				if(incommingMsg.getRemainingTransmissionTime() <= 0){
@@ -115,6 +118,8 @@ public abstract class NetworkNode {
 		}
 	}
 	
+	protected abstract void performeTimeDependentTasks();
+
 	public abstract void processRecivedMessage();
 
 	/**

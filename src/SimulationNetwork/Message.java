@@ -2,7 +2,10 @@ package SimulationNetwork;
 
 public class Message implements Cloneable{
 	
-	public static final int TRANSMISSION_TIME_PER_BIT = 4475; //Transmission time per bit in µs
+	public static final long TRANSMISSION_TIME_PER_BIT = 4475L; 			//Transmission time per bit in µs
+	public static final long TRANSMISSION_TIME_START_SIGNAL = 8951040L; 	//Transmission time for start signal in ns
+	public static final long TRANSMISSION_TIME_STOP_SIGNAL = 11934720L; 	//Transmission time for stop signal in ns
+	
 	
 	protected int senderID;
 	protected int destinationID;
@@ -18,6 +21,16 @@ public class Message implements Cloneable{
 		this.destinationID = destinationID;
 		this.remainingTransmissionTime = remainingTransmissionTime;
 		this.dataVolume = dataVolume;
+	}
+	
+	/**
+	 * Calculates transmission time for a given message size
+	 * @param sizeOfMessage	Size of message in bit
+	 * @return transmission Time for message in ns
+	 */
+	public static long calculateTransmissionTime(long sizeOfMessage) {
+		long transmissionTime = TRANSMISSION_TIME_START_SIGNAL + sizeOfMessage*TRANSMISSION_TIME_PER_BIT*1000 + TRANSMISSION_TIME_STOP_SIGNAL;
+		return transmissionTime;
 	}
 	
 	/**

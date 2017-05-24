@@ -6,12 +6,13 @@ import BasisGraphStruktur.Knoten;
 import BasisGraphStruktur.Nachricht;
 import SimulationNetwork.Message;
 import SimulationNetwork.NetworkNode;
+import SimulationNetwork.PayloadMessage;
 
 public class AodvNetworkNode extends NetworkNode {
 
-	private LinkedList<Message> messagesToBeSent;
+	private LinkedList<PayloadMessage> messagesToBeSent;
 	private LinkedList<RoutingTableEntry> routingTable;
-	private LinkedList<RREQ> recivedRREQs;
+	//private LinkedList<RREQ> recivedRREQs;
 	private LinkedList<RREP> recivedRREPs;
 	private LinkedList<ReversePathRoutingTableEntry> reversePathRoutingTable;
 	private int sequenceNumber;
@@ -19,9 +20,9 @@ public class AodvNetworkNode extends NetworkNode {
 
 	public AodvNetworkNode(int id) {
 		super(id);
-		messagesToBeSent = new LinkedList<Message>();
+		messagesToBeSent = new LinkedList<PayloadMessage>();
 		routingTable = new LinkedList<RoutingTableEntry>();
-		recivedRREQs = new LinkedList<RREQ>();
+		//recivedRREQs = new LinkedList<RREQ>();
 		recivedRREPs = new LinkedList<RREP>();
 		reversePathRoutingTable = new LinkedList<ReversePathRoutingTableEntry>();
 	}
@@ -34,8 +35,25 @@ public class AodvNetworkNode extends NetworkNode {
 			if (recivedMsg instanceof RREP) {
 				reciveRREP((RREP) recivedMsg);
 			}
+			else{
+				if(recivedMsg instanceof PayloadMessage){
+					recivePayloadMessage((PayloadMessage) recivedMsg);
+				}
+			}
 		}
+	}
 
+	private void recivePayloadMessage(PayloadMessage msg) {
+		if(msg.getDestinationID() == this.id){
+			if(msg.getPayloadDestinationAdress() != this.id){
+				//forward message to next hop
+				System.out.println("Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
+				this.addMessageToSent(msg);
+			}
+			else{
+				System.out.println("Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived.");
+			}
+		}
 	}
 
 	private void reciveRREQ(RREQ rreq) {
@@ -54,7 +72,7 @@ public class AodvNetworkNode extends NetworkNode {
 
 			if (firstRREQ) {
 
-				System.out.println("Node: " + this.id + " recive RREQ from node: " + rreq.getSenderID());
+				System.out.println("Node: " + this.id + " recive RREQ from node: " + rreq.getSenderID() + "-> Requested path to node: " + rreq.getDest_addr());
 
 				// Save rreq message
 				this.reversePathRoutingTable.add(new ReversePathRoutingTableEntry(rreq.getSource_addr(),
@@ -177,6 +195,7 @@ public class AodvNetworkNode extends NetworkNode {
 					if (nextHop != this.id) {
 
 						RREP rrepCopy = rrep.clone();
+						rrepCopy.setSenderID(this.id);
 						rrepCopy.setDestinationID(nextHop);
 						this.outputBuffer.add(rrepCopy);
 
@@ -189,26 +208,31 @@ public class AodvNetworkNode extends NetworkNode {
 			}
 
 			if ((newRREP || replaceTableEntry) && (rrep.getSource_addr() == this.id)) {
+				
 				// Nachrichten die in Sendebuffer liegen senden
 
 				// Überprüfen ob Nachricht für Ziel im Sendebuffer enthalten ist
 				LinkedList<Nachricht> zuSendendeNachrichten = new LinkedList<Nachricht>();
-				for (Message msg : messagesToBeSent) {
-					if (msg.getDestinationID() == rrep.getDest_addr()) {
+				for (PayloadMessage msg : messagesToBeSent) {
+					if (msg.getPayloadDestinationAdress() == rrep.getDest_addr()) {
+						
+						msg.setDestinationID(rrep.getSenderID());
+						msg.setSenderID(this.id);
+						msg.setRemainingTransmissionTime(Message.calculateTransmissionTime(msg.getPayload().length));
 						outputBuffer.add(msg);
-						System.out.println("Route from node " + this.id + " to destination " + msg.getDestinationID()
-								+ " discovered.");
+						System.out.println("Route from node " + this.id + " to destination " + msg.getPayloadDestinationAdress()
+								+ " discovered -> Send message");
 					}
 				}
 			}
 		}
 	}
 
-	public void addMessageToSent(Message msg) {
+	public void addMessageToSent(PayloadMessage msg) {
 		// Search destination in routing table
 		RoutingTableEntry entry = null;
 		for (RoutingTableEntry tempEntry : routingTable) {
-			if (tempEntry.getZielknotenID() == msg.getDestinationID()) {
+			if (tempEntry.getZielknotenID() == msg.getPayloadDestinationAdress()) {
 				entry = tempEntry;
 				break;
 			}
@@ -221,13 +245,17 @@ public class AodvNetworkNode extends NetworkNode {
 			messagesToBeSent.add(msg);
 
 			// start route discovery process
-			this.startRouteDiscoveryProcess(msg.getDestinationID(), entry);
+			this.startRouteDiscoveryProcess(msg.getPayloadDestinationAdress(), entry);
 		} else {
 			// calculate message transmission time
-			msg.setRemainingTransmissionTime(msg.getDataVolume() * msg.TRANSMISSION_TIME_PER_BIT);
+			// msg.setRemainingTransmissionTime(msg.getDataVolume() * msg.TRANSMISSION_TIME_PER_BIT);
 			// nachricht.addZwischenKnoten(this.ID);
 
-			// send message to all neighbors
+			msg.setDestinationID(entry.getNextHop());
+			msg.setSenderID(this.id);
+			msg.setRemainingTransmissionTime(Message.calculateTransmissionTime(msg.getPayload().length));
+			
+			// send message to next hop
 			this.outputBuffer.add(msg);
 		}
 	}
@@ -241,9 +269,19 @@ public class AodvNetworkNode extends NetworkNode {
 		// RREQ-Nachricht generieren
 		RREQ rreq = new RREQ(this.id, 0, this.id, this.sequenceNumber, this.broadcastID, destinationID,
 				destinationSequenceNumber);
-		this.recivedRREQs.add(rreq);
+		
 
 		this.outputBuffer.add(rreq);
+		
+		this.broadcastID++;
 	}
 
+	protected void performeTimeDependentTasks(){
+		/*
+		LinkedList<RREQ> toDeleteRREQs = new LinkedList<RREQ>();
+		for(RREQ rreq: recivedRREQs){
+			if(rreq.get)
+		}
+		*/
+	}
 }

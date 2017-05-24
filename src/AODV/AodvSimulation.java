@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import MatlabChart.MatlabChart;
 
 public class AodvSimulation {
+	/*
 	
 	public void simulation(){
 		AODV_Graph graph = new AODV_Graph(4);
@@ -40,7 +41,8 @@ public class AodvSimulation {
 		fig.grid("on", "on");
 		fig.legend("northeast");
 		fig.saveas("Output/AODV/AODV_Uebertragungszeit_max_Entfernung.jpeg",640,480);
-		*/
+		
+	
 		
 		//Kostenanalyse
 		anzahlKnoten = new double[32];
@@ -97,6 +99,10 @@ public class AodvSimulation {
 		fig.saveas("Output/AODV/AODV_KonstanteUebertragungskosten.jpeg",640,480);
 	}
 	
+	*/
+	
+	
+	
 	
 	/**
 	 * 
@@ -105,6 +111,7 @@ public class AodvSimulation {
 	 * @param zielknoten		Knoten zu dem Nachricht gesndet werden soll
 	 * @return					Anzahl an Übertragungen bis Paket bei Ziel angekommen ist
 	 */
+	/*
 	public int geschwindigkeitsanalyse(int netzwerkBreite, int startknoten, int zielknoten){
 		
 		if(netzwerkBreite < 2){
@@ -156,5 +163,7 @@ public class AodvSimulation {
 		//int anzahlUebertragungen = ((AODV_Knoten)graph.getKnoten(startknoten)).getRoutingTableEntry(zielknoten).getNumberOfHops();
 		return graph.getEnergiekostenRREQs();
 	}
+	
+	*/
 
 }
