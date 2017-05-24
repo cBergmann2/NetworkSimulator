@@ -1,13 +1,19 @@
 package SimulationNetwork;
 
+import AODV.AodvNetworkGraph;
+import AODV.AodvNetworkNode;
+
 public class Simulator {
 
 	
 	public long lifetimeAnalysis(int networkWidth){
-		NetworkGraph graph = new NetworkGraph(networkWidth);
+		NetworkGraph graph = new AodvNetworkGraph(networkWidth);
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		long networkLifetime = 0;
-		int simulatedDays = -1;
+		int simulatedDays = 0;
+		
+		Message msg = new Message(0, 2, 20, 400);
+		((AodvNetworkNode)networkNodes[0]).addMessageToSent(msg);
 		
 		do{
 			// TODO: Choose node(s) to send a message
@@ -24,7 +30,7 @@ public class Simulator {
 				System.out.println("Simulated days: " + simulatedDays);
 			}
 			
-		}while(allNodesAlive(networkNodes));
+		}while(networkLifetime < 3600000);
 		
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage");
 		

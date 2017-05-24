@@ -1,6 +1,10 @@
 package AODV;
 
-public class RREP {
+import javax.sound.midi.Sequence;
+
+import SimulationNetwork.Message;
+
+public class RREP extends Message {
 	
 	public static final int RREP_UEBERTRAGUNGSZEIT = 378927; //Übertragungszeit in µsec
 	
@@ -11,7 +15,12 @@ public class RREP {
 	private int lifetime;
 	private int uebertragungszeit;
 	
-	public RREP(int source_addr, int dest_addr, int dest_sequence_number, int lifetime, int hop_cnt){
+	private RREP(int senderID, int destinationID, long remainingTransmissionTime, int dataVolume){
+		super(senderID, destinationID, remainingTransmissionTime, dataVolume);
+	}
+	
+	public RREP(int senderID, int destinationID, int source_addr, int dest_addr, int dest_sequence_number, int lifetime, int hop_cnt){
+		this(senderID, destinationID, RREP_UEBERTRAGUNGSZEIT, 80);
 		this.source_addr = source_addr;
 		this.dest_addr = dest_addr;
 		this.dest_sequence_number = dest_sequence_number;
@@ -47,6 +56,10 @@ public class RREP {
 
 	public void addUebertragungszeit(int uebertragungszeit) {
 		this.uebertragungszeit += uebertragungszeit;
+	}
+	
+	public RREP clone(){
+		return new RREP(senderID, destinationID, source_addr, dest_addr, dest_sequence_number, lifetime, hop_cnt);
 	}
 
 }

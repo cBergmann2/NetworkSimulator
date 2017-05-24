@@ -1,19 +1,13 @@
 package SimulationNetwork;
 
-public class NetworkGraph {
+public abstract class NetworkGraph {
 	
 	protected NetworkNode nodes[];
 	protected int networkWidth;
 	protected long lifetime;
 	
-	public NetworkGraph(int width){
-		nodes = new NetworkNode[width*width];
-		
-		for(int id=0; id<nodes.length; id++){
-			nodes[id] = new NetworkNode(id);
-		}
-		lifetime = 0;
-		initializeNetworkStructure();
+	public NetworkGraph(){
+
 	}
 	
 	public void initializeNetworkStructure(){

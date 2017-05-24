@@ -43,5 +43,10 @@ public class RoutingTableEntry {
 	public int getNumberOfHops() {
 		return numberOfHops;
 	}
+
+	public boolean isExpired() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

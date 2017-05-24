@@ -13,7 +13,7 @@ public class Main {
 		aodvSimulation.simulation();*/
 		
 		Simulator simulator = new Simulator();
-		simulator.lifetimeAnalysis(2);
+		simulator.lifetimeAnalysis(3);
 		
 	}
 }

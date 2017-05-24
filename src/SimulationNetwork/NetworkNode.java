@@ -2,10 +2,15 @@ package SimulationNetwork;
 
 import java.util.LinkedList;
 
-public class NetworkNode {
+public abstract class NetworkNode {
+	
+	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 74000;
+	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400;
+	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400;
+	
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
-	protected long elapsedTimeSinceLastReception;
+	protected long elapsedTimeSinceLastReception;	//Time in ms
 	protected Message incommingMsg;
 	protected Message outgoingMsg;
 	protected boolean nodeAlive;
@@ -25,43 +30,82 @@ public class NetworkNode {
 		availableEnery = 4600L*3600L*1000L*1000L;	
 	}
 	
-	
+	/**
+	 * Runs this NetworkNode for 1 ms
+	 */
 	public void performAction(){
 		if(nodeAlive){
 			if(incommingMsg != null){
 				//Currently resiving a message
-				if(incommingMsg.getRemainingTime() <= 0){
+				if(incommingMsg.getRemainingTransmissionTime() <= 0){
 					//Transmission complete
 					inputBuffer.add(incommingMsg);
 					incommingMsg = null;
-					// TODO: do action
-					// TODO: update consumed energy
+					processRecivedMessage();
+					availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+					elapsedTimeSinceLastReception = 0;
 				}
 				else{
 					//Transmission is still in progress
-					incommingMsg.decreaseRemainingTime(1);
-					// TODO: update consumed energy
+					if(incommingMsg.getRemainingTransmissionTime() < 1000000L){
+						//Transmission takes less than 1 ms
+						// TODO: Calculate exact power consumption
+						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
+					}
+					else{
+						//Transmission still takes at least 1 ms
+						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
+					}
+					incommingMsg.decreaseRemainingTransmissionTime(1000000L);	
+					elapsedTimeSinceLastReception = 0;
 				}
 			}
 			else{
 				//No reciving process at this time
 				if(outgoingMsg != null){
 					//Currently transmitting a message
-					if(outgoingMsg.remainingTime <= 0){
+					if(outgoingMsg.remainingTransmissionTime <= 0){
 						//Transmission complete
 						outgoingMsg = null;
 						// TODO: shedule next action
-						// TODO: update consumed energy
+						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+						elapsedTimeSinceLastReception = 0;
 					}
 					else{
 						//Transmission is still in progress
-						outgoingMsg.decreaseRemainingTime(1);
-						// TODO: update consumed energy
+						
+						if(outgoingMsg.getRemainingTransmissionTime() < 1000000L){
+							//Transmission takes less than 1 ms
+							// TODO: Calculate exact power consumption
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+						}
+						else{
+							//Transmission still takes at least 1 ms
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+						}
+						outgoingMsg.decreaseRemainingTransmissionTime(1);
 					}
 				}
 				else{
+					//Currently not transmitting a message
+					if(outputBuffer.size() != 0){
+						if(isMediumAccessAllowed()){
+							//Start message transmission
+							outgoingMsg = outputBuffer.removeFirst();
+							for(NetworkNode node: connectedNodes){
+								node.reciveMsg(outgoingMsg.clone());
+								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+							}
+						}
+						else{
+							availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+							elapsedTimeSinceLastReception++;
+						}
+					}else{						
+						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+						elapsedTimeSinceLastReception++;
+					}
 					
-					availableEnery -= 10000;
 				}
 			}
 		}
@@ -71,6 +115,19 @@ public class NetworkNode {
 		}
 	}
 	
+	public abstract void processRecivedMessage();
+
+	/**
+	 * Implements the Medium Access Control (MAC)
+	 * @return
+	 */
+	private boolean isMediumAccessAllowed() {
+		if(elapsedTimeSinceLastReception > (10 + id*50)){
+			return true;
+		}
+		return false;
+	}
+
 	public void reciveMsg(Message msg){
 		if(incommingMsg == null){
 			incommingMsg = msg;

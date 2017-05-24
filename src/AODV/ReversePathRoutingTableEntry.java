@@ -1,6 +1,8 @@
 package AODV;
 
 public class ReversePathRoutingTableEntry {
+	public static final int ENTRY_EXPIRATION_TIME = 30000;	//entry expiration time in ms
+	
 	private int source_addr;
 	private int source_sequence_number;
 	private int broadcast_id;
