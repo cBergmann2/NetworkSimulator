@@ -45,4 +45,10 @@ public class FlutenKnoten extends Knoten{
 		
 	}
 
+	@Override
+	public void zufaelligeNachrichtSenden(double sendewahrscheinlichkeit) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

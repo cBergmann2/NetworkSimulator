@@ -4,7 +4,7 @@ import BasisGraphStruktur.Graph;
 
 public abstract class ProtokollAnalyse {
 	
-	Graph graph;
+	protected Graph graph;
 	
 	public ProtokollAnalyse(Graph graph){
 		this.graph = graph;

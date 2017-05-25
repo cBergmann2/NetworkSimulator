@@ -30,13 +30,13 @@ public class OLSR_Graph extends Graph {
 		super.finalize();
 	}
 	
-	public void HelloNachrichtenSenden(){
+	public void helloNachrichtenSenden(){
 		for(int i=0; i<knoten.length; i++){
 			((OLSR_Knoten)knoten[i]).sendeHelloNachricht();
 		}
 	}
 
-	public void TcNachrichtenSenden(){
+	public void tcNachrichtenSenden(){
 		for(int i=0; i<knoten.length; i++){
 			((OLSR_Knoten)knoten[i]).sendeTcNachricht();
 		}

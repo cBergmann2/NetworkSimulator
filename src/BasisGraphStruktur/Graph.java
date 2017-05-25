@@ -15,7 +15,6 @@ public abstract class Graph {
 
 	protected Knoten[] knoten; // Speichert alle Knoten des Netzwerks
 
-
 	
 	/*
 	public Graph(int netzwerkBreite) {
@@ -137,6 +136,21 @@ public abstract class Graph {
 					}
 				}
 			}
+		}
+	}
+	
+	public boolean alleKnotenFunktionsbereit(){
+		for(Knoten tempKnoten: knoten){
+			if(!tempKnoten.isKnotenFunktionsbereit()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void zufaelligeNachrichtenSenden(double sendewahrscheinlichkeit){
+		for(Knoten tempKnoten: knoten){
+			tempKnoten.zufaelligeNachrichtSenden(sendewahrscheinlichkeit);
 		}
 	}
 

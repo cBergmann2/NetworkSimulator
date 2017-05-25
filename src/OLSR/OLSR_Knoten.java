@@ -24,6 +24,8 @@ public class OLSR_Knoten extends Knoten {
 	private LinkedList<Integer> mprSelectorSet;
 	private LinkedList<TC_Nachricht> empfangeneTcNachrichte;
 	
+	private LinkedList<Integer> netzwerkknoten;
+	
 	//private int[] mprSet;
 
 	public OLSR_Knoten(int id){
@@ -46,6 +48,7 @@ public class OLSR_Knoten extends Knoten {
 		mprSet = new LinkedList<MoeglicherMPR>();
 		mprSelectorSet = new LinkedList<Integer>();
 		empfangeneTcNachrichte = new LinkedList<TC_Nachricht>();
+		netzwerkknoten = new LinkedList<Integer>();
 	}
 
 	public void finalize() throws Throwable {
@@ -224,6 +227,10 @@ public class OLSR_Knoten extends Knoten {
 			empfangeneTcNachrichte.add(nachricht);
 			this.tcNachrichtWeiterleiten(nachricht);
 		}
+		
+		if(!netzwerkknoten.contains(nachricht.getOriginatorID())){
+			netzwerkknoten.add(nachricht.getOriginatorID());
+		}
 	}
 	
 	public void tcNachrichtWeiterleiten(TC_Nachricht nachricht){
@@ -277,23 +284,18 @@ public class OLSR_Knoten extends Knoten {
 		this.anzahlEmpfangsoperationenHelloNachrichten = anzahlEmpfangsoperationenHelloNachrichten;
 	}
 
-
 	public int getAnzahlEmpfangsoperationenTcNachrichten() {
 		return anzahlEmpfangsoperationenTcNachrichten;
 	}
 
-	
-	
 	public void setAnzahlEmpfangsoperationenTcNachrichten(int anzahlEmpfangsoperationenTcNachrichten) {
 		this.anzahlEmpfangsoperationenTcNachrichten = anzahlEmpfangsoperationenTcNachrichten;
 	}
-
 	
 	public int getAnzahlSendeoperationenHelloNachrichten() {
 		return anzahlSendeoperationenHelloNachrichten;
 	}
 
-	
 	public void setAnzahlSendeoperationenHelloNachrichten(int anzahlSendeoperationenHelloNachrichten) {
 		this.anzahlSendeoperationenHelloNachrichten = anzahlSendeoperationenHelloNachrichten;
 	}
@@ -313,10 +315,27 @@ public class OLSR_Knoten extends Knoten {
 	}
 
 	@Override
+	public void zufaelligeNachrichtSenden(double sendewahrscheinlichkeit) {
+		
+		double randomNumber = Math.random();
+		
+		if(randomNumber < sendewahrscheinlichkeit){
+			
+			
+			randomNumber = Math.random() * netzwerkknoten.size(); //Zufälligen Zielknoten bestimmen
+			int zufaelligerZielknoten = (int) randomNumber;
+			
+			Nachricht nachricht = new Nachricht(zufaelligerZielknoten);	//Nachricht erstellen
+			this.nachrichtSenden(nachricht);							//Nachricht senden
+		}
+	}
+	
+	@Override
 	public void nachrichtEmpfangen(Nachricht nachricht) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 	
 }//end OLSR_Knoten

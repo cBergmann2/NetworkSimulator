@@ -13,6 +13,8 @@ public abstract class Knoten {
 	protected int anzahlVerbundenerKnoten;
 	protected Knoten[] verbundeneKnoten;
 	
+	proteced double
+	
 	protected double energiebedarfProEmpfangemByte;
 	protected double zusaetzlicherEnergiebedarfProEmpfangsaktion;
 	protected double energiebedarfProGesendetemByte;
@@ -20,6 +22,9 @@ public abstract class Knoten {
 	
 	protected int anzahlSendeoperationen;
 	protected int anzahlEmpfangsoperationen;
+	
+	protected boolean knotenFunktionsbereit;
+	
 
 	private Knoten(){
 		anzahlVerbundenerKnoten = 0;
@@ -27,6 +32,8 @@ public abstract class Knoten {
 		for(int i= 0; i<8; i++){
 			verbundeneKnoten[i] = null;
 		}
+		
+		knotenFunktionsbereit = true;
 	}
 	
 	public Knoten(int id){
@@ -66,6 +73,13 @@ public abstract class Knoten {
 	
 	public abstract void nachrichtSenden(Nachricht nachricht);
 	
+	/**
+	 * Sendet Nachricht mit Wahrscheinlichkeit sendewahrscheinlichkeit an einen zufälligen Knoten im Netzwerk
+	 * @param nachricht
+	 * @param sendewahrscheinlichkeit
+	 */
+	public abstract void zufaelligeNachrichtSenden(double sendewahrscheinlichkeit);
+	
 	public abstract void nachrichtEmpfangen(Nachricht nachricht);
 	
 	public String toString(){
@@ -90,6 +104,10 @@ public abstract class Knoten {
 
 	public int getAnzahlEmpfangsoperationen() {
 		return anzahlEmpfangsoperationen;
+	}
+
+	public boolean isKnotenFunktionsbereit() {
+		return knotenFunktionsbereit;
 	}
 	
 	

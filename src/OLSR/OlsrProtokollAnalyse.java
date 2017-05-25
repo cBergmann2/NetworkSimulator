@@ -24,8 +24,27 @@ public class OlsrProtokollAnalyse extends ProtokollAnalyse{
 
 	@Override
 	public int netzwerklebenszeitanalyse(double sendewahrscheinlichkeitEinesKnotens) {
-		// TODO Auto-generated method stub
-		return 0;
+		int zeit = 0; // Zeit in Sekunden
+		
+		while(graph.alleKnotenFunktionsbereit()){
+			//Alle zwei Sekunden HELLO-Nachrichten senden
+			if(zeit%2 == 0){
+				((OLSR_Graph)graph).helloNachrichtenSenden();
+			}
+			
+			//Alle 5 Sekunden TC-Nachrichten senden
+			if(zeit%5 == 0){
+				((OLSR_Graph)graph).tcNachrichtenSenden();
+			}
+			
+			//Jede Sekunde zufällig Nachrichten Senden
+			
+			
+			//Zeit inkrementieren
+			zeit++;
+		}
+		
+		return zeit;
 	}
 
 	@Override

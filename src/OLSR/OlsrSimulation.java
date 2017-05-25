@@ -20,10 +20,10 @@ public class OlsrSimulation {
 			OLSR_Graph graph = new OLSR_Graph(netzwerkBreite[i]);
 			
 			//Graph initialisieren
-			graph.HelloNachrichtenSenden();
+			graph.helloNachrichtenSenden();
 			graph.mprSetsBestimmen();
-			graph.HelloNachrichtenSenden();
-			graph.TcNachrichtenSenden();
+			graph.helloNachrichtenSenden();
+			graph.tcNachrichtenSenden();
 			
 			
 			//experimente[i][1] = graph.getAnzahlGesendeterHelloNachrichten();
@@ -45,5 +45,7 @@ public class OlsrSimulation {
 		fig.grid("on", "on");
 		fig.saveas("Output/OLSR/HELLO_Nachrichten.jpeg",640,480);
 	}
+	
+	
 	
 }
