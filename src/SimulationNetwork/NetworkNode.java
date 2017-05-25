@@ -2,6 +2,8 @@ package SimulationNetwork;
 
 import java.util.LinkedList;
 
+import AODV.AodvNetworkNode;
+
 public abstract class NetworkNode {
 	
 	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 74000;
@@ -18,6 +20,11 @@ public abstract class NetworkNode {
 	protected LinkedList<Message> outputBuffer;
 	protected long availableEnery;				//Available energy in nAs
 	
+	protected long idleTime;
+	protected long reciveTime;
+	protected long transmissionTime;
+	protected long waitingTimeForMediumAccesPermission;
+	
 	protected Simulator simulator;
 	
 	public NetworkNode(int id){
@@ -28,7 +35,12 @@ public abstract class NetworkNode {
 		nodeAlive = true;
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
-		availableEnery = 4600L*3600L*1000L*1000L;	
+		//availableEnery = 4600L*3600L*1000L*1000L;	
+		availableEnery = RECIVE_MODE_POWER_CONSUMPTION*1000L*60L*60L*24L;
+		idleTime = 0L;
+		reciveTime = 0L;
+		transmissionTime = 0L;
+		waitingTimeForMediumAccesPermission = 0L;
 	}
 	
 	/**
@@ -47,6 +59,7 @@ public abstract class NetworkNode {
 					incommingMsg = null;
 					processRecivedMessage();
 					availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+					idleTime++;
 					elapsedTimeSinceLastReception = 0;
 				}
 				else{
@@ -55,10 +68,12 @@ public abstract class NetworkNode {
 						//Transmission takes less than 1 ms
 						// TODO: Calculate exact power consumption
 						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
+						reciveTime++;
 					}
 					else{
 						//Transmission still takes at least 1 ms
 						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
+						reciveTime++;
 					}
 					incommingMsg.decreaseRemainingTransmissionTime(1000000L);	
 					elapsedTimeSinceLastReception = 0;
@@ -73,6 +88,7 @@ public abstract class NetworkNode {
 						outgoingMsg = null;
 						// TODO: shedule next action
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+						idleTime++;
 						elapsedTimeSinceLastReception = 0;
 					}
 					else{
@@ -82,10 +98,12 @@ public abstract class NetworkNode {
 							//Transmission takes less than 1 ms
 							// TODO: Calculate exact power consumption
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+							transmissionTime++;
 						}
 						else{
 							//Transmission still takes at least 1 ms
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+							transmissionTime++;
 						}
 						outgoingMsg.decreaseRemainingTransmissionTime(1000000L);
 					}
@@ -99,14 +117,18 @@ public abstract class NetworkNode {
 							for(NetworkNode node: connectedNodes){
 								node.reciveMsg(outgoingMsg.clone());
 								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
+								transmissionTime++;
 							}
 						}
 						else{
 							availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+							idleTime++;
 							elapsedTimeSinceLastReception++;
+							waitingTimeForMediumAccesPermission++;
 						}
 					}else{						
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
+						idleTime++;
 						elapsedTimeSinceLastReception++;
 					}
 					
@@ -140,7 +162,7 @@ public abstract class NetworkNode {
 		}
 		else{
 			//collison
-			System.out.println("Collision detected at Node " + this.id);
+			//System.out.println("Collision detected at Node " + this.id);
 		}
 	}
 	
@@ -173,4 +195,38 @@ public abstract class NetworkNode {
 	public void setSimulator(Simulator simulator){
 		this.simulator = simulator;
 	}
+
+	public long getIdleTime() {
+		return idleTime;
+	}
+
+	public long getReciveTime() {
+		return reciveTime;
+	}
+
+	public long getTransmissionTime() {
+		return transmissionTime;
+	}
+
+	public long getWaitingTimeForMediumAccesPermission() {
+		return waitingTimeForMediumAccesPermission;
+	}
+	
+	public void generateRandomTransmissionLoad(double sendProbability, int networkSize){
+		if(outputBuffer.size() == 0){
+			double random = Math.random();
+			if(random <= sendProbability){
+				
+				//find random destination
+				int randomDestination = (int)(Math.random()*networkSize);
+				
+				char dataToSend[] = {'M', 's', 'g'}; 
+				
+				PayloadMessage tmpMsg = new PayloadMessage(id , randomDestination, dataToSend);
+				this.sendMessage(tmpMsg);
+			}
+		}
+	}
+
+	protected abstract void sendMessage(PayloadMessage tmpMsg);
 }

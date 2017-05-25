@@ -27,8 +27,8 @@ public class Simulator {
 		
 		do{
 			
-			
-			if(networkLifetime % 60000 == 0){
+			/*
+			if(networkLifetime % 1000 == 0){
 				//every 10 seconds
 				for(int id=0; id<networkNodes.length; id++){
 					double random = Math.random();
@@ -42,6 +42,12 @@ public class Simulator {
 					}
 				}
 			}
+			*/
+			
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].generateRandomTransmissionLoad(sendProbability, networkNodes.length);
+			}
+			
 			
 			
 			// TODO: performe 1 msec
@@ -52,10 +58,12 @@ public class Simulator {
 			networkLifetime++;
 			
 			
+			
 			if(networkLifetime % (3600000) == 0){
 				simulatedHours++;
 				System.out.println("Simulated hours: " + simulatedHours);
 			}
+			
 			
 			if(networkLifetime % (86400000) == 0){
 				simulatedDays++;
@@ -65,6 +73,8 @@ public class Simulator {
 		//}while(networkNodes[networkWidth*networkWidth-1].getNumberOfRecivedPayloadMessages() == 0);
 		}while(allNodesAlive(networkNodes));//while(networkLifetime < 3600000);//
 		
+		
+		
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
 		return networkLifetime;
@@ -73,6 +83,7 @@ public class Simulator {
 	private boolean allNodesAlive(NetworkNode networkNodes[]){
 		for(NetworkNode node: networkNodes){
 			if(!node.isNodeAlive()){
+				System.out.println("Node " + node.getId() + " is down: " + ((double)node.getIdleTime()/(double)networkLifetime) + "% idle time" + ((double)node.getReciveTime()/(double)networkLifetime) + "% recive time" + ((double)node.getTransmissionTime()/(double)networkLifetime) + "% transmit time" + ((double)node.getWaitingTimeForMediumAccesPermission()/(double)networkLifetime) + "% waiting for medium access time" );
 				return false;
 			}
 		}

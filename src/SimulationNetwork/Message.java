@@ -11,6 +11,8 @@ public class Message implements Cloneable{
 	protected int destinationID;
 	protected long remainingTransmissionTime;	//Remaining time until message has been transferred in ns
 	protected int dataVolume;					//Data volume in bit
+	protected long startTransmissionTime;
+	protected long endTransmissionTime;
 
 	public Message(){
 		
@@ -84,5 +86,21 @@ public class Message implements Cloneable{
 	public Message clone(){
 		
 		return new Message(senderID, destinationID, remainingTransmissionTime, dataVolume);
+	}
+
+	public long getStartTransmissionTime() {
+		return startTransmissionTime;
+	}
+
+	public void setStartTransmissionTime(long startTransmissionTime) {
+		this.startTransmissionTime = startTransmissionTime;
+	}
+
+	public long getEndTransmissionTime() {
+		return endTransmissionTime;
+	}
+
+	public void setEndTransmissionTime(long endTransmissionTime) {
+		this.endTransmissionTime = endTransmissionTime;
 	}
 }

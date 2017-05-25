@@ -46,6 +46,8 @@ public class PayloadMessage extends Message{
 	}
 
 	public PayloadMessage clone(){
-		return new PayloadMessage(senderID, destinationID, payloadSourceAdress, payloadDestinationAdress, payload);
+		PayloadMessage copy = new PayloadMessage(senderID, destinationID, payloadSourceAdress, payloadDestinationAdress, payload);
+		copy.setStartTransmissionTime(startTransmissionTime);
+		return copy;
 	}
 }
