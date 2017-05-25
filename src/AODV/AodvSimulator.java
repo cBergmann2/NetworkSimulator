@@ -3,12 +3,29 @@ package AODV;
 import java.util.LinkedList;
 
 import MatlabChart.MatlabChart;
+import SimulationNetwork.NetworkGraph;
+import SimulationNetwork.NetworkNode;
+import SimulationNetwork.PayloadMessage;
+import SimulationNetwork.Simulator;
 
-public class AodvSimulation {
-	/*
+public class AodvSimulator extends Simulator{
+	
 	
 	public void simulation(){
-		AODV_Graph graph = new AODV_Graph(4);
+		
+		//Speed analysis 
+		
+		//(Energy) cost analysis
+		
+		//Lifetime analysis
+		//lifetimeAnalysis(networkWidth, sendProbability);
+		
+		//Partitioning analysis
+		
+		
+		
+		
+		/*AODV_Graph graph = new AODV_Graph(4);
 
 		graph.nachrichtSenden(0, 14);
 		
@@ -97,9 +114,11 @@ public class AodvSimulation {
 		fig.grid("on", "on");
 		fig.legend("northeast");
 		fig.saveas("Output/AODV/AODV_KonstanteUebertragungskosten.jpeg",640,480);
+		
+		*/
 	}
 	
-	*/
+	
 	
 	
 	
@@ -165,5 +184,140 @@ public class AodvSimulation {
 	}
 	
 	*/
+	
+	public long lifetimeAnalysis(int networkWidth, double sendProbability){
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		NetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+		}
+		
+		
+		char dataToSend[] = {'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D'}; 
+		
+		
+		PayloadMessage msg = new PayloadMessage(0, (networkWidth*networkWidth-1), dataToSend);
+		//((AodvNetworkNode)networkNodes[0]).sendMessage(msg);
+		
+		
+		do{
+			
+			
+			if(networkLifetime % 1000 == 0){
+				//every 10 seconds
+				for(int id=0; id<networkNodes.length; id++){
+					double random = Math.random();
+					if(random <= sendProbability){
+						
+						//find random destination
+						int randomDestination = (int)(Math.random()*networkNodes.length);
+						
+						PayloadMessage tmpMsg = new PayloadMessage(id , randomDestination, dataToSend);
+						((AodvNetworkNode)networkNodes[id]).sendMessage(tmpMsg);
+					}
+				}
+			}
+			
+			
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].generateRandomTransmissionLoad(sendProbability, networkNodes.length);
+			}
+			
+			
+			
+			// TODO: performe 1 msec
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction();
+			}
+			
+			networkLifetime++;
+			
+			
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+		
+		//}while(networkNodes[networkWidth*networkWidth-1].getNumberOfRecivedPayloadMessages() == 0);
+		}while(allNodesAlive(networkNodes));//while(networkLifetime < 3600000);//
+		
+		
+		
+		//System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
+		
+		return networkLifetime;
+	}
+
+
+
+
+
+
+	@Override
+	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
+		
+		networkLifetime = 0;
+
+		NetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+		}
+		
+		char dataToSend[] = {'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D'}; 
+		
+		
+		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
+		((AodvNetworkNode)networkNodes[sourceNodeId]).sendMessage(msg);
+		
+		
+		do{
+			// Performe 1 ms every iteration
+			
+			for(int id=0; id<networkNodes.length; id++){
+				((AodvNetworkNode)networkNodes[id]).performAction();
+			}
+			
+			networkLifetime++;
+		
+		}while(networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
+		
+		long transmissionTime = networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getEndTransmissionTime() - networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getStartTransmissionTime();
+
+		return transmissionTime;
+	}
+
+
+
+
+
+
+	@Override
+	public long energyCostAnalysis(int distance) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+	@Override
+	public long partitioningAnalysis(int networkWidth, double sendProbability) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

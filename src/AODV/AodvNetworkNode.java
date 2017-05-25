@@ -56,6 +56,8 @@ public class AodvNetworkNode extends NetworkNode {
 				long transmissionTime = simulator.getNetworkLifetime() - msg.getStartTransmissionTime();
 				//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived. Transmissiontime: " + transmissionTime);
 				numberRecivedPayloadMsg++;
+				msg.setEndTransmissionTime(simulator.getNetworkLifetime());
+				this.lastRecivedPayloadMessage = msg;
 			}
 		}
 	}
@@ -301,7 +303,33 @@ public class AodvNetworkNode extends NetworkNode {
 		
 		this.broadcastID++;
 	}
+	
+	public void reciveMsg(Message msg){
+		if(incommingMsg == null){
+			incommingMsg = msg;
+		}
+		else{
+			//collision
+			//System.out.println("Collision detected at Node " + this.id);
+			if((msg instanceof RREP) && msg.getDestinationID() == this.id){
+				System.out.println("Collision-Error: RREP was not transfered to destination");
+				System.out.println("Hard collision error: RREP message is collided with another message -> for simulation give RREP priority");
+				incommingMsg = msg;
+				
+			}
+			if((msg instanceof PayloadMessage) && (msg.getDestinationID() == this.id)){
+				//System.out.println("Collision-Error: Payload was not transfered to destination");
+				System.out.println("Hard collision error: Payload message is collided with another message -> for simulation give payloadMessage priority");
+				incommingMsg = msg;
+				
+			}
+		}
+	}
 
+	public void sendHelloMsg(){
+		
+	}
+	
 	protected void performeTimeDependentTasks(){
 		//Clear memory of node
 		/*

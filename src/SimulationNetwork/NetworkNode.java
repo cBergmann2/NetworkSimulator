@@ -27,6 +27,8 @@ public abstract class NetworkNode {
 	
 	protected Simulator simulator;
 	
+	protected PayloadMessage lastRecivedPayloadMessage;
+	
 	public NetworkNode(int id){
 		this.id = id;
 		connectedNodes = new LinkedList<NetworkNode>();
@@ -229,4 +231,8 @@ public abstract class NetworkNode {
 	}
 
 	protected abstract void sendMessage(PayloadMessage tmpMsg);
+
+	public PayloadMessage getLastRecivedPayloadMessage() {
+		return lastRecivedPayloadMessage;
+	}
 }
