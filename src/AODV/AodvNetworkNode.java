@@ -50,7 +50,7 @@ public class AodvNetworkNode extends NetworkNode {
 			if(msg.getPayloadDestinationAdress() != this.id){
 				//forward message to next hop
 				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
-				this.sendPayloadMessage(msg);
+				this.sendMessage(msg);
 			}
 			else{
 				long transmissionTime = simulator.getNetworkLifetime() - msg.getStartTransmissionTime();
@@ -244,13 +244,13 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 	
-	public void sendMessage(PayloadMessage msg){
+	public void startSendingProcess(PayloadMessage msg){
 		//System.out.println("Node " + id + ": start transmission process for message to destination node " + msg.getPayloadDestinationAdress());
-		sendPayloadMessage(msg);
+		sendMessage(msg);
 		msg.setStartTransmissionTime(simulator.getNetworkLifetime());
 	}
 
-	private void sendPayloadMessage(PayloadMessage msg) {
+	private void sendMessage(PayloadMessage msg) {
 		// Search destination in routing table
 		RoutingTableEntry entry = null;
 		for (RoutingTableEntry tempEntry : routingTable) {

@@ -48,6 +48,12 @@ public class PayloadMessage extends Message{
 	public PayloadMessage clone(){
 		PayloadMessage copy = new PayloadMessage(senderID, destinationID, payloadSourceAdress, payloadDestinationAdress, payload);
 		copy.setStartTransmissionTime(startTransmissionTime);
+		
+		//duplicate payload array
+		copy.payload = new char[payload.length];
+		for(int i=0; i<payload.length; i++){
+			copy.payload[i] = payload[i];
+		}
 		return copy;
 	}
 }

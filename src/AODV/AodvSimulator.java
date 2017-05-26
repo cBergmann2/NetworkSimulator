@@ -217,7 +217,7 @@ public class AodvSimulator extends Simulator{
 						int randomDestination = (int)(Math.random()*networkNodes.length);
 						
 						PayloadMessage tmpMsg = new PayloadMessage(id , randomDestination, dataToSend);
-						((AodvNetworkNode)networkNodes[id]).sendMessage(tmpMsg);
+						((AodvNetworkNode)networkNodes[id]).startSendingProcess(tmpMsg);
 					}
 				}
 			}
@@ -264,7 +264,6 @@ public class AodvSimulator extends Simulator{
 
 
 
-	@Override
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 		
 		networkLifetime = 0;
@@ -279,7 +278,7 @@ public class AodvSimulator extends Simulator{
 		
 		
 		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
-		((AodvNetworkNode)networkNodes[sourceNodeId]).sendMessage(msg);
+		((AodvNetworkNode)networkNodes[sourceNodeId]).startSendingProcess(msg);
 		
 		
 		do{

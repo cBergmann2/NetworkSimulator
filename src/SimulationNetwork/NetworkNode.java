@@ -225,12 +225,12 @@ public abstract class NetworkNode {
 				char dataToSend[] = {'M', 's', 'g'}; 
 				
 				PayloadMessage tmpMsg = new PayloadMessage(id , randomDestination, dataToSend);
-				this.sendMessage(tmpMsg);
+				this.startSendingProcess(tmpMsg);
 			}
 		}
 	}
 
-	protected abstract void sendMessage(PayloadMessage tmpMsg);
+	protected abstract void startSendingProcess(PayloadMessage tmpMsg);
 
 	public PayloadMessage getLastRecivedPayloadMessage() {
 		return lastRecivedPayloadMessage;
