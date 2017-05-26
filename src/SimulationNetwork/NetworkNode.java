@@ -25,7 +25,9 @@ public abstract class NetworkNode {
 	protected long transmissionTime;
 	protected long waitingTimeForMediumAccesPermission;
 	
+	protected NetworkGraph graph;
 	protected Simulator simulator;
+	
 	
 	protected PayloadMessage lastRecivedPayloadMessage;
 	
@@ -234,5 +236,9 @@ public abstract class NetworkNode {
 
 	public PayloadMessage getLastRecivedPayloadMessage() {
 		return lastRecivedPayloadMessage;
+	}
+
+	public void setGraph(NetworkGraph graph) {
+		this.graph = graph;
 	}
 }

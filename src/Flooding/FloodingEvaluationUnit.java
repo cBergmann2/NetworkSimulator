@@ -16,7 +16,7 @@ import Simulator.EvaluationUnit;
 
 public class FloodingEvaluationUnit extends EvaluationUnit{
 	
-	private static final int MAX_NETWORK_WIDTH = 10;
+	private static final int MAX_NETWORK_WIDTH = 32;
 
 	@Override
 	public void evaluateSpeedAnalysis() {
@@ -25,31 +25,45 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		
 		double numberOfNodes[] = new double[MAX_NETWORK_WIDTH-1];
 		double transmissionTime_max[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		double transmissionTime_max_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+
+		double min[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
 		double transmissionTime_min[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		double transmissionTime_min_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
 		double transmissionTime_med[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		double transmissionTime_med_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
+		
 		for(int i=2; i<MAX_NETWORK_WIDTH+1; i++){
 			numberOfNodes[i-2] = Math.pow(i, 2);
 			transmissionTime_max[0][i-2] = numberOfNodes[i-2];
-			transmissionTime_max[1][i-2] = floodingSimulator.speedAnalysis(i, 0, (int)Math.pow(i, 2)-1);
+			transmissionTime_max[1][i-2] = floodingSimulator.speedAnalysis(i, (int)Math.pow(i, 2)-i, (int)Math.pow(i, 2)-1);
+			transmissionTime_max_collisions[0][i-2] = numberOfNodes[i-2];
+			transmissionTime_max_collisions[1][i-2] = floodingSimulator.getCollisions();
 			System.out.println("Max Simulation for " + i*i + " nodes completed." );
 
 			transmissionTime_min[0][i-2] = numberOfNodes[i-2];
 			transmissionTime_min[1][i-2] = floodingSimulator.speedAnalysis(i, 0, 1);
+			transmissionTime_min_collisions[0][i-2] = numberOfNodes[i-2];
+			transmissionTime_min_collisions[1][i-2] = floodingSimulator.getCollisions();
 			System.out.println("Min Simulation for " + i*i + " nodes completed." );
 			
 			transmissionTime_med[0][i-2] = numberOfNodes[i-2];
 			transmissionTime_med[1][i-2] = floodingSimulator.speedAnalysis(i, 0, (i/2)*i+i/2);
+			transmissionTime_med_collisions[0][i-2] = numberOfNodes[i-2];
+			transmissionTime_med_collisions[1][i-2] = floodingSimulator.getCollisions();
 			System.out.println("Med Simulation for " + i*i + " nodes completed." );
 
 		}
 		
+		//Transmission Time
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		dataset.addSeries("maximale Distanz", transmissionTime_max);
 		dataset.addSeries("mittlere Distanz", transmissionTime_med);
 		dataset.addSeries("minimale Distanz", transmissionTime_min);
 		
-		
-		//XYDotRenderer dot = new XYDotRenderer();
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 		
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
@@ -69,6 +83,30 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 			e.printStackTrace();
 		}
 		
+		//Collisions
+		DefaultXYDataset dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("maximale Distanz", transmissionTime_max_collisions);
+		dataset2.addSeries("mittlere Distanz", transmissionTime_med_collisions);
+		dataset2.addSeries("minimale Distanz", transmissionTime_min_collisions);
+		
+		//XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+		
+		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis2 = new NumberAxis("Kollisionen");
+		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		
+		JFreeChart chart2 = new JFreeChart(plot2);
+		
+		chart2.getPlot().setBackgroundPaint( Color.WHITE );
+		chart2.setBackgroundPaint(Color.WHITE);
+		
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Uebertragungszeit_Kollisionen.png"),chart2,480,360);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

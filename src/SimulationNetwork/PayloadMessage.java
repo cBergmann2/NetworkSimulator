@@ -1,9 +1,9 @@
 package SimulationNetwork;
 
 public class PayloadMessage extends Message{
-	int payloadDestinationAdress;
-	int payloadSourceAdress;
-	char payload[];
+	protected int payloadDestinationAdress;
+	protected int payloadSourceAdress;
+	protected char payload[];
 		
 	public PayloadMessage(int sourceAdress, int destinationAdress, char[] payload){
 		this.payloadDestinationAdress = destinationAdress;
