@@ -9,6 +9,9 @@ public abstract class NetworkNode {
 	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 74000;
 	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400;
 	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400;
+	//protected final static int IDLE_MODE_POWER_CONSUMPTION = 1;
+	
+	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = IDLE_MODE_POWER_CONSUMPTION*1000L*60L*60L*24L;
 	
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
@@ -40,7 +43,7 @@ public abstract class NetworkNode {
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
 		//availableEnery = 4600L*3600L*1000L*1000L;	
-		availableEnery = RECIVE_MODE_POWER_CONSUMPTION*1000L*60L*60L*24L;
+		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
@@ -61,6 +64,7 @@ public abstract class NetworkNode {
 					//Transmission complete
 					inputBuffer.add(incommingMsg);
 					incommingMsg = null;
+					//currentlyTransmittingAMessage = false;
 					processRecivedMessage();
 					availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
 					idleTime++;
@@ -118,6 +122,7 @@ public abstract class NetworkNode {
 						if(isMediumAccessAllowed()){
 							//Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
+							//System.out.println("Node " + id + "start sending message.");
 							for(NetworkNode node: connectedNodes){
 								node.reciveMsg(outgoingMsg.clone());
 								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
@@ -134,6 +139,7 @@ public abstract class NetworkNode {
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
 						idleTime++;
 						elapsedTimeSinceLastReception++;
+						//currentlyTransmittingAMessage = false;
 					}
 					
 				}
@@ -232,7 +238,7 @@ public abstract class NetworkNode {
 		}
 	}
 
-	protected abstract void startSendingProcess(PayloadMessage tmpMsg);
+	public abstract void startSendingProcess(PayloadMessage tmpMsg);
 
 	public PayloadMessage getLastRecivedPayloadMessage() {
 		return lastRecivedPayloadMessage;
@@ -240,5 +246,27 @@ public abstract class NetworkNode {
 
 	public void setGraph(NetworkGraph graph) {
 		this.graph = graph;
+	}
+
+	public long getAvailableEnery() {
+		return availableEnery;
+	}
+	
+	public int getOutputBufferSize(){
+		return outputBuffer.size();
+	}
+	
+	public Message getOutgoingMessage(){
+		if(outgoingMsg != null){
+			return outgoingMsg.clone();
+		}
+		return null;
+	}
+	
+	public Message getIncomingMessage(){
+		if(incommingMsg != null){
+			return incommingMsg.clone();
+		}
+		return null;
 	}
 }

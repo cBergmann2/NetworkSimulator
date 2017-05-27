@@ -305,6 +305,7 @@ public class AodvNetworkNode extends NetworkNode {
 	}
 	
 	public void reciveMsg(Message msg){
+		//currentlyTransmittingAMessage = true;
 		if(incommingMsg == null){
 			incommingMsg = msg;
 		}

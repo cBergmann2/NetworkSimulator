@@ -10,6 +10,7 @@ public class FloodingNetworkNode extends NetworkNode{
 	LinkedList<PayloadMessage> messagesToBeSent;
 	LinkedList<PayloadMessage> recivedMessages;
 	int numberRecivedPayloadMsg;
+	int numberTransmittedMsg;
 	
 	public FloodingNetworkNode(int id) {
 		super(id);
@@ -17,6 +18,8 @@ public class FloodingNetworkNode extends NetworkNode{
 		recivedMessages = new LinkedList<PayloadMessage>();
 		
 		numberRecivedPayloadMsg = 0;
+		numberTransmittedMsg = 0;
+		//currentlyTransmittingAMessage = false;
 	}
 
 	@Override
@@ -30,22 +33,22 @@ public class FloodingNetworkNode extends NetworkNode{
 		Message recivedMsg = inputBuffer.removeFirst();
 		if(recivedMsg instanceof PayloadMessageWithRoute){
 			
-			PayloadMessageWithRoute msg = new PayloadMessageWithRoute(((PayloadMessage) recivedMsg).getPayloadSourceAdress(), ((PayloadMessage) recivedMsg).getPayloadDestinationAdress(), ((PayloadMessage) recivedMsg).getPayload());
+			PayloadMessageWithRoute msg = new PayloadMessageWithRoute(((PayloadMessage) recivedMsg).getPayloadSourceAdress(), ((PayloadMessage) recivedMsg).getPayloadDestinationAdress(), null);
 			
-			if(!this.recivedMessages.contains(msg)){
-				this.recivedMessages.add( msg);
+			if(!doMessageAlreadyExists(msg)){
+				this.recivedMessages.add(msg);
 				if(msg.getPayloadDestinationAdress() == this.id){
 					this.numberRecivedPayloadMsg++;
 					this.lastRecivedPayloadMessage = (PayloadMessage) recivedMsg;
 					recivedMsg.setEndTransmissionTime(simulator.getNetworkLifetime());
 					
-					System.out.print("Message path: ");
-					msg = (PayloadMessageWithRoute) recivedMsg;
-					LinkedList<Integer> msgRoute = msg.getMesageRoute();
-					for(int i=0; i<msgRoute.size(); i++){
-						System.out.print(" " + msgRoute.get(i) + ",");
-					}
-					System.out.println();
+					//System.out.print("Message path: ");
+					//msg = (PayloadMessageWithRoute) recivedMsg;
+					//LinkedList<Integer> msgRoute = msg.getMesageRoute();
+					//for(int i=0; i<msgRoute.size(); i++){
+					//	System.out.print(" " + msgRoute.get(i) + ",");
+					//}
+					//System.out.println();
 					
 				}else{
 					msg = (PayloadMessageWithRoute) recivedMsg;
@@ -54,6 +57,15 @@ public class FloodingNetworkNode extends NetworkNode{
 				}
 			}
 		}
+	}
+	
+	private boolean doMessageAlreadyExists(PayloadMessageWithRoute msg){
+		for(PayloadMessage tmpMsg: recivedMessages){
+			if((tmpMsg.getPayloadSourceAdress() == msg.getPayloadSourceAdress()) && (tmpMsg.getPayloadDestinationAdress() == msg.getPayloadDestinationAdress())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -68,10 +80,12 @@ public class FloodingNetworkNode extends NetworkNode{
 		
 		this.outputBuffer.add(msgCopy);
 		
+		this.numberTransmittedMsg++;
+			
 	}
 
 	@Override
-	protected void startSendingProcess(PayloadMessage msg) {
+	public void startSendingProcess(PayloadMessage msg) {
 		msg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		
 		PayloadMessageWithRoute newMsg = new PayloadMessageWithRoute(msg.getPayloadSourceAdress(), msg.getPayloadDestinationAdress(), msg.getPayload());
@@ -90,6 +104,9 @@ public class FloodingNetworkNode extends NetworkNode{
 			((FloodingNetworkGraph)graph).addCollision();
 		}
 	}
-	
+
+	public int getNumberTransmittedMsg() {
+		return numberTransmittedMsg;
+	}
 
 }

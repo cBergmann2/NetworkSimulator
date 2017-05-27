@@ -302,8 +302,15 @@ public class AodvSimulator extends Simulator{
 
 
 
+	
+
+
+
+
+
+
 	@Override
-	public long energyCostAnalysis(int distance) {
+	public long partitioningAnalysis(int networkWidth, double sendProbability) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -314,7 +321,7 @@ public class AodvSimulator extends Simulator{
 
 
 	@Override
-	public long partitioningAnalysis(int networkWidth, double sendProbability) {
+	public long energyCostAnalysis(NetworkGraph graph, int networkWidth, int sourceNodeId, int destinationNodeId) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
