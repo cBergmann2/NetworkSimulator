@@ -8,6 +8,7 @@ import SimulationNetwork.Simulator;
 public class FloodingSimulator extends Simulator {
 
 	private int collisions;
+	
 
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
@@ -78,11 +79,6 @@ public class FloodingSimulator extends Simulator {
 	}
 	*/
 
-	@Override
-	public long lifetimeAnalysis(int networkWidth, double sendProbability) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public long partitioningAnalysis(int networkWidth, double sendProbability) {

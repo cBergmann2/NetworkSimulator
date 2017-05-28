@@ -231,7 +231,7 @@ public class AodvSimulator extends Simulator{
 			
 			// TODO: performe 1 msec
 			for(int id=0; id<networkNodes.length; id++){
-				networkNodes[id].performAction();
+				networkNodes[id].performAction(1);
 			}
 			
 			networkLifetime++;
@@ -285,7 +285,7 @@ public class AodvSimulator extends Simulator{
 			// Performe 1 ms every iteration
 			
 			for(int id=0; id<networkNodes.length; id++){
-				((AodvNetworkNode)networkNodes[id]).performAction();
+				((AodvNetworkNode)networkNodes[id]).performAction(1);
 			}
 			
 			networkLifetime++;

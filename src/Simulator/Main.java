@@ -11,8 +11,8 @@ public class Main {
 
 		
 		FloodingEvaluationUnit floodingEvaluationUnit = new FloodingEvaluationUnit();
-		//floodingEvaluationUnit.evaluateSpeedAnalysis();
-		floodingEvaluationUnit.evaluateKostAnalysis();
+		floodingEvaluationUnit.evaluateSpeedAnalysis();
+		//floodingEvaluationUnit.evaluateKostAnalysis();
 		
 	}
 }

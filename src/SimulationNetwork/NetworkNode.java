@@ -5,36 +5,40 @@ import java.util.LinkedList;
 import AODV.AodvNetworkNode;
 
 public abstract class NetworkNode {
-	
+
 	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 74000;
 	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400;
 	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400;
-	//protected final static int IDLE_MODE_POWER_CONSUMPTION = 1;
-	
-	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = IDLE_MODE_POWER_CONSUMPTION*1000L*60L*60L*24L;
-	
+
+	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = RECIVE_MODE_POWER_CONSUMPTION * 1000L * 60L
+			* 60L * 24L;
+
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
-	protected long elapsedTimeSinceLastReception;	//Time in ms
+	protected long elapsedTimeSinceLastReception; // Time in ms
 	protected Message incommingMsg;
 	protected Message outgoingMsg;
 	protected boolean nodeAlive;
 	protected LinkedList<Message> inputBuffer;
 	protected LinkedList<Message> outputBuffer;
-	protected long availableEnery;				//Available energy in nAs
 	
+	//Envergy Variables
+	protected long availableEnery; // Available energy in nAs
+	protected long consumedEnergyInTransmissionMode;
+	protected long consumedEnergyInReciveMode;
+	protected long consumedEnergyInIdleMode;
+
 	protected long idleTime;
 	protected long reciveTime;
 	protected long transmissionTime;
 	protected long waitingTimeForMediumAccesPermission;
-	
+
 	protected NetworkGraph graph;
 	protected Simulator simulator;
-	
-	
+
 	protected PayloadMessage lastRecivedPayloadMessage;
-	
-	public NetworkNode(int id){
+
+	public NetworkNode(int id) {
 		this.id = id;
 		connectedNodes = new LinkedList<NetworkNode>();
 		incommingMsg = null;
@@ -42,148 +46,165 @@ public abstract class NetworkNode {
 		nodeAlive = true;
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
-		//availableEnery = 4600L*3600L*1000L*1000L;	
+		// availableEnery = 4600L*3600L*1000L*1000L;
 		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
 		waitingTimeForMediumAccesPermission = 0L;
+		consumedEnergyInIdleMode = 0L;
+		consumedEnergyInReciveMode = 0L;
+		consumedEnergyInTransmissionMode = 0L;
 	}
-	
+
 	/**
-	 * Runs this NetworkNode for 1 ms
+	 * Perform network node for executionTime
+	 * 
+	 * @param executionTime
+	 *            Time the network node has to be executed
+	 *            
+	 * @return Return true, if the simulation was possible with the given parameter. Otherwise false.
 	 */
-	public void performAction(){
-		if(nodeAlive){
-			
+	public boolean performAction(long executionTime) {
+		if((executionTime < 1) || (executionTime > 2)){
+			//It is only possible to use 1 or 2 ms steps
+			return false;
+		}
+		if (nodeAlive) {
+
 			performeTimeDependentTasks();
-			
-			if(incommingMsg != null){
-				//Currently resiving a message
-				if(incommingMsg.getRemainingTransmissionTime() <= 0){
-					//Transmission complete
+
+			if (incommingMsg != null) {
+				// Currently resiving a message
+				if (incommingMsg.getRemainingTransmissionTime() <= 0) {
+					// Transmission complete
 					inputBuffer.add(incommingMsg);
 					incommingMsg = null;
-					//currentlyTransmittingAMessage = false;
+					// currentlyTransmittingAMessage = false;
 					processRecivedMessage();
-					availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
-					idleTime++;
+					availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
+					consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
+					idleTime += executionTime;
 					elapsedTimeSinceLastReception = 0;
-				}
-				else{
-					//Transmission is still in progress
-					if(incommingMsg.getRemainingTransmissionTime() < 1000000L){
-						//Transmission takes less than 1 ms
+				} else {
+					// Transmission is still in progress
+					if (incommingMsg.getRemainingTransmissionTime() < (1000000L * executionTime)) {
+						// Transmission takes less than 1 ms
 						// TODO: Calculate exact power consumption
-						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
-						reciveTime++;
+						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+						consumedEnergyInReciveMode += RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+						reciveTime += executionTime;
+					} else {
+						// Transmission still takes at least 1 ms
+						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+						consumedEnergyInReciveMode += RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+						reciveTime += executionTime;
 					}
-					else{
-						//Transmission still takes at least 1 ms
-						availableEnery -= RECIVE_MODE_POWER_CONSUMPTION;
-						reciveTime++;
-					}
-					incommingMsg.decreaseRemainingTransmissionTime(1000000L);	
+					incommingMsg.decreaseRemainingTransmissionTime(1000000L * executionTime);
 					elapsedTimeSinceLastReception = 0;
 				}
-			}
-			else{
-				//No reciving process at this time
-				if(outgoingMsg != null){
-					//Currently transmitting a message
-					if(outgoingMsg.remainingTransmissionTime <= 0){
-						//Transmission complete
+			} else {
+				// No reciving process at this time
+				if (outgoingMsg != null) {
+					// Currently transmitting a message
+					if (outgoingMsg.remainingTransmissionTime <= 0) {
+						// Transmission complete
 						outgoingMsg = null;
 						// TODO: shedule next action
-						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
-						idleTime++;
+						availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
+						consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
+						idleTime += executionTime;
 						elapsedTimeSinceLastReception = 0;
-					}
-					else{
-						//Transmission is still in progress
-						
-						if(outgoingMsg.getRemainingTransmissionTime() < 1000000L){
-							//Transmission takes less than 1 ms
+					} else {
+						// Transmission is still in progress
+
+						if (outgoingMsg.getRemainingTransmissionTime() < (1000000L * executionTime)) {
+							// Transmission takes less than 1 ms
 							// TODO: Calculate exact power consumption
-							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
-							transmissionTime++;
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							transmissionTime += executionTime;
+						} else {
+							// Transmission still takes at least 1 ms
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							transmissionTime += executionTime;
 						}
-						else{
-							//Transmission still takes at least 1 ms
-							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
-							transmissionTime++;
-						}
-						outgoingMsg.decreaseRemainingTransmissionTime(1000000L);
+						outgoingMsg.decreaseRemainingTransmissionTime(1000000L * executionTime);
 					}
-				}
-				else{
-					//Currently not transmitting a message
-					if(outputBuffer.size() != 0){
-						if(isMediumAccessAllowed()){
-							//Start message transmission
+				} else {
+					// Currently not transmitting a message
+					if (outputBuffer.size() != 0) {
+						if (isMediumAccessAllowed()) {
+							// Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
-							//System.out.println("Node " + id + "start sending message.");
-							for(NetworkNode node: connectedNodes){
+							// System.out.println("Node " + id + "start sending
+							// message.");
+							for (NetworkNode node : connectedNodes) {
 								node.reciveMsg(outgoingMsg.clone());
-								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION;
-								transmissionTime++;
+								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+								consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+								transmissionTime += executionTime;
 							}
+						} else {
+							availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
+							consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
+							idleTime += executionTime;
+							elapsedTimeSinceLastReception += executionTime;
+							waitingTimeForMediumAccesPermission += executionTime;
 						}
-						else{
-							availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
-							idleTime++;
-							elapsedTimeSinceLastReception++;
-							waitingTimeForMediumAccesPermission++;
-						}
-					}else{						
-						availableEnery -= IDLE_MODE_POWER_CONSUMPTION;
-						idleTime++;
-						elapsedTimeSinceLastReception++;
-						//currentlyTransmittingAMessage = false;
+					} else {
+						availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
+						consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
+						idleTime += executionTime;
+						elapsedTimeSinceLastReception += executionTime;
+						// currentlyTransmittingAMessage = false;
 					}
-					
+
 				}
 			}
 		}
-		
-		if(availableEnery <= 0){
+
+		if (availableEnery <= 0) {
 			nodeAlive = false;
 		}
+		
+		return true;
 	}
-	
+
 	protected abstract void performeTimeDependentTasks();
 
 	public abstract void processRecivedMessage();
 
 	/**
 	 * Implements the Medium Access Control (MAC)
+	 * 
 	 * @return
 	 */
 	private boolean isMediumAccessAllowed() {
-		if(elapsedTimeSinceLastReception > (10 + id*50)){
+		if (elapsedTimeSinceLastReception > (10 + id * 50)) {
 			return true;
 		}
 		return false;
 	}
 
-	public void reciveMsg(Message msg){
-		if(incommingMsg == null){
+	public void reciveMsg(Message msg) {
+		if (incommingMsg == null) {
 			incommingMsg = msg;
-		}
-		else{
-			//collison
-			//System.out.println("Collision detected at Node " + this.id);
+		} else {
+			// collison
+			// System.out.println("Collision detected at Node " + this.id);
 		}
 	}
-	
-	public void sendMsg(Message msg){
-		
-		for(NetworkNode node: connectedNodes){
+
+	public void sendMsg(Message msg) {
+
+		for (NetworkNode node : connectedNodes) {
 			node.reciveMsg(msg);
 		}
 	}
 
-	public void addNeighbor(NetworkNode neighbor){
+	public void addNeighbor(NetworkNode neighbor) {
 		connectedNodes.add(neighbor);
 	}
 
@@ -199,10 +220,9 @@ public abstract class NetworkNode {
 		return nodeAlive;
 	}
 
-
 	public abstract int getNumberOfRecivedPayloadMessages();
 
-	public void setSimulator(Simulator simulator){
+	public void setSimulator(Simulator simulator) {
 		this.simulator = simulator;
 	}
 
@@ -221,18 +241,18 @@ public abstract class NetworkNode {
 	public long getWaitingTimeForMediumAccesPermission() {
 		return waitingTimeForMediumAccesPermission;
 	}
-	
-	public void generateRandomTransmissionLoad(double sendProbability, int networkSize){
-		if(outputBuffer.size() == 0){
+
+	public void generateRandomTransmissionLoad(double sendProbability, int networkSize) {
+		if (outputBuffer.size() == 0) {
 			double random = Math.random();
-			if(random <= sendProbability){
-				
-				//find random destination
-				int randomDestination = (int)(Math.random()*networkSize);
-				
-				char dataToSend[] = {'M', 's', 'g'}; 
-				
-				PayloadMessage tmpMsg = new PayloadMessage(id , randomDestination, dataToSend);
+			if (random <= sendProbability) {
+
+				// find random destination
+				int randomDestination = (int) (Math.random() * networkSize);
+
+				char dataToSend[] = { 'M', 's', 'g' };
+
+				PayloadMessage tmpMsg = new PayloadMessage(id, randomDestination, dataToSend);
 				this.startSendingProcess(tmpMsg);
 			}
 		}
@@ -248,25 +268,46 @@ public abstract class NetworkNode {
 		this.graph = graph;
 	}
 
+	public void setAvailableEnergy(long availableEnergy){
+		this.availableEnery = availableEnergy;
+	}
+	
 	public long getAvailableEnery() {
 		return availableEnery;
 	}
-	
-	public int getOutputBufferSize(){
+
+	public int getOutputBufferSize() {
 		return outputBuffer.size();
 	}
-	
-	public Message getOutgoingMessage(){
-		if(outgoingMsg != null){
+
+	public Message getOutgoingMessage() {
+		if (outgoingMsg != null) {
 			return outgoingMsg.clone();
 		}
 		return null;
 	}
-	
-	public Message getIncomingMessage(){
-		if(incommingMsg != null){
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public Message getIncomingMessage() {
+		if (incommingMsg != null) {
 			return incommingMsg.clone();
 		}
 		return null;
+	}
+
+	public long getConsumedEnergyInTransmissionMode() {
+		return consumedEnergyInTransmissionMode;
+	}
+
+	public long getConsumedEnergyInReciveMode() {
+		return consumedEnergyInReciveMode;
+	}
+
+	public long getConsumedEnergyInIdleMode() {
+		return consumedEnergyInIdleMode;
 	}
 }

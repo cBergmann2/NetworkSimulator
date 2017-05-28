@@ -5,7 +5,15 @@ import AODV.AodvNetworkNode;
 import Flooding.FloodingNetworkNode;
 
 public abstract class Simulator {
+
+	private static int NODE_EXECUTION_TIME = 2;
+	
+	
 	protected long networkLifetime;
+	
+	protected long consumedEnergyInTransmissionMode;
+	protected long consumedEnergyInReciveMode;
+	protected long consumedEnergyInIdleMode;
 
 	/**
 	 * Calculates time between start and end of transmission process
@@ -30,13 +38,13 @@ public abstract class Simulator {
 		networkNodes[sourceNodeId].startSendingProcess(msg);
 
 		do {
-			// Performe 1 ms every iteration
+			// Performe network node
 			
 			for (int id = 0; id < networkNodes.length; id++) {
-				networkNodes[id].performAction();
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
 			}
 
-			networkLifetime++;
+			networkLifetime += NODE_EXECUTION_TIME;
 
 		} while (networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
 
@@ -59,6 +67,10 @@ public abstract class Simulator {
 	public long energyCostAnalysis(NetworkGraph graph, int networkWidth, int sourceNodeId, int destinationNodeId){
 		long consumedEnergy = 0L;
 		boolean transmissionInNetworkDetected;
+		
+		consumedEnergyInIdleMode = 0L;
+		consumedEnergyInReciveMode = 0L;
+		consumedEnergyInTransmissionMode = 0L;
 
 		networkLifetime = 0;
 
@@ -75,10 +87,10 @@ public abstract class Simulator {
 		do {
 			// Performe 1 ms every iteration
 			for (int id = 0; id < networkNodes.length; id++) {
-				networkNodes[id].performAction();
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
 			}
 
-			networkLifetime++;
+			networkLifetime += NODE_EXECUTION_TIME;
 			
 			//Check if there is any transmission process in the network
 			transmissionInNetworkDetected = false;
@@ -102,11 +114,18 @@ public abstract class Simulator {
 		} while (transmissionInNetworkDetected);
 
 		for (int id = 0; id < networkNodes.length; id++) {
-			consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
+			/*consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
 					- networkNodes[id].getAvailableEnery();
+			*/
+			
+			
+			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
+			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
+			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
 		}
+		
 
-		return consumedEnergy;
+		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}
 
 	/**
@@ -146,7 +165,7 @@ public abstract class Simulator {
 
 			// TODO: performe 1 msec
 			for(int id=0; id<networkNodes.length; id++){
-				networkNodes[id].performAction();
+				networkNodes[id].performAction(1);
 			}
 			
 			networkLifetime++;
@@ -200,5 +219,17 @@ public abstract class Simulator {
 
 	public long getNetworkLifetime() {
 		return networkLifetime;
+	}
+
+	public long getConsumedEnergyInTransmissionMode() {
+		return consumedEnergyInTransmissionMode;
+	}
+
+	public long getConsumedEnergyInReciveMode() {
+		return consumedEnergyInReciveMode;
+	}
+
+	public long getConsumedEnergyInIdleMode() {
+		return consumedEnergyInIdleMode;
 	}
 }
