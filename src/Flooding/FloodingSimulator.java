@@ -9,6 +9,8 @@ public class FloodingSimulator extends Simulator {
 
 	private int collisions;
 	
+	
+	
 
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
@@ -79,6 +81,19 @@ public class FloodingSimulator extends Simulator {
 	}
 	*/
 
+	public long lifetimeAnalysisStochasitcSendBehavior(int networkWidth, double sendProbability){
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+		
+		return this.lifetimeAnalysisStochasticBehavior(graph, networkWidth, sendProbability);
+	}
+
+	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod){
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+		
+		
+		
+		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod);
+	}
 
 	@Override
 	public long partitioningAnalysis(int networkWidth, double sendProbability) {

@@ -34,6 +34,8 @@ public class FloodingNetworkNode extends NetworkNode{
 		if(recivedMsg instanceof PayloadMessageWithRoute){
 			
 			PayloadMessageWithRoute msg = new PayloadMessageWithRoute(((PayloadMessage) recivedMsg).getPayloadSourceAdress(), ((PayloadMessage) recivedMsg).getPayloadDestinationAdress(), null);
+			msg.setPayloadHash(((PayloadMessage)recivedMsg).getPayloadHash());
+			
 			
 			if(!doMessageAlreadyExists(msg)){
 				this.recivedMessages.add(msg);
@@ -61,7 +63,9 @@ public class FloodingNetworkNode extends NetworkNode{
 	
 	private boolean doMessageAlreadyExists(PayloadMessageWithRoute msg){
 		for(PayloadMessage tmpMsg: recivedMessages){
-			if((tmpMsg.getPayloadSourceAdress() == msg.getPayloadSourceAdress()) && (tmpMsg.getPayloadDestinationAdress() == msg.getPayloadDestinationAdress())){
+			if((tmpMsg.getPayloadSourceAdress() == msg.getPayloadSourceAdress()) &&
+					(tmpMsg.getPayloadDestinationAdress() == msg.getPayloadDestinationAdress()) &&
+					(tmpMsg.getPayloadHash() == msg.getPayloadHash())){
 				return true;
 			}
 		}

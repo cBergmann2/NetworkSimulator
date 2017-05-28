@@ -238,4 +238,191 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		
 	}
 
+	public void evaluateNetworkLivetimeStochasticSendBehavior() {
+		FloodingSimulator floodingSimulator = new FloodingSimulator();
+		
+		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
+		int networkWidth[] = {3, 5,10,15};
+		
+		
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendProbability_0001[][] = new double[2][networkWidth.length];
+		
+		double sendProbability_001[][] = new double[2][networkWidth.length];
+		//double maxDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		//double maxDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
+		double sendProbability_005[][] = new double[2][networkWidth.length];
+		
+		double sendProbability_01[][] = new double[2][networkWidth.length];
+		//double minDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		//double minDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
+		
+		//double sendProbability_10[][] = new double[2][networkWidth.length];
+		//double medDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		//double medDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH-1];
+		
+		
+		for(int i=0; i<networkWidth.length; i++){
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			sendProbability_0001[0][i] = numberOfNodes[i];
+			
+			sendProbability_0001[1][i] = floodingSimulator.lifetimeAnalysisStochasitcSendBehavior(networkWidth[i], 0.0001) /1000 / 60;
+			System.out.println("0,01% Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+
+			
+			sendProbability_001[0][i] = numberOfNodes[i];
+			sendProbability_001[1][i] = floodingSimulator.lifetimeAnalysisStochasitcSendBehavior(networkWidth[i], 0.001) /1000 / 60;
+			System.out.println("0,1% Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+			sendProbability_005[0][i] = numberOfNodes[i];
+			sendProbability_005[1][i] = floodingSimulator.lifetimeAnalysisStochasitcSendBehavior(networkWidth[i], 0.005) /1000 / 60;
+			System.out.println("0,5% Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+
+			
+			sendProbability_01[0][i] = numberOfNodes[i];
+			sendProbability_01[1][i] = floodingSimulator.lifetimeAnalysisStochasitcSendBehavior(networkWidth[i], 0.01) /1000 / 60;
+			System.out.println("5% Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+
+			//sendProbability_10[0][i] = numberOfNodes[i];
+			//sendProbability_10[1][i] = floodingSimulator.lifetimeAnalysis(networkWidth[i], 0.1) /1000 / 60;
+			//System.out.println("10% Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+
+		}
+		
+		//Consumed energy
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Sendewahrscheinlichkeit 0,01%", sendProbability_0001);
+		dataset.addSeries("Sendewahrscheinlichkeit 0,1%", sendProbability_001);
+		dataset.addSeries("Sendewahrscheinlichkeit 0,5%", sendProbability_005);
+		dataset.addSeries("Sendewahrscheinlichkeit 1%", sendProbability_01);
+		//dataset.addSeries("Sendewahrscheinlichkeit 10%", sendProbability_10);
+
+		
+		
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+		
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		
+		JFreeChart chart = new JFreeChart(plot);
+		
+		chart.getPlot().setBackgroundPaint( Color.WHITE );
+		chart.setBackgroundPaint(Color.WHITE);
+		
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Lebenszeit.png"),chart,CHART_WIDTH,CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public void evaluateNetworkLivetimeStaticSendBehavior() {
+		FloodingSimulator floodingSimulator = new FloodingSimulator();
+		
+		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
+		int networkWidth[] = {3, 5, 10, 15};
+		
+		
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
+		
+		double sendTime_30[][] = new double[2][networkWidth.length];
+		double sendTime_30_TransmissionMode[][] = new double[2][networkWidth.length];
+
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
+		
+		double sendTime_600[][] = new double[2][networkWidth.length];
+		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
+		
+		
+		for(int i=0; i<networkWidth.length; i++){
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 10) /1000 / 60;
+			sendTime_10_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_10_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 60) /1000 / 60;
+			sendTime_60_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_60_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 600) /1000 / 60;
+			sendTime_600_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_600_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+		}
+		
+		//Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+		
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+		
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		
+		JFreeChart chart = new JFreeChart(plot);
+		
+		chart.getPlot().setBackgroundPaint( Color.WHITE );
+		chart.setBackgroundPaint(Color.WHITE);
+		
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Lebenszeit_statisch.png"),chart,CHART_WIDTH,CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//Average time in transmission mode
+		DefaultXYDataset dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_TransmissionMode);
+		
+
+		
+		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		
+		JFreeChart chart2 = new JFreeChart(plot2);
+		
+		chart2.getPlot().setBackgroundPaint( Color.WHITE );
+		chart2.setBackgroundPaint(Color.WHITE);
+		
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Lebenszeit_statisch_prozentualeZeit_Sendemodus.png"),chart2,CHART_WIDTH,CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 }

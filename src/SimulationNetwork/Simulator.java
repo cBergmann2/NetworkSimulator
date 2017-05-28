@@ -14,6 +14,8 @@ public abstract class Simulator {
 	protected long consumedEnergyInTransmissionMode;
 	protected long consumedEnergyInReciveMode;
 	protected long consumedEnergyInIdleMode;
+	
+	protected double averageTimeInTransmissionMode;
 
 	/**
 	 * Calculates time between start and end of transmission process
@@ -138,7 +140,7 @@ public abstract class Simulator {
 	 *            Probability to send Data, when node is in idle mode
 	 * @return duration until first node is out of power
 	 */
-	public long lifetimeAnalysis(NetworkGraph graph, int networkWidth, double sendProbability){
+	public long lifetimeAnalysisStochasticBehavior(NetworkGraph graph, int networkWidth, double sendProbability){
 		networkLifetime = 0;
 		int simulatedHours = 0;
 		int simulatedDays = 0;
@@ -147,28 +149,21 @@ public abstract class Simulator {
 		for(int id=0; id<networkNodes.length; id++){
 			networkNodes[id].setSimulator(this);
 		}
-		
-		
-		char dataToSend[] = {'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D'}; 
-		
-		
-		PayloadMessage msg = new PayloadMessage(0, (networkWidth*networkWidth-1), dataToSend);
-		//((AodvNetworkNode)networkNodes[0]).sendMessage(msg);
-		
-		
+			
 		do{
 					
 			for(int id=0; id<networkNodes.length; id++){
+				//Generate random transmission of data
 				networkNodes[id].generateRandomTransmissionLoad(sendProbability, networkNodes.length);
 			}
 			
 
-			// TODO: performe 1 msec
+			// performe network nodes
 			for(int id=0; id<networkNodes.length; id++){
-				networkNodes[id].performAction(1);
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
 			}
 			
-			networkLifetime++;
+			networkLifetime += NODE_EXECUTION_TIME;
 			
 			
 			if(networkLifetime % (3600000) == 0){
@@ -182,12 +177,65 @@ public abstract class Simulator {
 				System.out.println("Simulated days: " + simulatedDays);
 			}
 		
-		//}while(networkNodes[networkWidth*networkWidth-1].getNumberOfRecivedPayloadMessages() == 0);
-		}while(allNodesAlive(networkNodes));//while(networkLifetime < 3600000);//
+
+		}while(allNodesAlive(networkNodes));
+	
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
+		return networkLifetime;
+	}
+	
+	/**
+	 * Run network with given parameter to determine duration until first node
+	 * is out of power
+	 * 
+	 * @param networkWidth
+	 *            sqrt(Number of Nodes)
+	 * @param sendProbability
+	 *            Probability to send Data, when node is in idle mode
+	 * @return duration until first node is out of power
+	 */
+	public long lifetimeAnalysisStaticBehavior(NetworkGraph graph, int networkWidth, int transmissionPeriod){
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+		}
+			
+		do{
+					
+			for(int id=0; id<networkNodes.length; id++){
+				//Generate static transmission of data
+				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length);
+			}
+			
+
+			// performe network nodes
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
 		
-		
-		//System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
+
+		}while(allNodesAlive(networkNodes));
+	
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
 		return networkLifetime;
 	}
@@ -205,6 +253,9 @@ public abstract class Simulator {
 	protected boolean allNodesAlive(NetworkNode networkNodes[]) {
 		for (NetworkNode node : networkNodes) {
 			if (!node.isNodeAlive()) {
+				
+				this.averageTimeInTransmissionMode = node.getTransmissionTime() / (double) networkLifetime;
+				
 				System.out.println("Node " + node.getId() + " is down: "
 						+ ((double) node.getIdleTime() / (double) networkLifetime) + "% idle time"
 						+ ((double) node.getReciveTime() / (double) networkLifetime) + "% recive time"
@@ -231,5 +282,9 @@ public abstract class Simulator {
 
 	public long getConsumedEnergyInIdleMode() {
 		return consumedEnergyInIdleMode;
+	}
+	
+	public double getAverageTimeInTransmissionMode() {
+		return averageTimeInTransmissionMode;
 	}
 }

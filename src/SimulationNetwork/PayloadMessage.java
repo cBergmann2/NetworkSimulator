@@ -4,6 +4,7 @@ public class PayloadMessage extends Message{
 	protected int payloadDestinationAdress;
 	protected int payloadSourceAdress;
 	protected char payload[];
+	protected long payloadHash;
 		
 	public PayloadMessage(int sourceAdress, int destinationAdress, char[] payload){
 		this.payloadDestinationAdress = destinationAdress;
@@ -55,5 +56,13 @@ public class PayloadMessage extends Message{
 			copy.payload[i] = payload[i];
 		}
 		return copy;
+	}
+
+	public long getPayloadHash() {
+		return payloadHash;
+	}
+
+	public void setPayloadHash(long payloadHash) {
+		this.payloadHash = payloadHash;
 	}
 }

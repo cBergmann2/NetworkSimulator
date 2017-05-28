@@ -37,6 +37,7 @@ public abstract class NetworkNode {
 	protected Simulator simulator;
 
 	protected PayloadMessage lastRecivedPayloadMessage;
+	private long elapsedTimeSinceLastGenerationOfTransmission;	// in milli Sekunden
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -55,6 +56,7 @@ public abstract class NetworkNode {
 		consumedEnergyInIdleMode = 0L;
 		consumedEnergyInReciveMode = 0L;
 		consumedEnergyInTransmissionMode = 0L;
+		elapsedTimeSinceLastGenerationOfTransmission = 0L;
 	}
 
 	/**
@@ -250,12 +252,43 @@ public abstract class NetworkNode {
 				// find random destination
 				int randomDestination = (int) (Math.random() * networkSize);
 
-				char dataToSend[] = { 'M', 's', 'g' };
-
+				
+				// set message payload as simulation time 
+				long networkLivetime = simulator.getNetworkLifetime();
+				char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
+				
 				PayloadMessage tmpMsg = new PayloadMessage(id, randomDestination, dataToSend);
+				tmpMsg.setPayloadHash(networkLivetime);
+
 				this.startSendingProcess(tmpMsg);
 			}
 		}
+	}
+	
+	/**
+	 * Generates a transmission every t seconds
+	 * @param seconds
+	 * @param nodeExecutionTime
+	 * @param networkSize
+	 */
+	public void generateTransmissionEveryTSeconds(int seconds, int nodeExecutionTime, int networkSize){
+		if(this.elapsedTimeSinceLastGenerationOfTransmission/1000 >= seconds){
+			// find random destination
+			int randomDestination = (int) (Math.random() * networkSize);
+
+			// set message payload as simulation time 
+			long networkLivetime = simulator.getNetworkLifetime();
+			char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
+			
+			PayloadMessage tmpMsg = new PayloadMessage(id, randomDestination, dataToSend);
+			tmpMsg.setPayloadHash(networkLivetime);
+
+			this.startSendingProcess(tmpMsg);
+			
+			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
+		}
+		
+		this.elapsedTimeSinceLastGenerationOfTransmission += nodeExecutionTime;
 	}
 
 	public abstract void startSendingProcess(PayloadMessage tmpMsg);
