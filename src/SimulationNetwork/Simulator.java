@@ -78,7 +78,7 @@ public abstract class Simulator {
 
 		networkLifetime = 0;
 
-		FloodingNetworkNode networkNodes[] = (FloodingNetworkNode[])graph.getNetworkNodes();
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		for (int id = 0; id < networkNodes.length; id++) {
 			networkNodes[id].setSimulator(this);
 		}

@@ -1,9 +1,10 @@
 package MatlabChart;
 
-import AODV.AodvSimulator_old;
 import org.jfree.data.xy.*;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RectangleEdge;
+
+import AODV.AodvSimulator;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -33,7 +34,7 @@ public class GraphGenerator {
 		
 		
 		//AODV
-		AodvSimulator_old aodvSimulator = new AodvSimulator_old();
+		AodvSimulator aodvSimulator = new AodvSimulator();
 		
 		
 		double numberOfNodes[] = new double[MAX_NETWORK_WIDTH-1];

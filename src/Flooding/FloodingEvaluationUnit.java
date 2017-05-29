@@ -11,7 +11,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-import AODV.AodvSimulator_old;
 import Simulator.EvaluationUnit;
 
 public class FloodingEvaluationUnit extends EvaluationUnit{
@@ -113,7 +112,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 	}
 
 	@Override
-	public void evaluateKostAnalysis() {
+	public void evaluateCostAnalysis() {
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 		
 		

@@ -4,6 +4,6 @@ public abstract class EvaluationUnit {
 	
 	public abstract void evaluateSpeedAnalysis();
 	
-	public abstract void evaluateKostAnalysis();
+	public abstract void evaluateCostAnalysis();
 
 }
