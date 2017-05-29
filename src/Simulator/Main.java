@@ -1,5 +1,6 @@
 package Simulator;
-import AODV.AodvSimulator;
+import AODV.AodvEvaluationUnit;
+import AODV.AodvSimulator_old;
 import Flooding.FloodingEvaluationUnit;
 import MatlabChart.GraphGenerator;
 import SimulationNetwork.Simulator;
@@ -15,7 +16,10 @@ public class Main {
 		//floodingEvaluationUnit.evaluateKostAnalysis();
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
 		
-		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
+		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
+		
+		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
+		aodvEvaluationUnit.evaluateSpeedAnalysis();
 		
 	}
 }

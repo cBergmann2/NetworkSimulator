@@ -196,6 +196,7 @@ public abstract class NetworkNode {
 		} else {
 			// collison
 			// System.out.println("Collision detected at Node " + this.id);
+			graph.addCollision();
 		}
 	}
 

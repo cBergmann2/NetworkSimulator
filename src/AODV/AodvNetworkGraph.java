@@ -11,6 +11,7 @@ public class AodvNetworkGraph extends NetworkGraph{
 		
 		for(int id=0; id<nodes.length; id++){
 			nodes[id] = new AodvNetworkNode(id);
+			nodes[id].setGraph(this);
 		}
 		lifetime = 0;
 		initializeNetworkStructure();

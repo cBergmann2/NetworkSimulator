@@ -6,6 +6,8 @@ public abstract class NetworkGraph {
 	protected int networkWidth;
 	protected long lifetime;
 	
+	protected int collisions;
+	
 	public NetworkGraph(){
 
 	}
@@ -106,5 +108,13 @@ public abstract class NetworkGraph {
 
 	public NetworkNode[] getNetworkNodes() {
 		return nodes;
+	}
+
+	public int getCollisions() {
+		return collisions;
+	}
+	
+	public void addCollision() {
+		this.collisions++;
 	}
 }

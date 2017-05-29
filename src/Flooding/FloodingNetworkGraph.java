@@ -5,7 +5,7 @@ import SimulationNetwork.NetworkGraph;
 
 public class FloodingNetworkGraph extends NetworkGraph {
 	
-	private int collisions;
+	
 
 	public FloodingNetworkGraph(int width) {
 		nodes = new FloodingNetworkNode[width * width];
@@ -19,12 +19,5 @@ public class FloodingNetworkGraph extends NetworkGraph {
 		initializeNetworkStructure();
 	}
 
-	public int getCollisions() {
-		return collisions;
-	}
-
-	public void addCollision() {
-		this.collisions++;
-	}
 
 }

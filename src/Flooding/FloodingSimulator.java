@@ -7,10 +7,6 @@ import SimulationNetwork.Simulator;
 
 public class FloodingSimulator extends Simulator {
 
-	private int collisions;
-	
-	
-	
 
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
@@ -101,12 +97,5 @@ public class FloodingSimulator extends Simulator {
 		return 0;
 	}
 
-	public int getCollisions() {
-		return collisions;
-	}
-
-	private void setCollisions(int collisions) {
-		this.collisions = collisions;
-	}
 
 }

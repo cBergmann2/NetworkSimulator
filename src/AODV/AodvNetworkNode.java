@@ -312,6 +312,7 @@ public class AodvNetworkNode extends NetworkNode {
 		else{
 			//collision
 			//System.out.println("Collision detected at Node " + this.id);
+			graph.addCollision();
 			if((msg instanceof RREP) && msg.getDestinationID() == this.id){
 				System.out.println("Collision-Error: RREP was not transfered to destination");
 				System.out.println("Hard collision error: RREP message is collided with another message -> for simulation give RREP priority");

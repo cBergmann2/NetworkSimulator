@@ -15,6 +15,8 @@ public abstract class Simulator {
 	protected long consumedEnergyInReciveMode;
 	protected long consumedEnergyInIdleMode;
 	
+	protected int collisions;
+	
 	protected double averageTimeInTransmissionMode;
 
 	/**
@@ -286,5 +288,14 @@ public abstract class Simulator {
 	
 	public double getAverageTimeInTransmissionMode() {
 		return averageTimeInTransmissionMode;
+	}
+
+	public int getCollisions() {
+		return collisions;
+	}
+	
+
+	protected void setCollisions(int collisions) {
+		this.collisions = collisions;
 	}
 }

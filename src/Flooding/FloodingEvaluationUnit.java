@@ -11,12 +11,12 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-import AODV.AodvSimulator;
+import AODV.AodvSimulator_old;
 import Simulator.EvaluationUnit;
 
 public class FloodingEvaluationUnit extends EvaluationUnit{
 	
-	private static final int MAX_NETWORK_WIDTH = 32;
+	private static final int MAX_NETWORK_WIDTH = 10;
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
