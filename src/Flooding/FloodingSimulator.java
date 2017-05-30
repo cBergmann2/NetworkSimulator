@@ -83,12 +83,10 @@ public class FloodingSimulator extends Simulator {
 		return this.lifetimeAnalysisStochasticBehavior(graph, networkWidth, sendProbability);
 	}
 
-	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod){
+	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod, int payloadSize){
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
-		
-		
-		
-		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod);
+
+		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
 	@Override

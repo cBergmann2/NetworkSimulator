@@ -197,7 +197,7 @@ public abstract class Simulator {
 	 *            Probability to send Data, when node is in idle mode
 	 * @return duration until first node is out of power
 	 */
-	public long lifetimeAnalysisStaticBehavior(NetworkGraph graph, int networkWidth, int transmissionPeriod){
+	public long lifetimeAnalysisStaticBehavior(NetworkGraph graph, int networkWidth, int transmissionPeriod, int payloadSize){
 		networkLifetime = 0;
 		int simulatedHours = 0;
 		int simulatedDays = 0;
@@ -211,7 +211,7 @@ public abstract class Simulator {
 					
 			for(int id=0; id<networkNodes.length; id++){
 				//Generate static transmission of data
-				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length);
+				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
 			}
 			
 

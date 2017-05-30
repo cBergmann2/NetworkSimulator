@@ -1,6 +1,7 @@
 package AODV;
 
 
+import Flooding.FloodingNetworkGraph;
 import SimulationNetwork.Simulator;
 
 public class AodvSimulator extends Simulator
@@ -32,6 +33,12 @@ public class AodvSimulator extends Simulator
 	public long partitioningAnalysis(int networkWidth, double sendProbability) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSIze){
+		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+
+		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSIze);
 	}
 
 }

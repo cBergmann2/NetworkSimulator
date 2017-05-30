@@ -331,6 +331,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
 		int networkWidth[] = {3, 5, 10, 15};
 		
+		int payloadSize = 100;
 		
 		double numberOfNodes[] = new double[networkWidth.length];
 
@@ -351,19 +352,19 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 10) /1000 / 60;
+			sendTime_10[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 10, payloadSize) /1000 / 60;
 			sendTime_10_TransmissionMode[0][i] = numberOfNodes[i];
 			sendTime_10_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
 			System.out.println("10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
 		
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 60) /1000 / 60;
+			sendTime_60[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 60, payloadSize) /1000 / 60;
 			sendTime_60_TransmissionMode[0][i] = numberOfNodes[i];
 			sendTime_60_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
 			System.out.println("60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
 		
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 600) /1000 / 60;
+			sendTime_600[1][i] = floodingSimulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 600, payloadSize) /1000 / 60;
 			sendTime_600_TransmissionMode[0][i] = numberOfNodes[i];
 			sendTime_600_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
 			System.out.println("10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );

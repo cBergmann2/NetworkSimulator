@@ -5,5 +5,7 @@ public abstract class EvaluationUnit {
 	public abstract void evaluateSpeedAnalysis();
 	
 	public abstract void evaluateCostAnalysis();
+	
+	public abstract void evaluateNetworkLivetimeStaticSendBehavior();
 
 }

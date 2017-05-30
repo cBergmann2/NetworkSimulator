@@ -272,7 +272,7 @@ public abstract class NetworkNode {
 	 * @param nodeExecutionTime
 	 * @param networkSize
 	 */
-	public void generateTransmissionEveryTSeconds(int seconds, int nodeExecutionTime, int networkSize){
+	public void generateTransmissionEveryTSeconds(int seconds, int nodeExecutionTime, int networkSize, int payloadSize){
 		if(this.elapsedTimeSinceLastGenerationOfTransmission/1000 >= seconds){
 			// find random destination
 			int randomDestination = (int) (Math.random() * networkSize);
@@ -283,7 +283,8 @@ public abstract class NetworkNode {
 			
 			PayloadMessage tmpMsg = new PayloadMessage(id, randomDestination, dataToSend);
 			tmpMsg.setPayloadHash(networkLivetime);
-
+			tmpMsg.setPayloadSize(payloadSize);
+			
 			this.startSendingProcess(tmpMsg);
 			
 			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
