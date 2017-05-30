@@ -24,7 +24,16 @@ public class FloodingNetworkNode extends NetworkNode{
 
 	@Override
 	protected void performeTimeDependentTasks() {
-		// TODO Auto-generated method stub
+		long currentTime = simulator.getNetworkLifetime();
+		LinkedList<PayloadMessage> msgToDelete = new LinkedList<PayloadMessage>();
+		for(PayloadMessage msg: recivedMessages){
+			if(msg.getStartTransmissionTime()-currentTime > 3600000){
+				msgToDelete.add(msg);			}
+		}
+		
+		for(PayloadMessage msg: msgToDelete){
+			recivedMessages.remove(msg);
+		}
 		
 	}
 
@@ -93,6 +102,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		msg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		
 		PayloadMessageWithRoute newMsg = new PayloadMessageWithRoute(msg.getPayloadSourceAdress(), msg.getPayloadDestinationAdress(), msg.getPayload());
+		newMsg.setStartTransmissionTime(this.simulator.getNetworkLifetime());
 		newMsg.addNodeToRoute(this.id);
 		this.sendMessage(newMsg);
 	}

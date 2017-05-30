@@ -325,21 +325,16 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 	}
 	
 	
-	public void evaluateNetworkLivetimeStaticSendBehavior() {
+	public void evaluateNetworkLivetimeStaticSendBehavior(int payloadSize) {
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 		
 		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
 		int networkWidth[] = {3, 5, 10, 15};
 		
-		int payloadSize = 100;
-		
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
 		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
-		
-		double sendTime_30[][] = new double[2][networkWidth.length];
-		double sendTime_30_TransmissionMode[][] = new double[2][networkWidth.length];
 
 		double sendTime_60[][] = new double[2][networkWidth.length];
 		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
@@ -389,8 +384,9 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		chart.setBackgroundPaint(Color.WHITE);
 		
 
+		String filename = "Output/Flooding/Flooding_statisch_" + payloadSize + "Byte.png"; 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Lebenszeit_statisch.png"),chart,CHART_WIDTH,CHART_HIGHT);
+			ChartUtilities.saveChartAsPNG(new File(filename),chart,CHART_WIDTH,CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -414,14 +410,20 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		chart2.getPlot().setBackgroundPaint( Color.WHITE );
 		chart2.setBackgroundPaint(Color.WHITE);
 		
-
+		
+		filename = "Output/Flooding/Flooding_Lebenszeit_statisch_prozentualeZeit_Sendemodus_" + payloadSize + "Byte.png"; 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Lebenszeit_statisch_prozentualeZeit_Sendemodus.png"),chart2,CHART_WIDTH,CHART_HIGHT);
+			ChartUtilities.saveChartAsPNG(new File(filename),chart,CHART_WIDTH,CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public void evaluateNetworkLivetimeStaticSendBehavior() {
+		// TODO Auto-generated method stub
 		
 	}
 
