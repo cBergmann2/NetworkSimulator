@@ -274,6 +274,8 @@ public abstract class NetworkNode {
 	 */
 	public void generateTransmissionEveryTSeconds(int seconds, int nodeExecutionTime, int networkSize, int payloadSize){
 		if(this.elapsedTimeSinceLastGenerationOfTransmission/1000 >= seconds){
+			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
+
 			// find random destination
 			int randomDestination = (int) (Math.random() * networkSize);
 
@@ -287,7 +289,6 @@ public abstract class NetworkNode {
 			
 			this.startSendingProcess(tmpMsg);
 			
-			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
 		}
 		
 		this.elapsedTimeSinceLastGenerationOfTransmission += nodeExecutionTime;

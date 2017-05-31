@@ -329,7 +329,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 		
 		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-		int networkWidth[] = {3, 5, 10, 15};
+		int networkWidth[] = {3};
 		
 		double numberOfNodes[] = new double[networkWidth.length];
 

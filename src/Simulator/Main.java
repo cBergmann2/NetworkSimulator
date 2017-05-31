@@ -15,7 +15,8 @@ public class Main {
 		
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
 		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
-		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
+		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
