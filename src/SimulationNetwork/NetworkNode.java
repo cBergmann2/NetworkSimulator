@@ -38,6 +38,7 @@ public abstract class NetworkNode {
 
 	protected PayloadMessage lastRecivedPayloadMessage;
 	private long elapsedTimeSinceLastGenerationOfTransmission;	// in milli Sekunden
+	protected int numberRecivedPayloadMsg;
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -57,6 +58,7 @@ public abstract class NetworkNode {
 		consumedEnergyInReciveMode = 0L;
 		consumedEnergyInTransmissionMode = 0L;
 		elapsedTimeSinceLastGenerationOfTransmission = 0L;
+		numberRecivedPayloadMsg = 0;
 	}
 
 	/**
@@ -140,6 +142,7 @@ public abstract class NetworkNode {
 						if (isMediumAccessAllowed()) {
 							// Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
+							outgoingMsg.setRemainingTransmissionTime(Message.calculateTransmissionTime(outgoingMsg.getDataVolume()));
 							// System.out.println("Node " + id + "start sending
 							// message.");
 							for (NetworkNode node : connectedNodes) {
@@ -200,11 +203,8 @@ public abstract class NetworkNode {
 		}
 	}
 
-	public void sendMsg(Message msg) {
-
-		for (NetworkNode node : connectedNodes) {
-			node.reciveMsg(msg);
-		}
+	public void sendMsg(Message msg){
+		this.outputBuffer.add(msg);
 	}
 
 	public void addNeighbor(NetworkNode neighbor) {
@@ -223,7 +223,9 @@ public abstract class NetworkNode {
 		return nodeAlive;
 	}
 
-	public abstract int getNumberOfRecivedPayloadMessages();
+	public int getNumberOfRecivedPayloadMessages(){
+		return this.numberRecivedPayloadMsg;
+	}
 
 	public void setSimulator(Simulator simulator) {
 		this.simulator = simulator;

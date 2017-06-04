@@ -11,6 +11,8 @@ public class PayloadMessage extends Message{
 		this.payloadDestinationAdress = destinationAdress;
 		this.payloadSourceAdress = sourceAdress;
 		this.payload = payload;
+		this.payloadSize = payload.length*8;
+		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress, char dataToSend[]){
@@ -18,6 +20,8 @@ public class PayloadMessage extends Message{
 		this.payloadSourceAdress = payloadSourceAdress;
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payload = dataToSend;
+		this.payloadSize = payload.length*8;
+		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress,int payloadSize){
@@ -25,10 +29,14 @@ public class PayloadMessage extends Message{
 		this.payloadSourceAdress = payloadSourceAdress;
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payloadSize = payloadSize;
-		
+		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
 	}
 
 	
+	public PayloadMessage() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getPayloadDestinationAdress() {
 		return payloadDestinationAdress;
 	}
@@ -56,15 +64,25 @@ public class PayloadMessage extends Message{
 	}
 
 	public PayloadMessage clone(){
-		PayloadMessage copy = new PayloadMessage(senderID, destinationID, payloadSourceAdress, payloadDestinationAdress, payload);
-		copy.setStartTransmissionTime(startTransmissionTime);
+		PayloadMessage copy = new PayloadMessage();
+		copy.setDataVolume(dataVolume);
+		copy.setDestinationID(destinationID);
 		
 		//duplicate payload array
 		copy.payload = new char[payload.length];
 		for(int i=0; i<payload.length; i++){
 			copy.payload[i] = payload[i];
 		}
-		copy.setPayloadSize(this.payloadSize);
+		
+		copy.setPayloadDestinationAdress(payloadDestinationAdress);
+		copy.setPayloadHash(payloadHash);
+		copy.setPayloadSize(payloadSize);
+		copy.setPayloadSourceAdress(payloadSourceAdress);
+		copy.setRemainingTransmissionTime(remainingTransmissionTime);
+		copy.setSenderID(senderID);
+		copy.setStartTransmissionTime(startTransmissionTime);
+		copy.setTimeToLive(timeToLive);
+		
 		return copy;
 	}
 

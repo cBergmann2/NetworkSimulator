@@ -6,6 +6,8 @@ public class Message implements Cloneable{
 	public static final long TRANSMISSION_TIME_START_SIGNAL = 8951040L; 	//Transmission time for start signal in ns
 	public static final long TRANSMISSION_TIME_STOP_SIGNAL 	= 11934720L; 	//Transmission time for stop signal in ns
 	
+	public static final int MESSAGE_SIZE = 4 * 32;
+	
 	
 	protected int senderID;
 	protected int destinationID;
@@ -13,6 +15,7 @@ public class Message implements Cloneable{
 	protected int dataVolume;					//Data volume in bit
 	protected long startTransmissionTime;
 	protected long endTransmissionTime;
+	protected int timeToLive;
 
 	public Message(){
 		
@@ -102,5 +105,13 @@ public class Message implements Cloneable{
 
 	public void setEndTransmissionTime(long endTransmissionTime) {
 		this.endTransmissionTime = endTransmissionTime;
+	}
+
+	public int getTimeToLive() {
+		return timeToLive;
+	}
+
+	public void setTimeToLive(int timeToLive) {
+		this.timeToLive = timeToLive;
 	}
 }
