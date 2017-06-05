@@ -30,7 +30,8 @@ public class PayloadMessageWithRoute extends PayloadMessage{
 	public PayloadMessageWithRoute clone(){
 		
 		PayloadMessageWithRoute copy = new PayloadMessageWithRoute(senderID, destinationID, payloadSourceAdress, payloadDestinationAdress, payload);
-		copy.setStartTransmissionTime(startTransmissionTime);
+		copy.setDataVolume(dataVolume);
+		copy.setDestinationID(destinationID);
 		
 		//duplicate payload array
 		copy.payload = new char[payload.length];
@@ -38,7 +39,14 @@ public class PayloadMessageWithRoute extends PayloadMessage{
 			copy.payload[i] = payload[i];
 		}
 		
-		copy.setPayloadSize(this.payloadSize);
+		copy.setPayloadDestinationAdress(payloadDestinationAdress);
+		copy.setPayloadHash(payloadHash);
+		copy.setPayloadSize(payloadSize);
+		copy.setPayloadSourceAdress(payloadSourceAdress);
+		copy.setSenderID(senderID);
+		copy.setStartTransmissionTime(startTransmissionTime);
+		copy.setTimeToLive(timeToLive);
+
 		
 		for(int i=0; i<route.size(); i++){
 			copy.route.add(this.route.get(i).intValue());

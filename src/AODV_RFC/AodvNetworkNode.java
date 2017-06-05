@@ -59,7 +59,7 @@ public class AodvNetworkNode extends NetworkNode{
 	}
 
 	private void reciveRREQ(RREQ msg){
-		//System.out.println("Node "+ this.id + ": Recive RREQ from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Addresse());
+		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREQ from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Addresse());
 		//Update route table entry for rreq transmitter node
 		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID());
 		
@@ -94,7 +94,7 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 			}
 			if(createRREP){
-				//System.out.println("Node " + this.id + ": Create RREP");
+				//System.out.println("" +simulator.getNetworkLifetime() +": Node " + this.id + ": Create RREP");
 				RREP rrep = new RREP();
 				rrep.setDestination_IP_Adress(msg.getDestination_IP_Addresse());
 				rrep.setOrignator_IP_Adress(msg.getOriginator_IP_Adress());
@@ -186,7 +186,7 @@ public class AodvNetworkNode extends NetworkNode{
 	}
 	
 	private void reciveRREP(RREP msg){
-		//System.out.println("Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
+		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
 		//Update routing table for previous hop
 		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID());
 		
@@ -213,6 +213,7 @@ public class AodvNetworkNode extends NetworkNode{
 			if(waitingMsg instanceof PayloadMessage){
 				if(((PayloadMessage)waitingMsg).getPayloadDestinationAdress() == msg.getDestination_IP_Adress()){
 					waitingMsg.setDestinationID(getNextHopToDestination(msg.getDestination_IP_Adress()));
+					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
 					outputBuffer.add(waitingMsg);
 					msgForWhichRouteWasFound.add(waitingMsg);
 				}
@@ -279,6 +280,7 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 				
 				if(routeTableEntry != null && routeTableEntry.isValid()){
+					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
 					msg.setDestinationID(getNextHopToDestination(((PayloadMessage)msg).getPayloadDestinationAdress()));
 					outputBuffer.add(msg);
 				}
@@ -294,6 +296,8 @@ public class AodvNetworkNode extends NetworkNode{
 	}
 	
 	private void startRouteDiscoveryProcess(int destinationID) {
+		//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Start route discovery process");
+		
 		RREQ rreq = new RREQ(this.id, this.sequenceNumber, destinationID, 0, this.rreqID);
 		
 		//Search routeTableEntry for destination
@@ -334,6 +338,9 @@ public class AodvNetworkNode extends NetworkNode{
 
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
+		
+		System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": start transmission process ");
+		
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		tmpMsg.setSenderID(this.id);
 		tmpMsg.setPayloadSourceAdress(this.id);

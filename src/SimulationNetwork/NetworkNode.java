@@ -13,6 +13,10 @@ public abstract class NetworkNode {
 	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = RECIVE_MODE_POWER_CONSUMPTION * 1000L * 60L
 			* 60L * 24L;
 
+	public static final long NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE = RECIVE_MODE_POWER_CONSUMPTION * 1000L * 60L
+			* 60L;
+
+	
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
 	protected long elapsedTimeSinceLastReception; // Time in ms
@@ -49,7 +53,7 @@ public abstract class NetworkNode {
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
 		// availableEnery = 4600L*3600L*1000L*1000L;
-		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
+		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
@@ -88,7 +92,7 @@ public abstract class NetworkNode {
 					processRecivedMessage();
 					availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
 					consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
-					idleTime += executionTime;
+					reciveTime += executionTime;
 					elapsedTimeSinceLastReception = 0;
 				} else {
 					// Transmission is still in progress
@@ -117,7 +121,7 @@ public abstract class NetworkNode {
 						// TODO: shedule next action
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
 						consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
-						idleTime += executionTime;
+						transmissionTime += executionTime;
 						elapsedTimeSinceLastReception = 0;
 					} else {
 						// Transmission is still in progress
@@ -154,11 +158,12 @@ public abstract class NetworkNode {
 						} else {
 							availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
 							consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
-							idleTime += executionTime;
+							//idleTime += executionTime;
 							elapsedTimeSinceLastReception += executionTime;
 							waitingTimeForMediumAccesPermission += executionTime;
 						}
 					} else {
+						//Node in idle mode
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
 						consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
 						idleTime += executionTime;
@@ -279,13 +284,16 @@ public abstract class NetworkNode {
 			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
 
 			// find random destination
-			int randomDestination = (int) (Math.random() * networkSize);
+			//int randomDestination = (int) (Math.random() * networkSize);
 
+			//send message to inverse node
+			int destination = graph.getNetworkNodes().length - this.id -1;
+			
 			// set message payload as simulation time 
 			long networkLivetime = simulator.getNetworkLifetime();
 			char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
 			
-			PayloadMessage tmpMsg = new PayloadMessage(id, randomDestination, dataToSend);
+			PayloadMessage tmpMsg = new PayloadMessage(id, destination, dataToSend);
 			tmpMsg.setPayloadHash(networkLivetime);
 			tmpMsg.setPayloadSize(payloadSize);
 			

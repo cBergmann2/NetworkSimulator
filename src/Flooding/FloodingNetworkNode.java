@@ -105,6 +105,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		newMsg.setStartTransmissionTime(this.simulator.getNetworkLifetime());
 		newMsg.addNodeToRoute(this.id);
 		newMsg.setPayloadSize(msg.getPayloadSize());
+		newMsg.setDataVolume(msg.getPayloadDestinationAdress() *8);
 		this.sendMessage(newMsg);
 	}
 	

@@ -21,7 +21,11 @@ public abstract class Simulator {
 	
 	private int numberOfInactiveNodes = 0;
 	
+	protected double averageTimeInIdleMode;
+	protected double averageTimeInReciveMode;
 	protected double averageTimeInTransmissionMode;
+	protected double averageTimeWaitingForMediumAccesPermission;
+	
 
 	/**
 	 * Calculates time between start and end of transmission process
@@ -240,6 +244,8 @@ public abstract class Simulator {
 		
 
 		}while(allNodesAlive(networkNodes));
+		
+		calculateAverateNodeTimes(graph.getNetworkNodes());
 	
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
@@ -283,7 +289,7 @@ public abstract class Simulator {
 			
 			if(networkLifetime % (60000) == 0){
 				simulatedMinutes++;
-				System.out.println("Simulated minutes: " + simulatedMinutes);
+				//System.out.println("Simulated minutes: " + simulatedMinutes);
 			}
 			
 			if(networkLifetime % (3600000) == 0){
@@ -298,31 +304,44 @@ public abstract class Simulator {
 			}
 		
 
-		}while(isNetworkPartitioned(graph));
+		}while(!isNetworkPartitioned(graph));
 	
+		calculateAverateNodeTimes(graph.getNetworkNodes());
+		
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
 		return networkLifetime;
 	}
 	
 	private boolean isNetworkPartitioned(NetworkGraph graph){
-		int numberOfInactiveNodes = getNumberOfInactiveNodes(graph.getNetworkNodes());
+		LinkedList<Integer> inactiveNodes = getInactiveNodes(graph.getNetworkNodes());
+		int numberOfInactiveNodes = inactiveNodes.size();
 		if((numberOfInactiveNodes >= 3) && (numberOfInactiveNodes > this.numberOfInactiveNodes)){
-			System.out.println("Partitioning analysis: " + numberOfInactiveNodes + " nodes are inactive.");
+			System.out.print("Partitioning analysis: " + numberOfInactiveNodes + " nodes are inactive. Inactive Nodes: ");
+			for(int node: inactiveNodes){
+				System.out.print(" " + node);
+			}
+			System.out.println();
 
 			NetworkNode networkNodes[] = graph.getNetworkNodes();
 			
-
+			//Check if only one or none node is active
+			if((numberOfInactiveNodes == (graph.getNetworkNodes().length -1)) || (numberOfInactiveNodes == (graph.getNetworkNodes().length))){
+				return true;
+			}
+			
+			//
 			for(NetworkNode node: networkNodes){
 				if(node.isNodeAlive()){
-					if(checkIfNodeCanReachAllAliveNodes(node.getId(), graph)){
-						return false;
+					if(!checkIfNodeCanReachAllAliveNodes(node.getId(), graph)){
+						//System.out.println("Node " + node.getId() + " can't reach all other alive nodes");
+						return true;
 					}
 				}
 			}
 		}
 		this.numberOfInactiveNodes = numberOfInactiveNodes;
-		return true;
+		return false;
 	}
 	
 	private boolean checkIfNodeCanReachAllAliveNodes(int selectedNode, NetworkGraph graph){
@@ -382,6 +401,16 @@ public abstract class Simulator {
 		return true;
 	}
 
+	protected LinkedList<Integer> getInactiveNodes(NetworkNode networkNodes[]){
+		LinkedList<Integer> inactiveNodes = new LinkedList<Integer>();	
+		for (NetworkNode node : networkNodes) {
+			if (!node.isNodeAlive()) {
+				inactiveNodes.add(node.getId());
+			}
+		}
+		return inactiveNodes;
+	}
+	
 	protected int getNumberOfInactiveNodes(NetworkNode networkNodes[]){
 		int inactiveNodes = 0;
 		
@@ -396,9 +425,7 @@ public abstract class Simulator {
 	protected boolean allNodesAlive(NetworkNode networkNodes[]) {
 		for (NetworkNode node : networkNodes) {
 			if (!node.isNodeAlive()) {
-				
-				this.averageTimeInTransmissionMode = node.getTransmissionTime() / (double) networkLifetime;
-				
+								
 				System.out.println("Node " + node.getId() + " is down: "
 						+ ((double) node.getIdleTime() / (double) networkLifetime) + "% idle time"
 						+ ((double) node.getReciveTime() / (double) networkLifetime) + "% recive time"
@@ -409,6 +436,25 @@ public abstract class Simulator {
 			}
 		}
 		return true;
+	}
+	
+	private void calculateAverateNodeTimes(NetworkNode networkNodes[]){
+		
+		this.averageTimeInIdleMode = 0.0;
+		this.averageTimeInReciveMode = 0.0;
+		this.averageTimeInTransmissionMode = 0.0;
+		this.averageTimeWaitingForMediumAccesPermission = 0.0;
+		
+		for(NetworkNode node: networkNodes){
+			this.averageTimeInIdleMode += node.getIdleTime() / (double) networkLifetime;
+			this.averageTimeInReciveMode += node.getReciveTime() / (double) networkLifetime;
+			this.averageTimeInTransmissionMode += node.getTransmissionTime() / (double) networkLifetime;
+			this.averageTimeWaitingForMediumAccesPermission+= node.getWaitingTimeForMediumAccesPermission() / (double) networkLifetime;
+		}
+		this.averageTimeInIdleMode /= networkNodes.length;
+		this.averageTimeInReciveMode  /= networkNodes.length;
+		this.averageTimeInTransmissionMode /= networkNodes.length;
+		this.averageTimeWaitingForMediumAccesPermission  /= networkNodes.length;
 	}
 
 	public long getNetworkLifetime() {
@@ -427,9 +473,6 @@ public abstract class Simulator {
 		return consumedEnergyInIdleMode;
 	}
 	
-	public double getAverageTimeInTransmissionMode() {
-		return averageTimeInTransmissionMode;
-	}
 
 	public int getCollisions() {
 		return collisions;
@@ -438,5 +481,21 @@ public abstract class Simulator {
 
 	protected void setCollisions(int collisions) {
 		this.collisions = collisions;
+	}
+
+	public double getAverageTimeInIdleMode() {
+		return averageTimeInIdleMode;
+	}
+
+	public double getAverageTimeInReciveMode() {
+		return averageTimeInReciveMode;
+	}
+
+	public double getAverageTimeInTransmissionMode() {
+		return averageTimeInTransmissionMode;
+	}
+
+	public double getAverageTimeWaitingForMediumAccesPermission() {
+		return averageTimeWaitingForMediumAccesPermission;
 	}
 }
