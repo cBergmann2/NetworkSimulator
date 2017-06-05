@@ -19,12 +19,14 @@ public class Main {
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
-		aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
+		aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
+		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10000);
 		

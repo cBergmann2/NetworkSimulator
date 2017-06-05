@@ -348,4 +348,8 @@ public abstract class NetworkNode {
 	public long getConsumedEnergyInIdleMode() {
 		return consumedEnergyInIdleMode;
 	}
+	
+	public LinkedList<NetworkNode> getConnectedNodes(){
+		return this.connectedNodes;
+	}
 }

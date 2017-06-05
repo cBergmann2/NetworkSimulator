@@ -11,7 +11,9 @@ public class PayloadMessage extends Message{
 		this.payloadDestinationAdress = destinationAdress;
 		this.payloadSourceAdress = sourceAdress;
 		this.payload = payload;
-		this.payloadSize = payload.length*8;
+		if(payload != null){
+			this.payloadSize = payload.length*8;
+		}
 		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
 	}
 	

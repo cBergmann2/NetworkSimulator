@@ -1,5 +1,7 @@
 package SimulationNetwork;
 
+import java.util.LinkedList;
+
 import AODV.AodvNetworkGraph;
 import AODV.AodvNetworkNode;
 import Flooding.FloodingNetworkNode;
@@ -16,6 +18,8 @@ public abstract class Simulator {
 	protected long consumedEnergyInIdleMode;
 	
 	protected int collisions;
+	
+	private int numberOfInactiveNodes = 0;
 	
 	protected double averageTimeInTransmissionMode;
 
@@ -250,8 +254,145 @@ public abstract class Simulator {
 	 * @param sendProbability
 	 * @return duration until network is partitioned
 	 */
-	public abstract long partitioningAnalysis(int networkWidth, double sendProbability);
+	public long partitioningAnalysis(NetworkGraph graph, int networkWidth, int transmissionPeriod, int payloadSize){
+		networkLifetime = 0;
+		int simulatedMinutes = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+		numberOfInactiveNodes = 0;
 
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+		}
+			
+		do{
+					
+			for(int id=0; id<networkNodes.length; id++){
+				//Generate static transmission of data
+				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
+			}
+			
+
+			// performe network nodes
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			if(networkLifetime % (60000) == 0){
+				simulatedMinutes++;
+				System.out.println("Simulated minutes: " + simulatedMinutes);
+			}
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+		
+
+		}while(isNetworkPartitioned(graph));
+	
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
+		
+		return networkLifetime;
+	}
+	
+	private boolean isNetworkPartitioned(NetworkGraph graph){
+		int numberOfInactiveNodes = getNumberOfInactiveNodes(graph.getNetworkNodes());
+		if((numberOfInactiveNodes >= 3) && (numberOfInactiveNodes > this.numberOfInactiveNodes)){
+			System.out.println("Partitioning analysis: " + numberOfInactiveNodes + " nodes are inactive.");
+
+			NetworkNode networkNodes[] = graph.getNetworkNodes();
+			
+
+			for(NetworkNode node: networkNodes){
+				if(node.isNodeAlive()){
+					if(checkIfNodeCanReachAllAliveNodes(node.getId(), graph)){
+						return false;
+					}
+				}
+			}
+		}
+		this.numberOfInactiveNodes = numberOfInactiveNodes;
+		return true;
+	}
+	
+	private boolean checkIfNodeCanReachAllAliveNodes(int selectedNode, NetworkGraph graph){
+		
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		
+		//Create list of alive nodes
+		LinkedList<AliveNode> aliveNodeList = new LinkedList<AliveNode>();
+		for(NetworkNode node: networkNodes){
+			if(node.isNodeAlive()){
+				aliveNodeList.add(new AliveNode(node.getId()));
+			}
+		}
+		
+		
+		while(selectedNode != -1){
+			
+			//Set all alive nodes from current node as reachable
+			for(NetworkNode node: networkNodes[selectedNode].getConnectedNodes()){
+				if(node.isNodeAlive()){
+					for(AliveNode aliveNode: aliveNodeList){
+						if(aliveNode.getNodeID() == node.getId()){
+							aliveNode.setReachable(true);
+							break;
+						}
+					}
+				}
+			}
+			
+			//set current node as reachable and processed
+			for(AliveNode node: aliveNodeList){
+				if(node.getNodeID() == selectedNode){
+					node.setReachable(true);
+					node.setProcessed(true);
+					break;
+				}
+			}
+			
+			//search next reachable and not processed node in aliveNodeList
+			selectedNode = -1;
+			for(AliveNode node: aliveNodeList){
+				if(node.isReachable() && !node.isProcessed()){
+					selectedNode = node.getNodeID();
+					break;
+				}
+			}
+		}
+		
+		//check if all alive nodes are reachable
+		for(AliveNode node: aliveNodeList){
+			if(!node.isReachable()){
+				return false;
+			}
+		}
+		
+		
+		return true;
+	}
+
+	protected int getNumberOfInactiveNodes(NetworkNode networkNodes[]){
+		int inactiveNodes = 0;
+		
+		for (NetworkNode node : networkNodes) {
+			if (!node.isNodeAlive()) {
+				inactiveNodes++;
+			}
+		}
+		return inactiveNodes;
+	}
+	
 	protected boolean allNodesAlive(NetworkNode networkNodes[]) {
 		for (NetworkNode node : networkNodes) {
 			if (!node.isNodeAlive()) {

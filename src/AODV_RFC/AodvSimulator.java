@@ -32,10 +32,5 @@ public class AodvSimulator extends Simulator{
 		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSIze);
 	}
 	
-	@Override
-	public long partitioningAnalysis(int networkWidth, double sendProbability) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

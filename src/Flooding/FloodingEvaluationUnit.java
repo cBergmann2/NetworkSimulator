@@ -16,6 +16,8 @@ import Simulator.EvaluationUnit;
 public class FloodingEvaluationUnit extends EvaluationUnit{
 	
 	private static final int MAX_NETWORK_WIDTH = 10;
+	//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
+	int networkWidth[] = {4};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -328,8 +330,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 	public void evaluateNetworkLivetimeStaticSendBehavior(int payloadSize) {
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 		
-		//int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-		int networkWidth[] = {3};
+		
 		
 		double numberOfNodes[] = new double[networkWidth.length];
 
@@ -427,4 +428,101 @@ public class FloodingEvaluationUnit extends EvaluationUnit{
 		
 	}
 
+	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
+		System.out.println("Start partitioning analysis");
+		
+		FloodingSimulator floodingSimulator = new FloodingSimulator();
+
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
+
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
+		
+		double sendTime_600[][] = new double[2][networkWidth.length];
+		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
+		
+		
+		for(int i=0; i<networkWidth.length; i++){
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = floodingSimulator.partitioningAnalysis(networkWidth[i], 10, payloadSize) /1000 / 60;
+			sendTime_10_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_10_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = floodingSimulator.partitioningAnalysis(networkWidth[i], 60, payloadSize) /1000 / 60;
+			sendTime_60_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_60_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = floodingSimulator.partitioningAnalysis(networkWidth[i], 600, payloadSize) /1000 / 60;
+			sendTime_600_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_600_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			System.out.println("10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: " + floodingSimulator.getNetworkLifetime() /1000 / 60 + " min" );
+		
+		}
+		
+		//Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+		
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+		
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		
+		JFreeChart chart = new JFreeChart(plot);
+		
+		chart.getPlot().setBackgroundPaint( Color.WHITE );
+		chart.setBackgroundPaint(Color.WHITE);
+		
+
+		String filename = "Output/Flooding/Flooding_partitionierungsanalyse_" + payloadSize + "Byte.png"; 
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename),chart,CHART_WIDTH,CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//Average time in transmission mode
+		DefaultXYDataset dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_TransmissionMode);
+		
+
+		
+		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		
+		JFreeChart chart2 = new JFreeChart(plot2);
+		
+		chart2.getPlot().setBackgroundPaint( Color.WHITE );
+		chart2.setBackgroundPaint(Color.WHITE);
+		
+		
+		filename = "Output/Flooding/Flooding_partitionierungsanalyse_prozentualeZeit_Sendemodus_" + payloadSize + "Byte.png"; 
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename),chart,CHART_WIDTH,CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
 }

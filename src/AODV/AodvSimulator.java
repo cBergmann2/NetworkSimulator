@@ -28,11 +28,6 @@ public class AodvSimulator extends Simulator
 		return energyCosts;
 	}
 	
-	@Override
-	public long partitioningAnalysis(int networkWidth, double sendProbability) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSIze){
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);

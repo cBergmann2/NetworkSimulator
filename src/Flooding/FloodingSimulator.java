@@ -89,10 +89,10 @@ public class FloodingSimulator extends Simulator {
 		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
-	@Override
-	public long partitioningAnalysis(int networkWidth, double sendProbability) {
-		// TODO Auto-generated method stub
-		return 0;
+	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+
+		return this.partitioningAnalysis(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
 
