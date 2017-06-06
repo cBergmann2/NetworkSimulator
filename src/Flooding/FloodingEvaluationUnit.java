@@ -16,8 +16,8 @@ import Simulator.EvaluationUnit;
 public class FloodingEvaluationUnit extends EvaluationUnit {
 
 	private static final int MAX_NETWORK_WIDTH = 10;
-	// int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	int networkWidth[] = { 3, 5, 10 };
+	int networkWidth[] = {2, 5, 10, 24, 32};
+	//int networkWidth[] = { 3, 5, 10 };
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -26,38 +26,38 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 	public void evaluateSpeedAnalysis() {
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 
-		double numberOfNodes[] = new double[MAX_NETWORK_WIDTH - 1];
-		double transmissionTime_max[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double transmissionTime_max_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double numberOfNodes[] = new double[networkWidth.length];
+		double transmissionTime_max[][] = new double[2][networkWidth.length];
+		double transmissionTime_max_collisions[][] = new double[2][networkWidth.length];
 
-		double min[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double min[][] = new double[2][networkWidth.length];
 
-		double transmissionTime_min[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double transmissionTime_min_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double transmissionTime_min[][] = new double[2][networkWidth.length];
+		double transmissionTime_min_collisions[][] = new double[2][networkWidth.length];
 
-		double transmissionTime_med[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double transmissionTime_med_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double transmissionTime_med[][] = new double[2][networkWidth.length];
+		double transmissionTime_med_collisions[][] = new double[2][networkWidth.length];
 
-		for (int i = 2; i < MAX_NETWORK_WIDTH + 1; i++) {
-			numberOfNodes[i - 2] = Math.pow(i, 2);
-			transmissionTime_max[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_max[1][i - 2] = floodingSimulator.speedAnalysis(i, (int) Math.pow(i, 2) - i,
-					(int) Math.pow(i, 2) - 1);
-			transmissionTime_max_collisions[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_max_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			System.out.println("Max Simulation for " + i * i + " nodes completed.");
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+			transmissionTime_max[0][i] = numberOfNodes[i];
+			transmissionTime_max[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
+					(int) Math.pow(networkWidth[i], 2) - 1) /1000;
+			transmissionTime_max_collisions[0][i] = numberOfNodes[i];
+			transmissionTime_max_collisions[1][i] = floodingSimulator.getCollisions();
+			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
-			transmissionTime_min[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_min[1][i - 2] = floodingSimulator.speedAnalysis(i, 0, 1);
-			transmissionTime_min_collisions[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_min_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			System.out.println("Min Simulation for " + i * i + " nodes completed.");
+			transmissionTime_min[0][i] = numberOfNodes[i];
+			transmissionTime_min[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, 1) /1000;
+			transmissionTime_min_collisions[0][i] = numberOfNodes[i];
+			transmissionTime_min_collisions[1][i] = floodingSimulator.getCollisions();
+			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
-			transmissionTime_med[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_med[1][i - 2] = floodingSimulator.speedAnalysis(i, 0, (i / 2) * i + i / 2);
-			transmissionTime_med_collisions[0][i - 2] = numberOfNodes[i - 2];
-			transmissionTime_med_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			System.out.println("Med Simulation for " + i * i + " nodes completed.");
+			transmissionTime_med[0][i] = numberOfNodes[i];
+			transmissionTime_med[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) /1000;
+			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
+			transmissionTime_med_collisions[1][i] = floodingSimulator.getCollisions();
+			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 		}
 
@@ -70,7 +70,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
-		NumberAxis yAxis = new NumberAxis("Übertragungszeit [ms]");
+		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 
 		JFreeChart chart = new JFreeChart(plot);
@@ -79,7 +79,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		chart.setBackgroundPaint(Color.WHITE);
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Uebertragungszeit.png"), chart, 480, 360);
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Uebertragungszeit.png"), chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,7 +104,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		try {
 			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Uebertragungszeit_Kollisionen.png"),
-					chart2, 480, 360);
+					chart2, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,50 +115,50 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 	public void evaluateCostAnalysis() {
 		FloodingSimulator floodingSimulator = new FloodingSimulator();
 
-		double numberOfNodes[] = new double[MAX_NETWORK_WIDTH - 1];
-		double maxDistance[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double maxDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double maxDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double numberOfNodes[] = new double[networkWidth.length];
+		double maxDistance[][] = new double[2][networkWidth.length];
+		double maxDistance_collisions[][] = new double[2][networkWidth.length];
+		double maxDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
 
-		double minDistance[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double minDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double minDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double minDistance[][] = new double[2][networkWidth.length];
+		double minDistance_collisions[][] = new double[2][networkWidth.length];
+		double minDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
 
-		double medDistance[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double medDistance_collisions[][] = new double[2][MAX_NETWORK_WIDTH - 1];
-		double medDistance_onlyTransmissionEnergy[][] = new double[2][MAX_NETWORK_WIDTH - 1];
+		double medDistance[][] = new double[2][networkWidth.length];
+		double medDistance_collisions[][] = new double[2][networkWidth.length];
+		double medDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
 
-		for (int i = 2; i < MAX_NETWORK_WIDTH + 1; i++) {
-			numberOfNodes[i - 2] = Math.pow(i, 2);
-			maxDistance[0][i - 2] = numberOfNodes[i - 2];
-			maxDistance[1][i - 2] = floodingSimulator.energyCostAnalysis(i, (int) Math.pow(i, 2) - i,
-					(int) Math.pow(i, 2) - 1);
-			maxDistance_collisions[0][i - 2] = numberOfNodes[i - 2];
-			maxDistance_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			maxDistance_onlyTransmissionEnergy[0][i - 2] = numberOfNodes[i - 2];
-			maxDistance_onlyTransmissionEnergy[1][i - 2] = floodingSimulator.getConsumedEnergyInReciveMode()
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+			maxDistance[0][i] = numberOfNodes[i];
+			maxDistance[1][i] = floodingSimulator.energyCostAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
+					(int) Math.pow(networkWidth[i], 2) - 1);
+			maxDistance_collisions[0][i] = numberOfNodes[i];
+			maxDistance_collisions[1][i] = floodingSimulator.getCollisions();
+			maxDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
+			maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
 					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
-			System.out.println("Max Simulation for " + i * i + " nodes completed. Ausführungszeit des Netzwerks: "
+			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms");
 
-			minDistance[0][i - 2] = numberOfNodes[i - 2];
-			minDistance[1][i - 2] = floodingSimulator.energyCostAnalysis(i, 0, 1);
-			minDistance_collisions[0][i - 2] = numberOfNodes[i - 2];
-			minDistance_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			minDistance_onlyTransmissionEnergy[0][i - 2] = numberOfNodes[i - 2];
-			minDistance_onlyTransmissionEnergy[1][i - 2] = floodingSimulator.getConsumedEnergyInReciveMode()
+			minDistance[0][i] = numberOfNodes[i];
+			minDistance[1][i] = floodingSimulator.energyCostAnalysis(networkWidth[i], 0, 1);
+			minDistance_collisions[0][i] = numberOfNodes[i];
+			minDistance_collisions[1][i] = floodingSimulator.getCollisions();
+			minDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
+			minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
 					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
-			System.out.println("Min Simulation for " + i * i + " nodes completed. Ausführungszeit des Netzwerks: "
+			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms");
 
-			medDistance[0][i - 2] = numberOfNodes[i - 2];
-			medDistance[1][i - 2] = floodingSimulator.energyCostAnalysis(i, 0, (i / 2) * i + i / 2);
-			medDistance_collisions[0][i - 2] = numberOfNodes[i - 2];
-			medDistance_collisions[1][i - 2] = floodingSimulator.getCollisions();
-			medDistance_onlyTransmissionEnergy[0][i - 2] = numberOfNodes[i - 2];
-			medDistance_onlyTransmissionEnergy[1][i - 2] = floodingSimulator.getConsumedEnergyInReciveMode()
+			medDistance[0][i] = numberOfNodes[i];
+			medDistance[1][i] = floodingSimulator.energyCostAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
+			medDistance_collisions[0][i] = numberOfNodes[i];
+			medDistance_collisions[1][i] = floodingSimulator.getCollisions();
+			medDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
+			medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
 					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
-			System.out.println("Med Simulation for " + i * i + " nodes completed. Ausführungszeit des Netzwerks: "
+			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms");
 
 		}
