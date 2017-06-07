@@ -19,8 +19,8 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 	private static final int MAX_NETWORK_WIDTH = 32;
 	
 	//private static final int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {3};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	//private static final int networkWidth[] = {3};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -33,14 +33,16 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 		double transmissionTime_max[][] = new double[2][networkWidth.length];
 		double transmissionTime_max_collisions[][] = new double[2][networkWidth.length];
+		double transmissionTime_msg_max[][] = new double[2][networkWidth.length];
 
-		double min[][] = new double[2][networkWidth.length];
 
 		double transmissionTime_min[][] = new double[2][networkWidth.length];
 		double transmissionTime_min_collisions[][] = new double[2][networkWidth.length];
+		double transmissionTime_msg_min[][] = new double[2][networkWidth.length];
 
 		double transmissionTime_med[][] = new double[2][networkWidth.length];
 		double transmissionTime_med_collisions[][] = new double[2][networkWidth.length];
+		double transmissionTime_msg_med[][] = new double[2][networkWidth.length];
 
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
@@ -49,6 +51,8 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 					(int) Math.pow(networkWidth[i], 2) - 1) /1000;
 			transmissionTime_max_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_max_collisions[1][i] = aodvSimulator.getCollisions();
+			transmissionTime_msg_max[0][i] = numberOfNodes[i];
+			transmissionTime_msg_max[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			
@@ -56,12 +60,16 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			transmissionTime_min[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, 1)/1000;
 			transmissionTime_min_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_min_collisions[1][i] = aodvSimulator.getCollisions();
+			transmissionTime_msg_min[0][i] = numberOfNodes[i];
+			transmissionTime_msg_min[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			transmissionTime_med[0][i] = numberOfNodes[i];
 			transmissionTime_med[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2)/1000;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = aodvSimulator.getCollisions();
+			transmissionTime_msg_med[0][i] = numberOfNodes[i];
+			transmissionTime_msg_med[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 			
 
@@ -111,6 +119,29 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 
 		try {
 			ChartUtilities.saveChartAsPNG(new File("Output/AODV_RFC/AODV_Uebertragungszeit_Kollisionen.png"), chart2,
+					CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Msg Transmission time
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("maximale Distanz", transmissionTime_msg_max);
+		dataset2.addSeries("mittlere Distanz", transmissionTime_msg_med);
+		dataset2.addSeries("minimale Distanz", transmissionTime_msg_min);
+
+		xAxis2 = new NumberAxis("Anzahl Knoten");
+		yAxis2 = new NumberAxis("Übertragungszeit [s]");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/AODV_RFC/AODV_Uebertragungszeit_Nachricht.png"), chart2,
 					CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -212,8 +212,12 @@ public class AodvNetworkNode extends NetworkNode{
 		for(Message waitingMsg: waitingForRouteBuffer){
 			if(waitingMsg instanceof PayloadMessage){
 				if(((PayloadMessage)waitingMsg).getPayloadDestinationAdress() == msg.getDestination_IP_Adress()){
+					//simulator.resetTransmissionUnitFromAllNodes();
+					
 					waitingMsg.setDestinationID(getNextHopToDestination(msg.getDestination_IP_Adress()));
 					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
+					//aktualisiere Sendezeit
+					waitingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 					outputBuffer.add(waitingMsg);
 					msgForWhichRouteWasFound.add(waitingMsg);
 				}

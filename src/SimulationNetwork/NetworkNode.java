@@ -360,4 +360,14 @@ public abstract class NetworkNode {
 	public LinkedList<NetworkNode> getConnectedNodes(){
 		return this.connectedNodes;
 	}
+	
+	/**
+	 * Reset the transmission unit
+	 * All incoming and outgoing messages will be deleted
+	 */
+	public void resetTransmissionUnit(){
+		this.outgoingMsg = null;
+		this.outputBuffer.clear();
+		this.incommingMsg = null;
+	}
 }

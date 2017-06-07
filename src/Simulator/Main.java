@@ -10,8 +10,8 @@ public class Main {
 
 		
 		FloodingEvaluationUnit floodingEvaluationUnit = new FloodingEvaluationUnit();
-		//floodingEvaluationUnit.evaluateSpeedAnalysis();
-		//floodingEvaluationUnit.evaluateKostAnalysis();
+		floodingEvaluationUnit.evaluateSpeedAnalysis();
+		floodingEvaluationUnit.evaluateCostAnalysis();
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
 		
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
@@ -22,7 +22,7 @@ public class Main {
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
-		aodvEvaluationUnit.evaluateSpeedAnalysis();
+		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);

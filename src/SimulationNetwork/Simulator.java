@@ -26,7 +26,9 @@ public abstract class Simulator {
 	protected double averageTimeInTransmissionMode;
 	protected double averageTimeWaitingForMediumAccesPermission;
 	
+	private NetworkGraph graph;
 
+	
 	/**
 	 * Calculates time between start and end of transmission process
 	 * 
@@ -37,7 +39,7 @@ public abstract class Simulator {
 	public long speedAnalysis(NetworkGraph graph, int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		networkLifetime = 0;
-
+		this.graph = graph;
 		
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		for (int id = 0; id < networkNodes.length; id++) {
@@ -60,10 +62,12 @@ public abstract class Simulator {
 
 		} while (networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
 
+		/*
 		long transmissionTime = networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getEndTransmissionTime()
 				- networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getStartTransmissionTime();
+		*/
 
-		return transmissionTime;
+		return networkLifetime;
 	}
 
 	/**
@@ -497,5 +501,11 @@ public abstract class Simulator {
 
 	public double getAverageTimeWaitingForMediumAccesPermission() {
 		return averageTimeWaitingForMediumAccesPermission;
+	}
+	
+	public void resetTransmissionUnitFromAllNodes(){
+		for(NetworkNode node: this.graph.getNetworkNodes()){
+			node.resetTransmissionUnit();
+		}
 	}
 }
