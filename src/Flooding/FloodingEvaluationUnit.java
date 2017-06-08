@@ -17,7 +17,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 	private static final int MAX_NETWORK_WIDTH = 10;
 	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	// int networkWidth[] = { 3, 5, 10 };
+	//int networkWidth[] = { 2};
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -137,30 +137,33 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			maxDistance_collisions[0][i] = numberOfNodes[i];
 			maxDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			maxDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
-					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
+			maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			//maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ floodingSimulator.getNetworkLifetime() + " ms");
+					+ floodingSimulator.getNetworkLifetime() + " ms"
+					+ " Sende/Empfangsenergie: " + maxDistance_onlyTransmissionEnergy[1][i] + " nAs");
 
 			minDistance[0][i] = numberOfNodes[i];
 			minDistance[1][i] = floodingSimulator.energyCostAnalysis(networkWidth[i], 0, 1);
 			minDistance_collisions[0][i] = numberOfNodes[i];
 			minDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			minDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
-					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
+			minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			//minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ floodingSimulator.getNetworkLifetime() + " ms");
+					+ floodingSimulator.getNetworkLifetime() + " ms"
+					+ " Sende/Empfangsenergie: " + minDistance_onlyTransmissionEnergy[1][i] + " nAs");
 
 			medDistance[0][i] = numberOfNodes[i];
 			medDistance[1][i] = floodingSimulator.energyCostAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
 			medDistance_collisions[0][i] = numberOfNodes[i];
 			medDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			medDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode()
-					+ floodingSimulator.getConsumedEnergyInTransmissionMode();
+			medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			//medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ floodingSimulator.getNetworkLifetime() + " ms");
+					+ floodingSimulator.getNetworkLifetime() + " ms"
+					+ " Sende/Empfangsenergie: " + medDistance_onlyTransmissionEnergy[1][i] + " nAs");
 
 		}
 
@@ -189,14 +192,14 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			e.printStackTrace();
 		}
 
-		// consumed ransmission energy
+		// consumed transmission energy
 		DefaultXYDataset dataset3 = new DefaultXYDataset();
 		dataset3.addSeries("maximale Distanz", maxDistance_onlyTransmissionEnergy);
 		dataset3.addSeries("mittlere Distanz", medDistance_onlyTransmissionEnergy);
 		dataset3.addSeries("minimale Distanz", minDistance_onlyTransmissionEnergy);
 
 		NumberAxis xAxis3 = new NumberAxis("Anzahl Knoten");
-		NumberAxis yAxis3 = new NumberAxis("Kollisionen");
+		NumberAxis yAxis3 = new NumberAxis("Umgesetzte Energie [nAs]");
 		XYPlot plot3 = new XYPlot(dataset3, xAxis3, yAxis3, line);
 
 		JFreeChart chart3 = new JFreeChart(plot3);

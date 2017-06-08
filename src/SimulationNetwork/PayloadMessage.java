@@ -85,6 +85,8 @@ public class PayloadMessage extends Message{
 		copy.setStartTransmissionTime(startTransmissionTime);
 		copy.setTimeToLive(timeToLive);
 		
+		copy.setDataVolume(dataVolume);
+		
 		return copy;
 	}
 

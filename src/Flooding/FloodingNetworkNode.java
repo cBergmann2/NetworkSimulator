@@ -41,6 +41,7 @@ public class FloodingNetworkNode extends NetworkNode{
 	public void processRecivedMessage() {
 		Message recivedMsg = inputBuffer.removeFirst();
 		if(recivedMsg instanceof PayloadMessageWithRoute){
+			//System.out.println("Node " + this.id + ": recive msg from node " + recivedMsg.getSenderID() + ", transmission time: " + (simulator.getNetworkLifetime() - recivedMsg.getStartTransmissionTime()));	
 			
 			PayloadMessageWithRoute msg = new PayloadMessageWithRoute(((PayloadMessage) recivedMsg).getPayloadSourceAdress(), ((PayloadMessage) recivedMsg).getPayloadDestinationAdress(), null);
 			msg.setPayloadHash(((PayloadMessage)recivedMsg).getPayloadHash());
@@ -49,10 +50,12 @@ public class FloodingNetworkNode extends NetworkNode{
 			if(!doMessageAlreadyExists(msg)){
 				this.recivedMessages.add(msg);
 				if(msg.getPayloadDestinationAdress() == this.id){
+					
 					this.numberRecivedPayloadMsg++;
 					this.lastRecivedPayloadMessage = (PayloadMessage) recivedMsg;
 					recivedMsg.setEndTransmissionTime(simulator.getNetworkLifetime());
 					
+					//System.out.println("Node " + this.id + ": recive payload msg");
 					//System.out.print("Message path: ");
 					//msg = (PayloadMessageWithRoute) recivedMsg;
 					//LinkedList<Integer> msgRoute = msg.getMesageRoute();
@@ -62,6 +65,7 @@ public class FloodingNetworkNode extends NetworkNode{
 					//System.out.println();
 					
 				}else{
+					//System.out.println("Node "+ this.id + ": forward msg");
 					msg = (PayloadMessageWithRoute) recivedMsg;
 					msg.addNodeToRoute(this.id);
 					this.sendMessage(msg);
@@ -99,13 +103,15 @@ public class FloodingNetworkNode extends NetworkNode{
 
 	@Override
 	public void startSendingProcess(PayloadMessage msg) {
+		//System.out.println("DataVolume of msg to send: "+ msg.getDataVolume());
+		
 		msg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		
 		PayloadMessageWithRoute newMsg = new PayloadMessageWithRoute(msg.getPayloadSourceAdress(), msg.getPayloadDestinationAdress(), msg.getPayload());
 		newMsg.setStartTransmissionTime(this.simulator.getNetworkLifetime());
 		newMsg.addNodeToRoute(this.id);
 		newMsg.setPayloadSize(msg.getPayloadSize());
-		newMsg.setDataVolume(msg.getPayloadDestinationAdress() *8);
+		newMsg.setDataVolume(msg.getPayloadSize()*8);
 		this.sendMessage(newMsg);
 	}
 	

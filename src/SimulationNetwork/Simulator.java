@@ -97,7 +97,7 @@ public abstract class Simulator {
 
 		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
 
-		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
+		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
 
 		do {
@@ -136,8 +136,11 @@ public abstract class Simulator {
 			
 			
 			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
+			//System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode());
 			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
 			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
+			//System.out.println("Node " + id + ": time in transmissionMode: " + networkNodes[id].getTransmissionTime()  + ", consumedEnergy transmission: " + networkNodes[id].getConsumedEnergyInTransmissionMode());
+			
 		}
 		
 

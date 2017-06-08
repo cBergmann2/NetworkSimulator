@@ -117,6 +117,7 @@ public abstract class NetworkNode {
 					// Currently transmitting a message
 					if (outgoingMsg.remainingTransmissionTime <= 0) {
 						// Transmission complete
+						//System.out.println(simulator.getNetworkLifetime() + " Knoten " + this.id + ": Send process complete, transmsmission energy: " + this.consumedEnergyInTransmissionMode);
 						outgoingMsg = null;
 						// TODO: shedule next action
 						availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
@@ -146,15 +147,19 @@ public abstract class NetworkNode {
 						if (isMediumAccessAllowed()) {
 							// Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
+							outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 							outgoingMsg.setRemainingTransmissionTime(Message.calculateTransmissionTime(outgoingMsg.getDataVolume()));
 							// System.out.println("Node " + id + "start sending
 							// message.");
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							transmissionTime += executionTime;
+
 							for (NetworkNode node : connectedNodes) {
 								node.reciveMsg(outgoingMsg.clone());
-								availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
-								consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
-								transmissionTime += executionTime;
 							}
+							
+							//System.out.println(simulator.getNetworkLifetime() + " Knoten " + this.id +": start send process, data volume: " + outgoingMsg.getDataVolume() + ", remaining transmission time: " + outgoingMsg.getRemainingTransmissionTime());
 						} else {
 							availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
 							consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * executionTime;
