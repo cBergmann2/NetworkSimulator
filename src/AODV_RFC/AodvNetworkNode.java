@@ -14,6 +14,7 @@ public class AodvNetworkNode extends NetworkNode{
 	private LinkedList<TransmittedRREQ> recivedRREQs;
 	private int sequenceNumber;
 	private int rreqID;
+	private int numberRecivedRREPdMsg;
 
 	public AodvNetworkNode(int id) {
 		super(id);
@@ -23,6 +24,7 @@ public class AodvNetworkNode extends NetworkNode{
 		this.recivedRREQs = new LinkedList<TransmittedRREQ>();
 		this.sequenceNumber = 1;
 		this.rreqID = 1;
+		this.numberRecivedRREPdMsg = 0;
 	}
 
 	@Override
@@ -187,6 +189,7 @@ public class AodvNetworkNode extends NetworkNode{
 	
 	private void reciveRREP(RREP msg){
 		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
+		this.numberRecivedRREPdMsg++;
 		//Update routing table for previous hop
 		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID());
 		
@@ -343,7 +346,7 @@ public class AodvNetworkNode extends NetworkNode{
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 		
-		System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": start transmission process ");
+		System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": start transmission process, msg destination: " + tmpMsg.getPayloadDestinationAdress() );
 		
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		tmpMsg.setSenderID(this.id);
@@ -375,6 +378,10 @@ public class AodvNetworkNode extends NetworkNode{
 				
 			}
 		}
+	}
+
+	public int getNumberRecivedRREPdMsg() {
+		return numberRecivedRREPdMsg;
 	}
 
 }

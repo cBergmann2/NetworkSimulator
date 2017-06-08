@@ -11,7 +11,7 @@ public class Main {
 		
 		FloodingEvaluationUnit floodingEvaluationUnit = new FloodingEvaluationUnit();
 		//floodingEvaluationUnit.evaluateSpeedAnalysis();
-		floodingEvaluationUnit.evaluateCostAnalysis();
+		//floodingEvaluationUnit.evaluateCostAnalysis();
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
 		
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
@@ -23,7 +23,7 @@ public class Main {
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
-		//aodvEvaluationUnit.evaluateCostAnalysis();
+		aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);

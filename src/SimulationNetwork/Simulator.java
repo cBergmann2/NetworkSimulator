@@ -8,7 +8,7 @@ import Flooding.FloodingNetworkNode;
 
 public abstract class Simulator {
 
-	private static int NODE_EXECUTION_TIME = 2;
+	protected static int NODE_EXECUTION_TIME = 2;
 	
 	
 	protected long networkLifetime;
@@ -26,7 +26,7 @@ public abstract class Simulator {
 	protected double averageTimeInTransmissionMode;
 	protected double averageTimeWaitingForMediumAccesPermission;
 	
-	private NetworkGraph graph;
+	protected NetworkGraph graph;
 
 	
 	/**
@@ -127,22 +127,20 @@ public abstract class Simulator {
 				}
 			}
 
-		} while (transmissionInNetworkDetected);
+		} while (transmissionInNetworkDetected || networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
 
 		for (int id = 0; id < networkNodes.length; id++) {
-			/*consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
-					- networkNodes[id].getAvailableEnery();
-			*/
-			
-			
 			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
-			//System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode());
+			System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode() + ", time in idleMode " + (networkNodes[id].getIdleTime() +networkNodes[id].getWaitingTimeForMediumAccesPermission()) + ", time in recive mode "+ networkNodes[id].getReciveTime() + ", time in transmit mode " + networkNodes[id].getTransmissionTime() );
 			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
 			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
-			//System.out.println("Node " + id + ": time in transmissionMode: " + networkNodes[id].getTransmissionTime()  + ", consumedEnergy transmission: " + networkNodes[id].getConsumedEnergyInTransmissionMode());
-			
 		}
 		
+		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		System.out.println("Consumed energy idle mode: " + consumedEnergyInIdleMode + ", time in idle mode: " + (this.averageTimeInIdleMode + this.averageTimeWaitingForMediumAccesPermission));
+		System.out.println("Consumed energy recive mode: " + consumedEnergyInReciveMode + ", time in recive mode: " + this.averageTimeInTransmissionMode);
+		System.out.println("Consumed energy transmit mode: " + consumedEnergyInTransmissionMode + ", time in transmit mode: " + this.averageTimeInReciveMode);
 
 		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}
@@ -252,7 +250,7 @@ public abstract class Simulator {
 
 		}while(allNodesAlive(networkNodes));
 		
-		calculateAverateNodeTimes(graph.getNetworkNodes());
+		calculateAverageNodeTimes(graph.getNetworkNodes());
 	
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
@@ -313,7 +311,7 @@ public abstract class Simulator {
 
 		}while(!isNetworkPartitioned(graph));
 	
-		calculateAverateNodeTimes(graph.getNetworkNodes());
+		calculateAverageNodeTimes(graph.getNetworkNodes());
 		
 		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
 		
@@ -445,7 +443,7 @@ public abstract class Simulator {
 		return true;
 	}
 	
-	private void calculateAverateNodeTimes(NetworkNode networkNodes[]){
+	private void calculateAverageNodeTimes(NetworkNode networkNodes[]){
 		
 		this.averageTimeInIdleMode = 0.0;
 		this.averageTimeInReciveMode = 0.0;

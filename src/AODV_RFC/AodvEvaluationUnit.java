@@ -158,28 +158,35 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		double maxDistance[][] = new double[2][networkWidth.length];
 		double maxDistance_collisions[][] = new double[2][networkWidth.length];
 		double maxDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
+		double maxDistance_onlyPayloadMsg[][] = new double[2][networkWidth.length];
 
 		double minDistance[][] = new double[2][networkWidth.length];
 		double minDistance_collisions[][] = new double[2][networkWidth.length];
 		double minDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
+		double minDistance_onlyPayloadMsg[][] = new double[2][networkWidth.length];
 
 		double medDistance[][] = new double[2][networkWidth.length];
 		double medDistance_collisions[][] = new double[2][networkWidth.length];
 		double medDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
+		double medDistance_onlyPayloadMsg[][] = new double[2][networkWidth.length];
 
 		for (int i = 0; i < networkWidth.length; i++) {
 		
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 			maxDistance[0][i] = numberOfNodes[i];
 			maxDistance[1][i] = aodvSimulator.energyCostAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
-					(int) Math.pow(i, 2) - 1);
+					(int) Math.pow(networkWidth[i], 2) - 1);
 			maxDistance_collisions[0][i] = numberOfNodes[i];
 			maxDistance_collisions[1][i] = aodvSimulator.getCollisions();
 			maxDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
 			maxDistance_onlyTransmissionEnergy[1][i] = aodvSimulator.getConsumedEnergyInReciveMode()
 					+ aodvSimulator.getConsumedEnergyInTransmissionMode();
+			maxDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
+			maxDistance_onlyPayloadMsg[1][i] = aodvSimulator.energyCostAnalysisWithoutRDP(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i], (int) Math.pow(networkWidth[i], 2) - 1);
+			
 			System.out.println("Max Simulation for " + networkWidth[i] * networkWidth[i] + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ aodvSimulator.getNetworkLifetime() + " ms");
+					+ aodvSimulator.getNetworkLifetime() + " ms"
+					+ " umgesetzte Energie: " + maxDistance[1][i]);
 
 			minDistance[0][i] = numberOfNodes[i];
 			minDistance[1][i] = aodvSimulator.energyCostAnalysis(networkWidth[i], 0, 1);
@@ -188,8 +195,12 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			minDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
 			minDistance_onlyTransmissionEnergy[1][i] = aodvSimulator.getConsumedEnergyInReciveMode()
 					+ aodvSimulator.getConsumedEnergyInTransmissionMode();
+			minDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
+			minDistance_onlyPayloadMsg[1][i] = aodvSimulator.energyCostAnalysisWithoutRDP(networkWidth[i], 0, 1);
+	
 			System.out.println("Min Simulation for " + networkWidth[i] * networkWidth[i] + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ aodvSimulator.getNetworkLifetime() + " ms");
+					+ aodvSimulator.getNetworkLifetime() + " ms"
+							+ " umgesetzte Energie: " + minDistance[1][i]);
 
 			medDistance[0][i] = numberOfNodes[i];
 			medDistance[1][i] = aodvSimulator.energyCostAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
@@ -198,8 +209,12 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			medDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
 			medDistance_onlyTransmissionEnergy[1][i] = aodvSimulator.getConsumedEnergyInReciveMode()
 					+ aodvSimulator.getConsumedEnergyInTransmissionMode();
+			medDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
+			medDistance_onlyPayloadMsg[1][i] = aodvSimulator.energyCostAnalysisWithoutRDP(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
+	
 			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i] + " nodes completed. Ausführungszeit des Netzwerks: "
-					+ aodvSimulator.getNetworkLifetime() + " ms");
+					+ aodvSimulator.getNetworkLifetime() + " ms"
+							+ " umgesetzte Energie: " + medDistance[1][i]);
 
 		}
 
@@ -276,6 +291,31 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		// Consumed Energy without route discovery process
+				dataset2 = new DefaultXYDataset();
+				dataset2.addSeries("maximale Distanz", maxDistance_onlyPayloadMsg);
+				dataset2.addSeries("mittlere Distanz", medDistance_onlyPayloadMsg);
+				dataset2.addSeries("minimale Distanz", minDistance_onlyPayloadMsg);
+
+				// XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+				xAxis2 = new NumberAxis("Anzahl Knoten");
+				yAxis2 = new NumberAxis("Umgesetzte Energie [nAs]");
+				plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+				chart2 = new JFreeChart(plot2);
+
+				chart2.getPlot().setBackgroundPaint(Color.WHITE);
+				chart2.setBackgroundPaint(Color.WHITE);
+
+				try {
+					ChartUtilities.saveChartAsPNG(new File("Output/AODV_RFC/AODV_Umgesetzte_Energie_ohne_RouteDiscovery.png"),
+							chart2, CHART_WIDTH, CHART_HIGHT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	}
 
 	public void evaluateNetworkLivetimeStaticSendBehavior(int payloadSize) {
