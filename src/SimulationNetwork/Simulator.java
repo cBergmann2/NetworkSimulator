@@ -131,16 +131,16 @@ public abstract class Simulator {
 
 		for (int id = 0; id < networkNodes.length; id++) {
 			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
-			System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode() + ", time in idleMode " + (networkNodes[id].getIdleTime() +networkNodes[id].getWaitingTimeForMediumAccesPermission()) + ", time in recive mode "+ networkNodes[id].getReciveTime() + ", time in transmit mode " + networkNodes[id].getTransmissionTime() );
+			//System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode() + ", time in idleMode " + (networkNodes[id].getIdleTime() +networkNodes[id].getWaitingTimeForMediumAccesPermission()) + ", time in recive mode "+ networkNodes[id].getReciveTime() + ", time in transmit mode " + networkNodes[id].getTransmissionTime() );
 			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
 			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
 		}
 		
 		calculateAverageNodeTimes(graph.getNetworkNodes());
 		
-		System.out.println("Consumed energy idle mode: " + consumedEnergyInIdleMode + ", time in idle mode: " + (this.averageTimeInIdleMode + this.averageTimeWaitingForMediumAccesPermission));
-		System.out.println("Consumed energy recive mode: " + consumedEnergyInReciveMode + ", time in recive mode: " + this.averageTimeInTransmissionMode);
-		System.out.println("Consumed energy transmit mode: " + consumedEnergyInTransmissionMode + ", time in transmit mode: " + this.averageTimeInReciveMode);
+		//System.out.println("Consumed energy idle mode: " + consumedEnergyInIdleMode + ", time in idle mode: " + (this.averageTimeInIdleMode + this.averageTimeWaitingForMediumAccesPermission));
+		//System.out.println("Consumed energy recive mode: " + consumedEnergyInReciveMode + ", time in recive mode: " + this.averageTimeInTransmissionMode);
+		//System.out.println("Consumed energy transmit mode: " + consumedEnergyInTransmissionMode + ", time in transmit mode: " + this.averageTimeInReciveMode);
 
 		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}

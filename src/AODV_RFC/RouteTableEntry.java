@@ -1,5 +1,7 @@
 package AODV_RFC;
 
+import java.util.LinkedList;
+
 public class RouteTableEntry {
 
 	private int destinationAdress;
@@ -9,9 +11,10 @@ public class RouteTableEntry {
 	private int nextHop;
 	private int lifetime;
 	private boolean valid;
+	private LinkedList<Integer> precursorList;
 	
 	public RouteTableEntry(){
-		
+		precursorList = new LinkedList<Integer>();
 	}
 	
 	
@@ -71,6 +74,16 @@ public class RouteTableEntry {
 
 	public void setValid(boolean valid) {
 		this.valid = valid;
+	}
+
+
+	public LinkedList<Integer> getPrecursorList() {
+		return precursorList;
+	}
+
+
+	public void addPrecursor(Integer precursor) {
+		this.precursorList.add(precursor);
 	}
 	
 }

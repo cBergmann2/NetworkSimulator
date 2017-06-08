@@ -10,7 +10,7 @@ public class DsdvNetworkNode extends NetworkNode{
 		// TODO Auto-generated constructor stub
 	}
 	
-	protected void performeTimeDependentTasks(){
+	protected void performeTimeDependentTasks(long executionTime){
 		
 		//Send routing updates to neighbors
 	}

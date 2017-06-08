@@ -8,6 +8,8 @@ import SimulationNetwork.PayloadMessage;
 
 public class AodvNetworkNode extends NetworkNode{
 	
+	private static final long HELLO_INTERVAL = 5*60000;	//HELLO_INTERVAL in ms
+	
 	private LinkedList<RouteTableEntry> routingTable;
 	private LinkedList<Message> waitingForRouteBuffer;
 	private LinkedList<TransmittedRREQ> transmittedRREQs;
@@ -15,6 +17,9 @@ public class AodvNetworkNode extends NetworkNode{
 	private int sequenceNumber;
 	private int rreqID;
 	private int numberRecivedRREPdMsg;
+	
+	private long helloInvervalCounter;
+	private boolean sendBroadcastMessageInCurrentHelloInterval;
 
 	public AodvNetworkNode(int id) {
 		super(id);
@@ -25,12 +30,45 @@ public class AodvNetworkNode extends NetworkNode{
 		this.sequenceNumber = 1;
 		this.rreqID = 1;
 		this.numberRecivedRREPdMsg = 0;
+		this.helloInvervalCounter = 0L;
+		this.sendBroadcastMessageInCurrentHelloInterval = false;
 	}
 
 	@Override
-	protected void performeTimeDependentTasks() {
-		// TODO Auto-generated method stub
+	protected void performeTimeDependentTasks(long executionTime) {
+		this.helloInvervalCounter += executionTime;
+		if(helloInvervalCounter >= HELLO_INTERVAL){
+			if(!sendBroadcastMessageInCurrentHelloInterval){
+				//Generate and send hello message
+			}
+			//reset helloInvervalCounter and msg send flag
+			this.helloInvervalCounter = 0L;
+			this.sendBroadcastMessageInCurrentHelloInterval = false;
+		}
 		
+	}
+	
+	private void generateHelloMessage(){
+		boolean nodeHasPrecursor = false;
+		
+		//Search for precursor
+		for(RouteTableEntry routeTableEntry: routingTable){
+			if(routeTableEntry.getPrecursorList().size() > 0){
+				nodeHasPrecursor = true;
+				break;
+			}
+		}
+		
+		if(nodeHasPrecursor){
+			//Node has at least one precursor -> generate and send hello message
+			RREP helloMsg = new RREP();
+			helloMsg.setDestination_IP_Adress(this.id);
+			helloMsg.setDestination_Sequence_Number(this.sequenceNumber);
+			helloMsg.setHop_Count(0);
+			helloMsg.setTimeToLive(1);
+			
+			this.sendMsg(helloMsg);
+		}
 	}
 
 	@Override
@@ -72,6 +110,8 @@ public class AodvNetworkNode extends NetworkNode{
 				return;
 			}
 		}
+		//RREQ not received and processed jet
+		recivedRREQs.add(new TransmittedRREQ(msg.getOriginator_IP_Adress(), msg.getRREQ_ID()));
 		
 		//Update routingtable for rreq originator
 		if(msg.getOriginator_IP_Adress() != this.id){
@@ -117,6 +157,9 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 				rrep.setDestinationID(getNextHopToDestination(msg.getOriginator_IP_Adress()));
 				rrep.setSenderID(this.id);
+				rrep.setTimeToLive(msg.getHop_Count() *2);
+				
+				this.addNodeAsPrecursor(rrep.getDestinationID(), rrep.getDestination_IP_Adress());
 				
 				sendMsg(rrep);
 				
@@ -131,16 +174,32 @@ public class AodvNetworkNode extends NetworkNode{
 					
 					
 					sendMsg(rreqCopy);
-					
+					this.sendBroadcastMessageInCurrentHelloInterval = true;
 				}
 			}
 			
-			recivedRREQs.add(new TransmittedRREQ(msg.getOriginator_IP_Adress(), msg.getRREQ_ID()));
 		}		
+		
 	}
 	
-	private void updateRouteTable(int destination, int sequenceNumber, int hopCount, int nextHop){
+	private void addNodeAsPrecursor(int nodeID, int destination){
+		LinkedList<Integer> precursorList = null;
+		for(RouteTableEntry tableEntry: routingTable){
+			if(tableEntry.getDestinationAdress() == destination){
+				precursorList = tableEntry.getPrecursorList();
+
+				if(!precursorList.contains(nodeID)){
+					tableEntry.addPrecursor(nodeID);
+				}
+				
+				break;
+			}
+		}
+	}
+	
+	private boolean updateRouteTable(int destination, int sequenceNumber, int hopCount, int nextHop){
 		boolean routeAlreadyExists = false;
+		boolean routingTableUpdated = false;
 		for(RouteTableEntry route: routingTable){
 			if(route.getDestinationAdress() == destination){
 				routeAlreadyExists = true;
@@ -149,6 +208,7 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
+					routingTableUpdated = true;
 					//TODO: set Lifetime
 					//route.setLifetime();
 				}
@@ -158,6 +218,7 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
+					routingTableUpdated = true;
 					//TODO: set Lifetime
 					//route.setLifetime()
 				}
@@ -173,9 +234,12 @@ public class AodvNetworkNode extends NetworkNode{
 			route.setHopCount(hopCount);
 			route.setNextHop(nextHop);
 			route.setValid(true);
+			routingTableUpdated = true;
 			//route.setLifetime();
 			routingTable.add(route);
 		}
+		
+		return routingTableUpdated;
 	}
 	
 	private int getNextHopToDestination(int destination){
@@ -196,17 +260,24 @@ public class AodvNetworkNode extends NetworkNode{
 		int nextHopCount = msg.getHop_Count() +1;
 		
 		//Update routing table for desintation node
-		updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID());
-		
-		if(msg.getOrignator_IP_Adress() != this.id){
-			if(msg.getDestinationID() == this.id){
-				//foward RREP to originator node
-				RREP copyRREP = msg.clone();
-				copyRREP.setSenderID(this.id);
-				copyRREP.setDestinationID(getNextHopToDestination(msg.getOrignator_IP_Adress()));
-				copyRREP.setHop_Count(nextHopCount);
-				
-				sendMsg(copyRREP);
+		if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID())){
+			//Forward RREP if routing table was updated
+			
+			//Forward RREP-Message if TTL > 0
+			if(msg.getOrignator_IP_Adress() != this.id){
+				if(msg.getDestinationID() == this.id){
+					if(msg.getTimeToLive() > 1){
+						//foward RREP to originator node
+						RREP copyRREP = msg.clone();
+						copyRREP.setSenderID(this.id);
+						copyRREP.setDestinationID(getNextHopToDestination(msg.getOrignator_IP_Adress()));
+						copyRREP.setHop_Count(nextHopCount);
+						copyRREP.setTimeToLive(msg.getTimeToLive() -1);
+						sendMsg(copyRREP);
+						//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward RREP");
+						this.addNodeAsPrecursor(copyRREP.getDestinationID(), copyRREP.getDestination_IP_Adress());
+					}
+				}
 			}
 		}
 		
@@ -346,7 +417,7 @@ public class AodvNetworkNode extends NetworkNode{
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 		
-		System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": start transmission process, msg destination: " + tmpMsg.getPayloadDestinationAdress() );
+		//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": start transmission process, msg destination: " + tmpMsg.getPayloadDestinationAdress() );
 		
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		tmpMsg.setSenderID(this.id);

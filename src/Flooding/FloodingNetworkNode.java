@@ -23,7 +23,7 @@ public class FloodingNetworkNode extends NetworkNode{
 	}
 
 	@Override
-	protected void performeTimeDependentTasks() {
+	protected void performeTimeDependentTasks(long executionTime) {
 		long currentTime = simulator.getNetworkLifetime();
 		LinkedList<PayloadMessage> msgToDelete = new LinkedList<PayloadMessage>();
 		for(PayloadMessage msg: recivedMessages){

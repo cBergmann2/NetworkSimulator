@@ -12,7 +12,7 @@ public class RREP extends Message{
 	private int Destination_IP_Adress;
 	private int Destination_Sequence_Number;
 	private int Orignator_IP_Adress;
-	private int Lifetime;
+	private long Lifetime;
 	
 	public RREP(){
 		this.setDataVolume(5*32);
@@ -146,13 +146,13 @@ public class RREP extends Message{
 	/**
 	 * @return the lifetime
 	 */
-	public int getLifetime() {
+	public long getLifetime() {
 		return Lifetime;
 	}
 	/**
 	 * @param lifetime the lifetime to set
 	 */
-	public void setLifetime(int lifetime) {
+	public void setLifetime(long lifetime) {
 		Lifetime = lifetime;
 	}
 }

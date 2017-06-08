@@ -53,7 +53,7 @@ public abstract class NetworkNode {
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
 		// availableEnery = 4600L*3600L*1000L*1000L;
-		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
+		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
@@ -80,7 +80,7 @@ public abstract class NetworkNode {
 		}
 		if (nodeAlive) {
 
-			performeTimeDependentTasks();
+			performeTimeDependentTasks(executionTime);
 
 			if (incommingMsg != null) {
 				// Currently resiving a message
@@ -187,7 +187,7 @@ public abstract class NetworkNode {
 		return true;
 	}
 
-	protected abstract void performeTimeDependentTasks();
+	protected abstract void performeTimeDependentTasks(long executionTime);
 
 	public abstract void processRecivedMessage();
 

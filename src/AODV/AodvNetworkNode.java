@@ -332,7 +332,7 @@ public class AodvNetworkNode extends NetworkNode {
 		
 	}
 	
-	protected void performeTimeDependentTasks(){
+	protected void performeTimeDependentTasks(long executionTime){
 		//Clear memory of node
 		/*
 		
