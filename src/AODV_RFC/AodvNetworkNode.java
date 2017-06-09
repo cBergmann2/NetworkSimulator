@@ -9,6 +9,7 @@ import SimulationNetwork.PayloadMessage;
 public class AodvNetworkNode extends NetworkNode{
 	
 	private static final long HELLO_INTERVAL = 5*60000;	//HELLO_INTERVAL in ms
+	private static final long MAX_ROUTE_LIFETIME = 9*60*1000;
 	
 	private LinkedList<RouteTableEntry> routingTable;
 	private LinkedList<Message> waitingForRouteBuffer;
@@ -40,6 +41,7 @@ public class AodvNetworkNode extends NetworkNode{
 		if(helloInvervalCounter >= HELLO_INTERVAL){
 			if(!sendBroadcastMessageInCurrentHelloInterval){
 				//Generate and send hello message
+				generateHelloMessage();
 			}
 			//reset helloInvervalCounter and msg send flag
 			this.helloInvervalCounter = 0L;
@@ -71,6 +73,14 @@ public class AodvNetworkNode extends NetworkNode{
 		}
 	}
 
+	private void updateLifetimeOfRoutes(long executionTime){
+		for(RouteTableEntry routeTableEntry: routingTable){
+			if(routeTableEntry.isValid()){
+				routeTableEntry.decrementRouteLifetime(executionTime);
+			}
+		}
+	}
+	
 	@Override
 	public void processRecivedMessage() {
 		Message recivedMsg = inputBuffer.removeFirst();
@@ -101,7 +111,7 @@ public class AodvNetworkNode extends NetworkNode{
 	private void reciveRREQ(RREQ msg){
 		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREQ from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Addresse());
 		//Update route table entry for rreq transmitter node
-		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID());
+		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID(), MAX_ROUTE_LIFETIME);
 		
 		//search for already received RREQ with same Originator IP Address and RREQ ID
 		for(TransmittedRREQ rreq: recivedRREQs){
@@ -115,7 +125,7 @@ public class AodvNetworkNode extends NetworkNode{
 		
 		//Update routingtable for rreq originator
 		if(msg.getOriginator_IP_Adress() != this.id){
-			updateRouteTable(msg.getOriginator_IP_Adress(), msg.getOriginator_Sequence_Number(), msg.getHop_Count()+1, msg.getSenderID());
+			updateRouteTable(msg.getOriginator_IP_Adress(), msg.getOriginator_Sequence_Number(), msg.getHop_Count()+1, msg.getSenderID(), MAX_ROUTE_LIFETIME);
 	
 			
 			//Search for route to destination
@@ -158,6 +168,7 @@ public class AodvNetworkNode extends NetworkNode{
 				rrep.setDestinationID(getNextHopToDestination(msg.getOriginator_IP_Adress()));
 				rrep.setSenderID(this.id);
 				rrep.setTimeToLive(msg.getHop_Count() *2);
+				rrep.setLifetime(9*60*1000); //Lifetime of Route = 9 minutes
 				
 				this.addNodeAsPrecursor(rrep.getDestinationID(), rrep.getDestination_IP_Adress());
 				
@@ -197,7 +208,7 @@ public class AodvNetworkNode extends NetworkNode{
 		}
 	}
 	
-	private boolean updateRouteTable(int destination, int sequenceNumber, int hopCount, int nextHop){
+	private boolean updateRouteTable(int destination, int sequenceNumber, int hopCount, int nextHop, long maxRouteLifetime){
 		boolean routeAlreadyExists = false;
 		boolean routingTableUpdated = false;
 		for(RouteTableEntry route: routingTable){
@@ -208,9 +219,13 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
+					route.setLifetime(maxRouteLifetime);
+
 					routingTableUpdated = true;
-					//TODO: set Lifetime
-					//route.setLifetime();
+				}
+				
+				if((route.getDestinationSequenceNumber() <= sequenceNumber) && (route.getLifetime() < maxRouteLifetime)){
+					route.setLifetime(maxRouteLifetime);
 				}
 				
 				if(!route.isValid()){
@@ -218,9 +233,9 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
+					route.setLifetime(maxRouteLifetime);
+
 					routingTableUpdated = true;
-					//TODO: set Lifetime
-					//route.setLifetime()
 				}
 				
 			}
@@ -234,8 +249,9 @@ public class AodvNetworkNode extends NetworkNode{
 			route.setHopCount(hopCount);
 			route.setNextHop(nextHop);
 			route.setValid(true);
+			route.setLifetime(maxRouteLifetime);
+
 			routingTableUpdated = true;
-			//route.setLifetime();
 			routingTable.add(route);
 		}
 		
@@ -255,12 +271,12 @@ public class AodvNetworkNode extends NetworkNode{
 		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
 		this.numberRecivedRREPdMsg++;
 		//Update routing table for previous hop
-		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID());
+		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID(), MAX_ROUTE_LIFETIME);
 		
 		int nextHopCount = msg.getHop_Count() +1;
 		
 		//Update routing table for desintation node
-		if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID())){
+		if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID(), msg.getLifetime())){
 			//Forward RREP if routing table was updated
 			
 			//Forward RREP-Message if TTL > 0

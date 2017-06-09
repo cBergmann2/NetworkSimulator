@@ -24,8 +24,8 @@ public class Main {
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
-		aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
+		aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
+		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10000);
