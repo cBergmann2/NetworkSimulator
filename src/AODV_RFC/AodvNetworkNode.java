@@ -9,7 +9,7 @@ import SimulationNetwork.PayloadMessage;
 public class AodvNetworkNode extends NetworkNode{
 	
 	private static final long HELLO_INTERVAL = 5*60000;	//HELLO_INTERVAL in ms
-	private static final long MAX_ROUTE_LIFETIME = 9*60*1000;
+	public static final long MAX_ROUTE_LIFETIME = 10*60*1000;
 	
 	private LinkedList<RouteTableEntry> routingTable;
 	private LinkedList<Message> waitingForRouteBuffer;
@@ -18,6 +18,10 @@ public class AodvNetworkNode extends NetworkNode{
 	private int sequenceNumber;
 	private int rreqID;
 	private int numberRecivedRREPdMsg;
+	private int numberTransmittedRREQMsg;
+	private int numberTransmittedRREPMsg;
+
+	private int nextPayloadMsgDestination;
 	
 	private long helloInvervalCounter;
 	private boolean sendBroadcastMessageInCurrentHelloInterval;
@@ -31,22 +35,34 @@ public class AodvNetworkNode extends NetworkNode{
 		this.sequenceNumber = 1;
 		this.rreqID = 1;
 		this.numberRecivedRREPdMsg = 0;
+		
 		this.helloInvervalCounter = 0L;
 		this.sendBroadcastMessageInCurrentHelloInterval = false;
+		
+		numberTransmittedRREQMsg = 0;
+		numberTransmittedRREPMsg = 0;
+		numberTransmittedPayloadMsg = 0;
+		
+		this.nextPayloadMsgDestination = this.id;
 	}
 
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
+	
+		/*
 		this.helloInvervalCounter += executionTime;
 		if(helloInvervalCounter >= HELLO_INTERVAL){
 			if(!sendBroadcastMessageInCurrentHelloInterval){
 				//Generate and send hello message
-				generateHelloMessage();
+				//generateHelloMessage();
 			}
 			//reset helloInvervalCounter and msg send flag
 			this.helloInvervalCounter = 0L;
 			this.sendBroadcastMessageInCurrentHelloInterval = false;
 		}
+		*/
+		updateLifetimeOfRoutes(executionTime);
+		
 		
 	}
 	
@@ -55,7 +71,7 @@ public class AodvNetworkNode extends NetworkNode{
 		
 		//Search for precursor
 		for(RouteTableEntry routeTableEntry: routingTable){
-			if(routeTableEntry.getPrecursorList().size() > 0){
+			if((routeTableEntry.getPrecursorList().size() > 0) && routeTableEntry.isValid()){
 				nodeHasPrecursor = true;
 				break;
 			}
@@ -70,6 +86,7 @@ public class AodvNetworkNode extends NetworkNode{
 			helloMsg.setTimeToLive(1);
 			
 			this.sendMsg(helloMsg);
+			this.numberTransmittedRREPMsg++;
 		}
 	}
 
@@ -168,7 +185,7 @@ public class AodvNetworkNode extends NetworkNode{
 				rrep.setDestinationID(getNextHopToDestination(msg.getOriginator_IP_Adress()));
 				rrep.setSenderID(this.id);
 				rrep.setTimeToLive(msg.getHop_Count() *2);
-				rrep.setLifetime(9*60*1000); //Lifetime of Route = 9 minutes
+				rrep.setLifetime(MAX_ROUTE_LIFETIME); //Lifetime of Route = 9 minutes
 				
 				this.addNodeAsPrecursor(rrep.getDestinationID(), rrep.getDestination_IP_Adress());
 				
@@ -176,13 +193,16 @@ public class AodvNetworkNode extends NetworkNode{
 				
 			}
 			else{
+				
+				
+				
 				if(msg.getTimeToLive() > 1){
 					//create copy of RREQ
 					RREQ rreqCopy = (RREQ) msg.clone();
 					rreqCopy.setSenderID(this.id);
 					rreqCopy.setHop_Count(msg.getHop_Count()+1);
 					rreqCopy.setTimeToLive(msg.getTimeToLive() -1);
-					
+					rreqCopy.setDestinationID(-1);
 					
 					sendMsg(rreqCopy);
 					this.sendBroadcastMessageInCurrentHelloInterval = true;
@@ -204,6 +224,16 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 				
 				break;
+			}
+		}
+	}
+	
+	private void updateRouteLifetime(int destination){
+		for(RouteTableEntry route: routingTable){
+			if(route.getDestinationAdress() == destination){
+				if(route.isValid()){
+					route.setLifetime(MAX_ROUTE_LIFETIME);
+				}
 			}
 		}
 	}
@@ -309,6 +339,7 @@ public class AodvNetworkNode extends NetworkNode{
 					//aktualisiere Sendezeit
 					waitingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 					outputBuffer.add(waitingMsg);
+					this.numberTransmittedPayloadMsg++;
 					msgForWhichRouteWasFound.add(waitingMsg);
 				}
 			}
@@ -329,7 +360,11 @@ public class AodvNetworkNode extends NetworkNode{
 	
 	private void recivePayloadMessage(PayloadMessage msg){
 		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": recive payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
+		
+		
 		if(msg.getDestinationID() == this.id){
+			updateRouteLifetime(msg.getPayloadSourceAdress());
+
 			if(msg.getPayloadDestinationAdress() != this.id){
 				//forward message to next hop
 				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
@@ -338,9 +373,9 @@ public class AodvNetworkNode extends NetworkNode{
 			else{
 				long transmissionTime = simulator.getNetworkLifetime() - msg.getStartTransmissionTime();
 				//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived. Transmissiontime: " + transmissionTime);
-				numberRecivedPayloadMsg++;
 				msg.setEndTransmissionTime(simulator.getNetworkLifetime());
 				this.lastRecivedPayloadMessage = msg;
+				numberRecivedPayloadMsg++;
 			}
 		}
 	}
@@ -348,18 +383,17 @@ public class AodvNetworkNode extends NetworkNode{
 
 	@Override
 	public void sendMsg(Message msg) {
-		if(msg.getDestinationID() == -1){
-			//Broadcast message send this to all neighbors
-			super.sendMsg(msg);
-		}
-		else{
-			
+		
 			if(msg instanceof RREP){
+				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": send RREP. DestinationNode: " + msg.getDestinationID());
 				outputBuffer.add(msg);
+				this.numberTransmittedRREPMsg++;
 			}
 			
 			if(msg instanceof RREQ){
+				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": send RREQ. DestinationNode: " + ((RREQ)msg).getDestination_IP_Addresse());
 				outputBuffer.add(msg);
+				this.numberTransmittedRREQMsg++;
 			}
 			
 			if(msg instanceof PayloadMessage){
@@ -377,16 +411,30 @@ public class AodvNetworkNode extends NetworkNode{
 					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
 					msg.setDestinationID(getNextHopToDestination(((PayloadMessage)msg).getPayloadDestinationAdress()));
 					outputBuffer.add(msg);
-				}
-				else{
-					startRouteDiscoveryProcess(((PayloadMessage)msg).getPayloadDestinationAdress());
-					waitingForRouteBuffer.add(msg);
+					this.numberTransmittedPayloadMsg++;
+					//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": send PayloadMsg. DestinationNode: " + msg.getDestinationID());
+				}else{
+					//check if Route Discovery process is already started
+					boolean routeDiscoveryProcessStarted = false;
+					for(Message tmpMsg: waitingForRouteBuffer){
+						if(tmpMsg instanceof PayloadMessage){
+							if(((PayloadMessage)tmpMsg).getPayloadDestinationAdress() == ((PayloadMessage)msg).getPayloadDestinationAdress()){
+								routeDiscoveryProcessStarted = true;
+								break;
+							}
+						}
+					}
+					
+					if(routeDiscoveryProcessStarted){
+						waitingForRouteBuffer.add(msg);
+					}
+					else{
+						startRouteDiscoveryProcess(((PayloadMessage)msg).getPayloadDestinationAdress());
+						waitingForRouteBuffer.add(msg);
+					}
 				}
 				
 			}
-		}
-		
-		
 	}
 	
 	private void startRouteDiscoveryProcess(int destinationID) {
@@ -415,6 +463,7 @@ public class AodvNetworkNode extends NetworkNode{
 		rreq.setDestinationOnly(false);
 		rreq.setTimeToLive(1000);
 		rreq.setSenderID(this.id);
+		rreq.setDestinationID(-1);
 		
 		
 		//Add RREQ to trransmittedRREQ list
@@ -426,7 +475,9 @@ public class AodvNetworkNode extends NetworkNode{
 		
 		
 		//send RREQ
-		outputBuffer.add(rreq);
+		this.sendMsg(rreq);
+		//outputBuffer.add(rreq);
+		//this.numberTransmittedRREQMsg++;
 		
 	}
 
@@ -470,5 +521,49 @@ public class AodvNetworkNode extends NetworkNode{
 	public int getNumberRecivedRREPdMsg() {
 		return numberRecivedRREPdMsg;
 	}
+
+	public int getNumberTransmittedRREQMsg() {
+		return numberTransmittedRREQMsg;
+	}
+
+	public int getNumberTransmittedRREPMsg() {
+		return numberTransmittedRREPMsg;
+	}
+
+	/**
+	 * Generates a transmission every t seconds
+	 * @param seconds
+	 * @param nodeExecutionTime
+	 * @param networkSize
+	 */
+	public void generateTransmissionEveryTSecondsChangingDestination(int seconds, int nodeExecutionTime, int networkSize, int payloadSize){
+		if(this.elapsedTimeSinceLastGenerationOfTransmission/1000 >= seconds){
+			this.elapsedTimeSinceLastGenerationOfTransmission = 0L; //Reset timer
+
+			// find random destination
+			//int randomDestination = (int) (Math.random() * networkSize);
+
+			//calculate destination node
+			int destination = this.nextPayloadMsgDestination++;
+			if(destination == this.id){
+				destination++;
+				this.nextPayloadMsgDestination++;
+			}
+			
+			// set message payload as simulation time 
+			long networkLivetime = simulator.getNetworkLifetime();
+			char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
+			
+			PayloadMessage tmpMsg = new PayloadMessage(id, destination, dataToSend);
+			tmpMsg.setPayloadHash(networkLivetime);
+			tmpMsg.setPayloadSize(payloadSize);
+			
+			this.startSendingProcess(tmpMsg);
+			
+		}
+		
+		this.elapsedTimeSinceLastGenerationOfTransmission += nodeExecutionTime;
+	}
+	
 
 }

@@ -2,7 +2,6 @@ package SimulationNetwork;
 
 import java.util.LinkedList;
 
-import AODV.AodvNetworkNode;
 
 public abstract class NetworkNode {
 
@@ -41,8 +40,9 @@ public abstract class NetworkNode {
 	protected Simulator simulator;
 
 	protected PayloadMessage lastRecivedPayloadMessage;
-	private long elapsedTimeSinceLastGenerationOfTransmission;	// in milli Sekunden
+	protected long elapsedTimeSinceLastGenerationOfTransmission;	// in milli Sekunden
 	protected int numberRecivedPayloadMsg;
+	protected int numberTransmittedPayloadMsg;
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -149,8 +149,7 @@ public abstract class NetworkNode {
 							outgoingMsg = outputBuffer.removeFirst();
 							outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 							outgoingMsg.setRemainingTransmissionTime(Message.calculateTransmissionTime(outgoingMsg.getDataVolume()));
-							// System.out.println("Node " + id + "start sending
-							// message.");
+							//System.out.println(simulator.getNetworkLifetime() + ": Node " + id + " start sending message to destination " + outgoingMsg.getDestinationID());
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
 							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
 							transmissionTime += executionTime;
@@ -381,5 +380,10 @@ public abstract class NetworkNode {
 		consumedEnergyInIdleMode = 0L;
 		consumedEnergyInReciveMode = 0L;
 		consumedEnergyInTransmissionMode = 0L;
+	}
+	
+
+	public int getNumberTransmittedPayloadMsg() {
+		return numberTransmittedPayloadMsg;
 	}
 }

@@ -6,6 +6,10 @@ import SimulationNetwork.Simulator;
 
 public class AodvSimulator extends Simulator{
 	
+	private double percentageTransmittedRREQMsg;
+	private double percentageTransmittedRREPMsg;
+	private double percentageTransmittedPayloadMsg;
+	
 	private long msgTransmissionTime; 
 
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
@@ -30,6 +34,8 @@ public class AodvSimulator extends Simulator{
 		long energyCosts = this.energyCostAnalysis(graph, networkWidth, sourceNodeId, destinationNodeId);
 		
 		setCollisions(graph.getCollisions());
+		
+		calculatSpreadOfTransmittedMessages(graph.getNetworkNodes());
 		
 		return energyCosts;
 	}
@@ -133,10 +139,94 @@ public class AodvSimulator extends Simulator{
 		
 	}
 	
-	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSIze){
+	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSize){
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
 
-		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSIze);
+		this.graph = graph;
+		
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+		}
+			
+		do{
+					
+			for(int id=0; id<networkNodes.length; id++){
+				//Generate static transmission of data
+				((AodvNetworkNode)networkNodes[id]).generateTransmissionEveryTSecondsChangingDestination(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
+			}
+			
+
+			// performe network nodes
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+		
+
+		}while(allNodesAlive(networkNodes));
+		
+		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		int recivedPayloadMsg = 0;
+		for(int id=0; id<networkNodes.length; id++){
+			recivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+		}
+		
+	
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden. Recived PayloadMsg: " + recivedPayloadMsg);
+	
+		
+		int sendPayloadMsg = 0;
+		int sendRoutingMsg = 0;
+		for(int id=0; id<networkNodes.length; id++){
+			sendPayloadMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
+			sendRoutingMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
+		}
+		System.out.println("Number send payload msg: " + sendPayloadMsg + ", number send routing msg: " + sendRoutingMsg);
+		
+		
+		calculatSpreadOfTransmittedMessages(graph.getNetworkNodes());
+		
+		return networkLifetime;
+	}
+	
+	public long lifetimeAnalysisStaticSendBehaviorChangingDestination(int networkWidth, int transmissionPeriod,int payloadSIze){
+		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		
+		long lifetime = this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSIze); 
+
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		
+		int sendPayloadMsg = 0;
+		int sendRoutingMsg = 0;
+		for(int id=0; id<networkNodes.length; id++){
+			sendPayloadMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
+			sendRoutingMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
+		}
+		System.out.println("Number send payload msg: " + sendPayloadMsg + ", number send routing msg: " + sendRoutingMsg);
+		
+		
+		calculatSpreadOfTransmittedMessages(graph.getNetworkNodes());
+		
+		return lifetime;
 	}
 	
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
@@ -150,4 +240,39 @@ public class AodvSimulator extends Simulator{
 		return msgTransmissionTime;
 	}
 
+	private void calculatSpreadOfTransmittedMessages(NetworkNode networkNodes[]){
+		int numberTransmittedMsg = 0;
+		int numberTransmittedRREQMsg = 0;
+		int numberTransmittedRREPMsg = 0;
+		int numberTransmittedPayloadMsg = 0;
+		this.percentageTransmittedRREQMsg = 0.0;
+		this.percentageTransmittedRREPMsg = 0.0;
+		this.percentageTransmittedPayloadMsg = 0.0;
+
+		for(NetworkNode node: networkNodes){
+			numberTransmittedRREQMsg += ((AodvNetworkNode)node).getNumberTransmittedRREQMsg();
+			numberTransmittedRREPMsg += ((AodvNetworkNode)node).getNumberTransmittedRREPMsg();
+			numberTransmittedPayloadMsg += ((AodvNetworkNode)node).getNumberTransmittedPayloadMsg();
+			numberTransmittedMsg += ((AodvNetworkNode)node).getNumberTransmittedRREQMsg() + ((AodvNetworkNode)node).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)node).getNumberTransmittedPayloadMsg();
+		}
+		
+		percentageTransmittedRREQMsg = numberTransmittedRREQMsg / (double)numberTransmittedMsg;
+		percentageTransmittedRREPMsg = numberTransmittedRREPMsg / (double)numberTransmittedMsg;
+		percentageTransmittedPayloadMsg = numberTransmittedPayloadMsg / (double)numberTransmittedMsg;
+	}
+
+	public double getPercentageTransmittedRREQMsg() {
+		return percentageTransmittedRREQMsg;
+	}
+
+	public double getPercentageTransmittedRREPMsg() {
+		return percentageTransmittedRREPMsg;
+	}
+
+	public double getPercentageTransmittedPayloadMsg() {
+		return percentageTransmittedPayloadMsg;
+	}
+
+
+	
 }

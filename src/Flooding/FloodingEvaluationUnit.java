@@ -17,7 +17,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 	private static final int MAX_NETWORK_WIDTH = 10;
 	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	//int networkWidth[] = { 2};
+	//private static final int networkWidth[] = {2, 3, 4, 5, 6 };
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -346,6 +346,8 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 	}
 
 	public void evaluateNetworkLivetimeStaticSendBehavior(int payloadSize) {
+		System.out.println("\nFlooding Lifetime analysis");
+		
 		FloodingSimulator simulator = new FloodingSimulator();
 
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -355,24 +357,34 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		double sendTime_10_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_10_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+		double sendTime_10_NumberPayloadMsg[][] = new double[2][networkWidth.length];
 
 		double sendTime_60[][] = new double[2][networkWidth.length];
 		double sendTime_60_IdleMode[][] = new double[2][networkWidth.length];
 		double sendTime_60_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_60_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+		double sendTime_60_NumberPayloadMsg[][] = new double[2][networkWidth.length];
 
 		double sendTime_600[][] = new double[2][networkWidth.length];
 		double sendTime_600_IdleMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+		double sendTime_600_NumberPayloadMsg[][] = new double[2][networkWidth.length];
+		
+		double sendTime_1200[][] = new double[2][networkWidth.length];
+		double sendTime_1200_IdleMode[][] = new double[2][networkWidth.length];
+		double sendTime_1200_ReciveMode[][] = new double[2][networkWidth.length];
+		double sendTime_1200_TransmissionMode[][] = new double[2][networkWidth.length];
+		double sendTime_1200_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+		double sendTime_1200_NumberPayloadMsg[][] = new double[2][networkWidth.length];
 
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 10, payloadSize) / 1000 / 60;
+			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 60, payloadSize) / 1000 / 60;
 			sendTime_10_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_10_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_10_ReciveMode[0][i] = numberOfNodes[i];
@@ -382,12 +394,15 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_10_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_10_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
+			sendTime_10_NumberPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_10_NumberPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
+			
 			System.out.println(
 					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 60, payloadSize) / 1000 / 60;
+			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 5*60, payloadSize) / 1000 / 60;
 			sendTime_60_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_60_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_60_ReciveMode[0][i] = numberOfNodes[i];
@@ -397,12 +412,14 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_60_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_60_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
+			sendTime_60_NumberPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_60_NumberPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 600, payloadSize) / 1000 / 60;
+			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 10*60, payloadSize) / 1000 / 60;
 			sendTime_600_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_600_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_600_ReciveMode[0][i] = numberOfNodes[i];
@@ -412,17 +429,38 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_600_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_600_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
+			sendTime_600_NumberPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_600_NumberPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
 			System.out.println(
 					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			
+			sendTime_1200[0][i] = numberOfNodes[i];
+			sendTime_1200[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 20*60, payloadSize) / 1000 / 60;
+			sendTime_1200_IdleMode[0][i] = numberOfNodes[i];
+			sendTime_1200_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
+			sendTime_1200_ReciveMode[0][i] = numberOfNodes[i];
+			sendTime_1200_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
+			sendTime_1200_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_1200_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
+			sendTime_1200_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
+			sendTime_1200_WaitingForMediumAccesPermission[1][i] = simulator
+					.getAverageTimeWaitingForMediumAccesPermission();
+			sendTime_1200_NumberPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_1200_NumberPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
+			System.out.println(
+					"20m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 		}
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
-		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 5 m", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+		dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
@@ -445,9 +483,10 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		// Average time in transmission mode
 		DefaultXYDataset dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_TransmissionMode);
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 5 m", sendTime_60_TransmissionMode);
 		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 20 m", sendTime_1200_TransmissionMode);
 
 		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten");
 		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
@@ -469,9 +508,10 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		// Average time in idle mode
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_IdleMode);
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_IdleMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_IdleMode);
+		dataset2.addSeries("Knoten Sendet alle 5 m", sendTime_60_IdleMode);
 		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_IdleMode);
+		dataset2.addSeries("Knoten Sendet alle 20 m", sendTime_1200_IdleMode);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten");
 		yAxis2 = new NumberAxis("Knoten im Idle-Modus [%]");
@@ -493,9 +533,10 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		// Average time Waiting For MediumAccesPermission
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_WaitingForMediumAccesPermission);
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten Sendet alle 5 m", sendTime_60_WaitingForMediumAccesPermission);
 		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten Sendet alle 20 m", sendTime_1200_WaitingForMediumAccesPermission);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten");
 		yAxis2 = new NumberAxis("Knoten wartet auf Medium [%]");
@@ -517,9 +558,10 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		// Average time in recive mode
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_ReciveMode);
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_ReciveMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_ReciveMode);
+		dataset2.addSeries("Knoten Sendet alle 5 m", sendTime_60_ReciveMode);
 		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_ReciveMode);
+		dataset2.addSeries("Knoten Sendet alle 20 m", sendTime_1200_ReciveMode);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten");
 		yAxis2 = new NumberAxis("Knoten im Empfangs-Modus [%]");
@@ -531,6 +573,31 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		chart2.setBackgroundPaint(Color.WHITE);
 
 		filename = "Output/Flooding/Flooding_Lebenszeitanalyse_prozentualeZeit_ReciveModus_" + payloadSize
+				+ "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Number transmitted PayloadMsg
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_NumberPayloadMsg);
+		dataset2.addSeries("Knoten Sendet alle 5 m", sendTime_60_NumberPayloadMsg);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_NumberPayloadMsg);
+		dataset2.addSeries("Knoten Sendet alle 20 m", sendTime_1200_NumberPayloadMsg);
+
+		xAxis2 = new NumberAxis("Anzahl Knoten");
+		yAxis2 = new NumberAxis("Anzahl gesendeter Nachrichten");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/Flooding/Flooding_Lebenszeitanalyse_AnzahlGesendterNachrichten_" + payloadSize
 				+ "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);

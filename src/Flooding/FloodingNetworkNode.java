@@ -98,6 +98,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		this.outputBuffer.add(msgCopy);
 		
 		this.numberTransmittedMsg++;
+		this.numberTransmittedPayloadMsg++;
 			
 	}
 
@@ -112,6 +113,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		newMsg.addNodeToRoute(this.id);
 		newMsg.setPayloadSize(msg.getPayloadSize());
 		newMsg.setDataVolume(msg.getPayloadSize()*8);
+		newMsg.setPayloadHash(msg.getPayloadHash());
 		this.sendMessage(newMsg);
 	}
 	

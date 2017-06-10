@@ -104,6 +104,7 @@ public class PayloadMessage extends Message{
 
 	public void setPayloadSize(int payloadSize) {
 		this.payloadSize = payloadSize;
+		this.setDataVolume(payloadSize*8);
 		this.remainingTransmissionTime = this.calculateTransmissionTime(payloadSize*8);
 	}
 }

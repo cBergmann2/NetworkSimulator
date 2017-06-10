@@ -2,9 +2,6 @@ package SimulationNetwork;
 
 import java.util.LinkedList;
 
-import AODV.AodvNetworkGraph;
-import AODV.AodvNetworkNode;
-import Flooding.FloodingNetworkNode;
 
 public abstract class Simulator {
 
@@ -215,6 +212,8 @@ public abstract class Simulator {
 		int simulatedHours = 0;
 		int simulatedDays = 0;
 
+		this.graph = graph;
+		
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		for(int id=0; id<networkNodes.length; id++){
 			networkNodes[id].setSimulator(this);
@@ -251,8 +250,14 @@ public abstract class Simulator {
 		}while(allNodesAlive(networkNodes));
 		
 		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		int recivedPayloadMsg = 0;
+		for(int id=0; id<networkNodes.length; id++){
+			recivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+		}
+		
 	
-		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden. Recived PayloadMsg: " + recivedPayloadMsg);
 		
 		return networkLifetime;
 	}
@@ -443,7 +448,7 @@ public abstract class Simulator {
 		return true;
 	}
 	
-	private void calculateAverageNodeTimes(NetworkNode networkNodes[]){
+	protected void calculateAverageNodeTimes(NetworkNode networkNodes[]){
 		
 		this.averageTimeInIdleMode = 0.0;
 		this.averageTimeInReciveMode = 0.0;
@@ -508,5 +513,15 @@ public abstract class Simulator {
 		for(NetworkNode node: this.graph.getNetworkNodes()){
 			node.resetTransmissionUnit();
 		}
+	}
+	
+	public int getNumberTransmittedPayloadMsg(){
+		int countPayloadMsg = 0;
+		
+		for(NetworkNode node: graph.getNetworkNodes()){
+			countPayloadMsg += node.getNumberTransmittedPayloadMsg();
+		}
+		
+		return countPayloadMsg;
 	}
 }
