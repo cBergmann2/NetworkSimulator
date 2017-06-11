@@ -261,6 +261,76 @@ public abstract class Simulator {
 		
 		return networkLifetime;
 	}
+	
+	/**
+	 * Run network with given parameter to determine duration until first node
+	 * is out of power. All Nodes will send their data to one destination
+	 * 
+	 * @param networkWidth
+	 *            sqrt(Number of Nodes)
+	 * @param sendProbability
+	 *            Probability to send Data, when node is in idle mode
+	 * @return duration until first node is out of power
+	 */
+	public long lifetimeAnalysisStaticBehaviorOneDestination(NetworkGraph graph, int networkWidth, int transmissionPeriod, int payloadSize){
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		this.graph = graph;
+		
+		int destinationNode = networkWidth / 2;
+		
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+			networkNodes[id].setDestinationNode(destinationNode);
+		}
+		
+		networkNodes[destinationNode].setBatteryPowered(false);
+			
+		do{
+					
+			for(int id=0; id<networkNodes.length; id++){
+				//Generate static transmission of data
+				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
+			}
+			
+
+			// performe network nodes
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+		
+
+		}while(allNodesAlive(networkNodes));
+		
+		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		int recivedPayloadMsg = 0;
+		for(int id=0; id<networkNodes.length; id++){
+			recivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+		}
+		
+	
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden. Recived PayloadMsg: " + recivedPayloadMsg);
+		
+		return networkLifetime;
+	}	
 
 	/**
 	 * Run network with given parameter to determine duration until the network

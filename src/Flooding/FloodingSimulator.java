@@ -1,8 +1,6 @@
 package Flooding;
 
-import SimulationNetwork.NetworkGraph;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+
 import SimulationNetwork.Simulator;
 
 public class FloodingSimulator extends Simulator {
@@ -94,6 +92,13 @@ public class FloodingSimulator extends Simulator {
 		
 		
 		return this.partitioningAnalysis(graph, networkWidth, transmissionPeriod, payloadSize);
+	}
+
+	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){
+		
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+		
+		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
 	}
 
 

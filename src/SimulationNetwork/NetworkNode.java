@@ -43,6 +43,12 @@ public abstract class NetworkNode {
 	protected long elapsedTimeSinceLastGenerationOfTransmission;	// in milli Sekunden
 	protected int numberRecivedPayloadMsg;
 	protected int numberTransmittedPayloadMsg;
+	
+	protected long csmaWaitingTime;
+	
+	protected int destinationNode;
+	
+	protected boolean batteryPowered;
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -53,7 +59,7 @@ public abstract class NetworkNode {
 		inputBuffer = new LinkedList<Message>();
 		outputBuffer = new LinkedList<Message>();
 		// availableEnery = 4600L*3600L*1000L*1000L;
-		availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
+		availableEnery = 5*NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
@@ -63,6 +69,12 @@ public abstract class NetworkNode {
 		consumedEnergyInTransmissionMode = 0L;
 		elapsedTimeSinceLastGenerationOfTransmission = 0L;
 		numberRecivedPayloadMsg = 0;
+		
+		csmaWaitingTime = 10 + this.id * 50 ;
+		
+		destinationNode = this.id;
+		
+		batteryPowered = true;
 	}
 
 	/**
@@ -178,11 +190,11 @@ public abstract class NetworkNode {
 				}
 			}
 		}
-
-		if (availableEnery <= 0) {
-			nodeAlive = false;
+		if(batteryPowered){
+			if (availableEnery <= 0) {
+				nodeAlive = false;
+			}
 		}
-		
 		return true;
 	}
 
@@ -196,7 +208,7 @@ public abstract class NetworkNode {
 	 * @return
 	 */
 	private boolean isMediumAccessAllowed() {
-		if (elapsedTimeSinceLastReception > (10 + id * 50)) {
+		if (elapsedTimeSinceLastReception > csmaWaitingTime) {
 			return true;
 		}
 		return false;
@@ -291,21 +303,28 @@ public abstract class NetworkNode {
 			//int randomDestination = (int) (Math.random() * networkSize);
 
 			//send message to inverse node
-			int destination = graph.getNetworkNodes().length - this.id -1;
+			//int destination = graph.getNetworkNodes().length - this.id -1;
 			
 			// set message payload as simulation time 
-			long networkLivetime = simulator.getNetworkLifetime();
-			char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
+			if(destinationNode != this.id){
 			
-			PayloadMessage tmpMsg = new PayloadMessage(id, destination, dataToSend);
-			tmpMsg.setPayloadHash(networkLivetime);
-			tmpMsg.setPayloadSize(payloadSize);
-			
-			this.startSendingProcess(tmpMsg);
+				long networkLivetime = simulator.getNetworkLifetime();
+				char dataToSend[] = { (char)((networkLivetime >> 8) & 0xFF), (char)((networkLivetime >> 16) & 0xFF), (char)((networkLivetime >> 24) & 0xFF), (char)((networkLivetime >> 32) & 0xFF), (char)((networkLivetime >> 40) & 0xFF), (char)((networkLivetime >> 48) & 0xFF), (char)((networkLivetime >> 56) & 0xFF), (char)((networkLivetime >> 64) & 0xFF) };
+				
+				PayloadMessage tmpMsg = new PayloadMessage(id, destinationNode, dataToSend);
+				tmpMsg.setPayloadHash(networkLivetime);
+				tmpMsg.setPayloadSize(payloadSize);
+				
+				this.startSendingProcess(tmpMsg);
+			}
 			
 		}
 		
 		this.elapsedTimeSinceLastGenerationOfTransmission += nodeExecutionTime;
+	}
+	
+	public void setDestinationNode(int nodeID){
+		this.destinationNode = nodeID;
 	}
 
 	public abstract void startSendingProcess(PayloadMessage tmpMsg);
@@ -385,5 +404,13 @@ public abstract class NetworkNode {
 
 	public int getNumberTransmittedPayloadMsg() {
 		return numberTransmittedPayloadMsg;
+	}
+
+	public boolean isBatteryPowered() {
+		return batteryPowered;
+	}
+
+	public void setBatteryPowered(boolean batteryPowered) {
+		this.batteryPowered = batteryPowered;
 	}
 }

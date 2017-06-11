@@ -61,7 +61,7 @@ public class AodvNetworkNode extends NetworkNode{
 			this.sendBroadcastMessageInCurrentHelloInterval = false;
 		}
 		*/
-		updateLifetimeOfRoutes(executionTime);
+		//updateLifetimeOfRoutes(executionTime);
 		
 		
 	}

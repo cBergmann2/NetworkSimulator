@@ -228,6 +228,13 @@ public class AodvSimulator extends Simulator{
 		
 		return lifetime;
 	}
+
+	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){
+		
+		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		
+		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
+	}
 	
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
