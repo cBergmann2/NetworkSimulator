@@ -1128,4 +1128,202 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	public void evaluateNetworkPartitioningAnalysisOneDestination(int payloadSize) {
+		System.out.println("Start partitioning analysis");
+
+		FloodingSimulator simulator = new FloodingSimulator();
+
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_10_IdleMode[][] = new double[2][networkWidth.length];
+		double sendTime_10_ReciveMode[][] = new double[2][networkWidth.length];
+		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
+		double sendTime_10_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_60_IdleMode[][] = new double[2][networkWidth.length];
+		double sendTime_60_ReciveMode[][] = new double[2][networkWidth.length];
+		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
+		double sendTime_60_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+
+		double sendTime_600[][] = new double[2][networkWidth.length];
+		double sendTime_600_IdleMode[][] = new double[2][networkWidth.length];
+		double sendTime_600_ReciveMode[][] = new double[2][networkWidth.length];
+		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
+		double sendTime_600_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = simulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 10, payloadSize) / 1000 / 60;
+			sendTime_10_IdleMode[0][i] = numberOfNodes[i];
+			sendTime_10_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
+			sendTime_10_ReciveMode[0][i] = numberOfNodes[i];
+			sendTime_10_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
+			sendTime_10_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_10_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
+			sendTime_10_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
+			sendTime_10_WaitingForMediumAccesPermission[1][i] = simulator
+					.getAverageTimeWaitingForMediumAccesPermission();
+			System.out.println(
+					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = simulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 60, payloadSize) / 1000 / 60;
+			sendTime_60_IdleMode[0][i] = numberOfNodes[i];
+			sendTime_60_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
+			sendTime_60_ReciveMode[0][i] = numberOfNodes[i];
+			sendTime_60_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
+			sendTime_60_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_60_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
+			sendTime_60_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
+			sendTime_60_WaitingForMediumAccesPermission[1][i] = simulator
+					.getAverageTimeWaitingForMediumAccesPermission();
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = simulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 600, payloadSize) / 1000 / 60;
+			sendTime_600_IdleMode[0][i] = numberOfNodes[i];
+			sendTime_600_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
+			sendTime_600_ReciveMode[0][i] = numberOfNodes[i];
+			sendTime_600_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
+			sendTime_600_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_600_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
+			sendTime_600_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
+			sendTime_600_WaitingForMediumAccesPermission[1][i] = simulator
+					.getAverageTimeWaitingForMediumAccesPermission();
+			System.out.println(
+					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		String filename = "Output/Flooding/Flooding_partitionierungsanalyse_OneDestination_" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Average time in transmission mode
+		DefaultXYDataset dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_TransmissionMode);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_TransmissionMode);
+
+		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten");
+		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		JFreeChart chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/Flooding/Flooding_partitionierungsanalyse_prozentualeZeit_Sendemodus_OneDestination_" + payloadSize
+				+ "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Average time in idle mode
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_IdleMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_IdleMode);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_IdleMode);
+
+		xAxis2 = new NumberAxis("Anzahl Knoten");
+		yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/Flooding/Flooding_partitionierungsanalyse_prozentualeZeit_IdleModus_OneDestination_" + payloadSize
+				+ "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Average time Waiting For MediumAccesPermission
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_WaitingForMediumAccesPermission);
+
+		xAxis2 = new NumberAxis("Anzahl Knoten");
+		yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/Flooding/Flooding_partitionierungsanalyse_prozentualeZeit_WaitingForMediumAccesPermission_OneDestination_"
+				+ payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Average time in recive mode
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("Knoten Sendet alle 10 s", sendTime_10_ReciveMode);
+		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_60_ReciveMode);
+		dataset2.addSeries("Knoten Sendet alle 10 m", sendTime_600_ReciveMode);
+
+		xAxis2 = new NumberAxis("Anzahl Knoten");
+		yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/Flooding/Flooding_partitionierungsanalyse_prozentualeZeit_ReciveModus_OneDestination_" + payloadSize
+				+ "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 }

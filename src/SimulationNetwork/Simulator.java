@@ -393,6 +393,70 @@ public abstract class Simulator {
 		return networkLifetime;
 	}
 	
+	/**
+	 * Run network with given parameter to determine duration until the network
+	 * is partitioned
+	 * 
+	 * @param networkWidth
+	 * @param sendProbability
+	 * @return duration until network is partitioned
+	 */
+	public long partitioningAnalysisOnePayloadmessageDestination(NetworkGraph graph, int networkWidth, int transmissionPeriod, int payloadSize){
+		networkLifetime = 0;
+		int simulatedMinutes = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+		numberOfInactiveNodes = 0;
+
+		int destinationNode = networkWidth / 2;
+		
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for(int id=0; id<networkNodes.length; id++){
+			networkNodes[id].setSimulator(this);
+			networkNodes[id].setDestinationNode(destinationNode);
+		}
+			
+		do{
+					
+			for(int id=0; id<networkNodes.length; id++){
+				//Generate static transmission of data
+				networkNodes[id].generateTransmissionEveryTSeconds(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
+			}
+			
+
+			// performe network nodes
+			for(int id=0; id<networkNodes.length; id++){
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			if(networkLifetime % (60000) == 0){
+				simulatedMinutes++;
+				//System.out.println("Simulated minutes: " + simulatedMinutes);
+			}
+			
+			if(networkLifetime % (3600000) == 0){
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+			
+			
+			if(networkLifetime % (86400000) == 0){
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+		
+
+		}while(!isNetworkPartitioned(graph));
+	
+		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		System.out.println("Network Lifetime:" + networkLifetime/1000/60/60/24 + " Tage bzw "+ networkLifetime/1000 + " Sekunden.");
+		
+		return networkLifetime;
+	}
+	
 	private boolean isNetworkPartitioned(NetworkGraph graph){
 		LinkedList<Integer> inactiveNodes = getInactiveNodes(graph.getNetworkNodes());
 		int numberOfInactiveNodes = inactiveNodes.size();

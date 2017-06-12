@@ -101,5 +101,12 @@ public class FloodingSimulator extends Simulator {
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
 	}
 
+	public long partitioningAnalysisOnePayloadmessageDestination(int networkWidth, int transmissionPeriod, int payloadSize) {
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+		
+		
+		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
+	}
+
 
 }
