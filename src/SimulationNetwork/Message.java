@@ -6,7 +6,7 @@ public class Message implements Cloneable{
 	public static final long TRANSMISSION_TIME_START_SIGNAL = 8951040L; 	//Transmission time for start signal in ns
 	public static final long TRANSMISSION_TIME_STOP_SIGNAL 	= 11934720L; 	//Transmission time for stop signal in ns
 	
-	public static final int MESSAGE_SIZE = 4 * 32;
+	public static final int MESSAGE_SIZE = 3 * 32;	//DestinationID, SenderID, TTL
 	
 	
 	protected int senderID;
