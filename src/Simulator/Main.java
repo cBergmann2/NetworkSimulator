@@ -1,6 +1,7 @@
 package Simulator;
 //import AODV.AodvEvaluationUnit;
 import AODV_RFC.AodvEvaluationUnit;
+import DSDV.DsdvEvaluationUnit;
 import Flooding.FloodingEvaluationUnit;
 
 public class Main {
@@ -21,7 +22,7 @@ public class Main {
 		
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(100);
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(100);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
@@ -38,5 +39,8 @@ public class Main {
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
 		
+		
+		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
+		dsdvEvaluationUnit.evaluateSpeedAnalysis();
 	}
 }

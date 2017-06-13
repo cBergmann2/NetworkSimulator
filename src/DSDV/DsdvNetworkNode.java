@@ -8,22 +8,27 @@ import SimulationNetwork.PayloadMessage;
 
 public class DsdvNetworkNode extends NetworkNode{
 	
-	private static final long UPDATE_INTERVAL = 60000;	//in ms
+	private static final long UPDATE_INTERVAL = 600000;	//in ms
 	private long lastUpdate;
 	private LinkedList<ForwardTableEntry> forwardTable;
 	private long numberTransmittedUpdateMsg;
 	private LinkedList<PayloadMessage> msgWaintingBuffer;
-
+	private long sequenceNumber;
+	
+	
 	public DsdvNetworkNode(int id) {
 		super(id);
-		lastUpdate = 0;
+		lastUpdate = 600000;
 		forwardTable = new LinkedList<ForwardTableEntry>();
 		numberTransmittedUpdateMsg = 0L;
 		msgWaintingBuffer = new LinkedList<PayloadMessage>();
+		this.sequenceNumber = 0;
+		this.forwardTable.add(new ForwardTableEntry(this.id,-1, 0, this.sequenceNumber, 0L));
 	}
 	
 	protected void performeTimeDependentTasks(long executionTime){
 		if(this.lastUpdate >= UPDATE_INTERVAL){
+
 			this.sendForwardTableUpdate();
 			this.lastUpdate = 0;
 		}
@@ -50,19 +55,27 @@ public class DsdvNetworkNode extends NetworkNode{
 	public void processRecivedMessage() {
 		Message receivedMsg = inputBuffer.removeFirst();
 		if (receivedMsg instanceof UpdateMessage) {
+			//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
 			this.receiveUpdateMessage((UpdateMessage)receivedMsg);
 		}
 		else{
-			this.receivePayloadMessage((PayloadMessage)receivedMsg);	
+			if(receivedMsg instanceof PayloadMessage){
+				//this.receivePayloadMessage((PayloadMessage)receivedMsg);
+				System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payload from Node " + receivedMsg.getSenderID());
+			}
 		}
 	}
 
 	private void receivePayloadMessage(PayloadMessage msg) {
 		if(msg.getPayloadDestinationAdress() == this.id){
 			this.numberRecivedPayloadMsg++;
+			this.lastRecivedPayloadMessage = msg;
 		}
 		else{
-			this.sendMsg(msg);
+			if(msg.getDestinationID() == this.id){
+				PayloadMessage copyMsg = msg.clone();
+				this.sendMsg(copyMsg);
+			}
 		}
 	}
 
@@ -128,8 +141,13 @@ public class DsdvNetworkNode extends NetworkNode{
 	
 	public void sendMsg(Message msg){
 		
+		msg.setSenderID(this.id);
+		
 		if(msg instanceof UpdateMessage){
+			//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": send UpdateMsg");
 			this.numberTransmittedUpdateMsg++;
+			
+			msg.setDestinationID(-1);
 			
 			this.outputBuffer.add(msg);
 			

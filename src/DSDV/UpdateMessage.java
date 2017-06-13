@@ -10,6 +10,7 @@ public class UpdateMessage extends Message{
 	
 	public UpdateMessage(){
 		updates = new LinkedList<UpdateMessageEntry>();
+		this.setDataVolume(Message.MESSAGE_SIZE);
 	}
 	
 	public void addUpdate(UpdateMessageEntry update){
@@ -21,4 +22,21 @@ public class UpdateMessage extends Message{
 		return this.updates;
 	}
 
+	
+	public UpdateMessage clone(){
+		UpdateMessage copy = new UpdateMessage();
+		copy.dataVolume = dataVolume;
+		copy.destinationID = destinationID;
+		copy.endTransmissionTime = endTransmissionTime;
+		copy.remainingTransmissionTime = remainingTransmissionTime;
+		copy.senderID = senderID;
+		copy.startTransmissionTime = startTransmissionTime;
+		copy.timeToLive = timeToLive;
+		copy.updates = new LinkedList<UpdateMessageEntry>();
+		for(UpdateMessageEntry entry: updates){
+			copy.updates.add(new UpdateMessageEntry(entry.getDestination(), entry.getMetric(), entry.getSequenceNumber()));
+		}
+		
+		return copy;
+	}
 }
