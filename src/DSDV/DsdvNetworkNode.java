@@ -11,11 +11,15 @@ public class DsdvNetworkNode extends NetworkNode{
 	private static final long UPDATE_INTERVAL = 60000;	//in ms
 	private long lastUpdate;
 	private LinkedList<ForwardTableEntry> forwardTable;
+	private long numberTransmittedUpdateMsg;
+	private LinkedList<PayloadMessage> msgWaintingBuffer;
 
 	public DsdvNetworkNode(int id) {
 		super(id);
 		lastUpdate = 0;
 		forwardTable = new LinkedList<ForwardTableEntry>();
+		numberTransmittedUpdateMsg = 0L;
+		msgWaintingBuffer = new LinkedList<PayloadMessage>();
 	}
 	
 	protected void performeTimeDependentTasks(long executionTime){
@@ -76,12 +80,14 @@ public class DsdvNetworkNode extends NetworkNode{
 					tableEntry.setSequenceNumber(updateMessageEntry.getSequenceNumber());
 					tableEntry.setNextHop(senderID);
 					tableEntry.setMetric(updateMessageEntry.getMetric() +1);
+					findMessageToSend(updateMessageEntry.getDestination(), updateMessageEntry.getMetric());
 				}
 				else{
 					if((tableEntry.getSequenceNumber() == updateMessageEntry.getSequenceNumber()) && 
 							(tableEntry.getMetric() < updateMessageEntry.getMetric())){
 						tableEntry.setNextHop(senderID);
 						tableEntry.setMetric(updateMessageEntry.getMetric() +1);
+						findMessageToSend(updateMessageEntry.getDestination(), updateMessageEntry.getMetric());
 					}		
 				}	
 				return;
@@ -92,12 +98,62 @@ public class DsdvNetworkNode extends NetworkNode{
 		ForwardTableEntry tableEntry = new ForwardTableEntry(updateMessageEntry.getDestination(), senderID, 
 				updateMessageEntry.getMetric(), updateMessageEntry.getSequenceNumber(), simulator.getNetworkLifetime());
 		this.forwardTable.add(tableEntry);
+		findMessageToSend(updateMessageEntry.getDestination(), updateMessageEntry.getMetric());
+	}
+	
+	private void findMessageToSend(int destinationID, int metric){
+		
+		LinkedList<PayloadMessage> msgToSend = new LinkedList<PayloadMessage>();
+		
+		if(metric < Integer.MAX_VALUE){
+			for(PayloadMessage msg: this.msgWaintingBuffer){
+				if(msg.getPayloadDestinationAdress() == destinationID){
+					msgToSend.add(msg);
+				}
+			}
+			
+			for(PayloadMessage msg: msgToSend){
+				this.msgWaintingBuffer.remove(msg);
+				this.sendMsg(msg);
+			}
+			
+		}
 	}
 	
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
-		// TODO Auto-generated method stub
+		this.sendMsg(tmpMsg);
 		
+	}
+	
+	public void sendMsg(Message msg){
+		
+		if(msg instanceof UpdateMessage){
+			this.numberTransmittedUpdateMsg++;
+			
+			this.outputBuffer.add(msg);
+			
+		}
+		else{
+			for(ForwardTableEntry entry: forwardTable){
+				if((entry.getDestination() == ((PayloadMessage)msg).getPayloadDestinationAdress()) 
+						&& (entry.getMetric() < Integer.MAX_VALUE)){
+					
+					msg.setDestinationID(entry.getNextHop());
+					
+					this.outputBuffer.add(msg);
+					this.numberTransmittedPayloadMsg++;
+					
+					return;
+				}
+			}
+			//No Route for destination available
+			msgWaintingBuffer.add((PayloadMessage) msg);
+		}	
+	}
+
+	public long getNumberTransmittedUpdateMsg() {
+		return numberTransmittedUpdateMsg;
 	}
 
 }
