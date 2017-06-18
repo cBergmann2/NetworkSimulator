@@ -2,7 +2,7 @@ package DSDV;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 
@@ -53,7 +53,7 @@ public class DsdvNetworkNode extends NetworkNode{
 
 	@Override
 	public void processRecivedMessage() {
-		Message receivedMsg = inputBuffer.removeFirst();
+		Layer3Message receivedMsg = inputBuffer.removeFirst();
 		if (receivedMsg instanceof UpdateMessage) {
 			//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
 			this.receiveUpdateMessage((UpdateMessage)receivedMsg);
@@ -139,7 +139,7 @@ public class DsdvNetworkNode extends NetworkNode{
 		
 	}
 	
-	public void sendMsg(Message msg){
+	public void sendMsg(Layer3Message msg){
 		
 		msg.setSenderID(this.id);
 		

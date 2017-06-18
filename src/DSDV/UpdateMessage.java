@@ -2,20 +2,20 @@ package DSDV;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 
-public class UpdateMessage extends Message{
+public class UpdateMessage extends Layer3Message{
 	
 	LinkedList<UpdateMessageEntry> updates;
 	
 	public UpdateMessage(){
 		updates = new LinkedList<UpdateMessageEntry>();
-		this.setDataVolume(Message.MESSAGE_SIZE);
+		this.setDataVolume(Layer3Message.MESSAGE_SIZE);
 	}
 	
 	public void addUpdate(UpdateMessageEntry update){
 		updates.add(update);
-		this.setDataVolume(Message.MESSAGE_SIZE + updates.size()*UpdateMessageEntry.SIZE);
+		this.setDataVolume(Layer3Message.MESSAGE_SIZE + updates.size()*UpdateMessageEntry.SIZE);
 	}
 	
 	public LinkedList<UpdateMessageEntry> getUpdates(){

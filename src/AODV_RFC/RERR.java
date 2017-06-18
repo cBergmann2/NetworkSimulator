@@ -2,9 +2,9 @@ package AODV_RFC;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 
-public class RERR extends Message{
+public class RERR extends Layer3Message{
 
 	private int Type;
 	private int N;

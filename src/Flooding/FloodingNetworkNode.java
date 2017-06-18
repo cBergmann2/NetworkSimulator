@@ -1,7 +1,7 @@
 package Flooding;
 
 import java.util.LinkedList;
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 
@@ -39,7 +39,7 @@ public class FloodingNetworkNode extends NetworkNode{
 
 	@Override
 	public void processRecivedMessage() {
-		Message recivedMsg = inputBuffer.removeFirst();
+		Layer3Message recivedMsg = inputBuffer.removeFirst();
 		if(recivedMsg instanceof PayloadMessageWithRoute){
 			//System.out.println("Node " + this.id + ": recive msg from node " + recivedMsg.getSenderID() + ", transmission time: " + (simulator.getNetworkLifetime() - recivedMsg.getStartTransmissionTime()));	
 			
@@ -118,7 +118,7 @@ public class FloodingNetworkNode extends NetworkNode{
 	}
 	
 	@Override
-	public void reciveMsg(Message msg){
+	public void reciveMsg(Layer3Message msg){
 		if(incommingMsg == null){
 			incommingMsg = msg;
 		}

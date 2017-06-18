@@ -1,6 +1,6 @@
 package SimulationNetwork;
 
-public class PayloadMessage extends Message{
+public class PayloadMessage extends Layer3Message{
 	protected int payloadDestinationAdress;
 	protected int payloadSourceAdress;
 	protected char payload[];
@@ -14,7 +14,7 @@ public class PayloadMessage extends Message{
 		if(payload != null){
 			this.payloadSize = payload.length*8;
 		}
-		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
+		this.dataVolume = this.payloadSize + Layer3Message.MESSAGE_SIZE;
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress, char dataToSend[]){
@@ -23,7 +23,7 @@ public class PayloadMessage extends Message{
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payload = dataToSend;
 		this.payloadSize = payload.length*8;
-		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
+		this.dataVolume = this.payloadSize + Layer3Message.MESSAGE_SIZE;
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress,int payloadSize){
@@ -31,7 +31,7 @@ public class PayloadMessage extends Message{
 		this.payloadSourceAdress = payloadSourceAdress;
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payloadSize = payloadSize;
-		this.dataVolume = this.payloadSize + Message.MESSAGE_SIZE;
+		this.dataVolume = this.payloadSize + Layer3Message.MESSAGE_SIZE;
 	}
 
 	

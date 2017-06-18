@@ -2,7 +2,7 @@ package AODV_RFC;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 
@@ -12,7 +12,7 @@ public class AodvNetworkNode extends NetworkNode{
 	public static final long MAX_ROUTE_LIFETIME = 10*60*1000;
 	
 	private LinkedList<RouteTableEntry> routingTable;
-	private LinkedList<Message> waitingForRouteBuffer;
+	private LinkedList<Layer3Message> waitingForRouteBuffer;
 	private LinkedList<TransmittedRREQ> transmittedRREQs;
 	private LinkedList<TransmittedRREQ> recivedRREQs;
 	private int sequenceNumber;
@@ -29,7 +29,7 @@ public class AodvNetworkNode extends NetworkNode{
 	public AodvNetworkNode(int id) {
 		super(id);
 		this.routingTable = new LinkedList<RouteTableEntry>();
-		this.waitingForRouteBuffer = new LinkedList<Message>();
+		this.waitingForRouteBuffer = new LinkedList<Layer3Message>();
 		this.transmittedRREQs = new LinkedList<TransmittedRREQ>();
 		this.recivedRREQs = new LinkedList<TransmittedRREQ>();
 		this.sequenceNumber = 1;
@@ -100,7 +100,7 @@ public class AodvNetworkNode extends NetworkNode{
 	
 	@Override
 	public void processRecivedMessage() {
-		Message recivedMsg = inputBuffer.removeFirst();
+		Layer3Message recivedMsg = inputBuffer.removeFirst();
 		if (recivedMsg instanceof RREQ) {
 			reciveRREQ((RREQ) recivedMsg);
 		} else {
@@ -328,8 +328,8 @@ public class AodvNetworkNode extends NetworkNode{
 		}
 		
 		//Search for messages that wait for a route for the destination
-		LinkedList<Message> msgForWhichRouteWasFound = new LinkedList<Message>();
-		for(Message waitingMsg: waitingForRouteBuffer){
+		LinkedList<Layer3Message> msgForWhichRouteWasFound = new LinkedList<Layer3Message>();
+		for(Layer3Message waitingMsg: waitingForRouteBuffer){
 			if(waitingMsg instanceof PayloadMessage){
 				if(((PayloadMessage)waitingMsg).getPayloadDestinationAdress() == msg.getDestination_IP_Adress()){
 					//simulator.resetTransmissionUnitFromAllNodes();
@@ -345,7 +345,7 @@ public class AodvNetworkNode extends NetworkNode{
 			}
 		}
 		//Delete Msg from waiting list
-		for(Message deleteMsg: msgForWhichRouteWasFound){
+		for(Layer3Message deleteMsg: msgForWhichRouteWasFound){
 			waitingForRouteBuffer.remove(deleteMsg);
 		}
 	}
@@ -382,7 +382,7 @@ public class AodvNetworkNode extends NetworkNode{
 	
 
 	@Override
-	public void sendMsg(Message msg) {
+	public void sendMsg(Layer3Message msg) {
 		
 			if(msg instanceof RREP){
 				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": send RREP. DestinationNode: " + msg.getDestinationID());
@@ -416,7 +416,7 @@ public class AodvNetworkNode extends NetworkNode{
 				}else{
 					//check if Route Discovery process is already started
 					boolean routeDiscoveryProcessStarted = false;
-					for(Message tmpMsg: waitingForRouteBuffer){
+					for(Layer3Message tmpMsg: waitingForRouteBuffer){
 						if(tmpMsg instanceof PayloadMessage){
 							if(((PayloadMessage)tmpMsg).getPayloadDestinationAdress() == ((PayloadMessage)msg).getPayloadDestinationAdress()){
 								routeDiscoveryProcessStarted = true;
@@ -494,7 +494,7 @@ public class AodvNetworkNode extends NetworkNode{
 		
 	}
 	
-	public void reciveMsg(Message msg){
+	public void reciveMsg(Layer3Message msg){
 		//currentlyTransmittingAMessage = true;
 		if(incommingMsg == null){
 			incommingMsg = msg;

@@ -19,11 +19,11 @@ public abstract class NetworkNode {
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
 	protected long elapsedTimeSinceLastReception; // Time in ms
-	protected Message incommingMsg;
-	protected Message outgoingMsg;
+	protected Layer3Message incommingMsg;
+	protected Layer3Message outgoingMsg;
 	protected boolean nodeAlive;
-	protected LinkedList<Message> inputBuffer;
-	protected LinkedList<Message> outputBuffer;
+	protected LinkedList<Layer3Message> inputBuffer;
+	protected LinkedList<Layer3Message> outputBuffer;
 	
 	//Envergy Variables
 	protected long availableEnery; // Available energy in nAs
@@ -51,6 +51,9 @@ public abstract class NetworkNode {
 	protected boolean batteryPowered;
 	
 	protected NodeState nodeState;
+	
+	protected boolean recivedOneNotACKasConfirmation;
+	private int numberDetectedTransmissions;
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -58,8 +61,8 @@ public abstract class NetworkNode {
 		incommingMsg = null;
 		outgoingMsg = null;
 		nodeAlive = true;
-		inputBuffer = new LinkedList<Message>();
-		outputBuffer = new LinkedList<Message>();
+		inputBuffer = new LinkedList<Layer3Message>();
+		outputBuffer = new LinkedList<Layer3Message>();
 		// availableEnery = 4600L*3600L*1000L*1000L;
 		availableEnery = 5*NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
 		idleTime = 0L;
@@ -79,21 +82,33 @@ public abstract class NetworkNode {
 		batteryPowered = true;
 		
 		nodeState = NodeState.IDLE;
+		
+		numberDetectedTransmissions = 0;
 	}
 
+	/**
+	 * Perform network node for executionTime
+	 * 
+	 * @param executionTime
+	 *            Time the network node has to be executed
+	 *            
+	 * @return Return true, if the simulation was possible with the given parameter. Otherwise false.
+	 */
 	public boolean performAction(long executionTime){
 		
 		switch(this.nodeState){
 		case IDLE:
 			if(this.incommingMsg != null){
-				if(this.performeReceivingProcess() == false){
+				
+				if(this.performeReceivingProcess(this.incommingMsg) == false){
 					//receiving process is not completed
 					this.nodeState = NodeState.RECEIVE;
 				}
+				
 			}
 			if(this.outputBuffer.size() > 0 ){
 				if(isMediumAccessAllowed()){
-					if(this.peroformeTransmitProcess() == false){
+					if(this.peroformeTransmitProcess(outputBuffer.getFirst()) == false){
 						//transmit process is not completed
 						this.nodeState = NodeState.TRANSMIT;
 					}
@@ -109,6 +124,154 @@ public abstract class NetworkNode {
 		return true;
 	}
 	
+	protected boolean peroformeTransmitProcess(Layer3Message msg){
+		long timeInCurrentState = simulator.getNetworkLifetime() - msg.getStartTimeOfCurrentState();
+		
+		switch(msg.getMsgState()){
+		case TRANSMIT_START_SIGNAL:
+			if(timeInCurrentState >= (Message.TRANSMISSION_TIME_START_SIGNAL / 1000000)){
+				this.recivedOneNotACKasConfirmation = false;
+				msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+				msg.setMsgState(MessageState.WAITING_FOR_ACK_START_SIGNAL);
+			}
+			break;
+		case WAITING_FOR_ACK_START_SIGNAL:
+			if(timeInCurrentState >= Message.WAITING_TIME_FOR_ACK_START_SIGNAL){
+				if(recivedOneNotACKasConfirmation){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_NOTACK_TO_SINKS);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_ACK_TO_SINKS);
+				}
+			}
+			break;
+		case TRANSMIT_NOTACK_TO_SINKS:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_1_BIT/1000000){
+				msg.setMsgIsCompletelyTransferred(false);
+				return true;
+			}
+			break;
+		case TRANSMIT_ACK_TO_SINKS:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_0_BIT/1000000){
+				if(msg.getTransmittedDataVolume() < msg.getDataVolume()){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_32_BIT_BLOCK);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_STOP_SIGNAL);
+				}
+			}
+			break;
+		case TRANSMIT_32_BIT_BLOCK:
+			if(timeInCurrentState >= (Message.TRANSMISSION_TIME_PER_BIT * (32+2)/1000000)){
+				msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+				msg.addTransmittedDataVolume(32);
+				msg.setMsgState(MessageState.WAITING_FOR_ACK);
+			}
+			 break;
+		case WAITING_FOR_ACK:
+			if(timeInCurrentState >= Message.WAITING_TIME_FOR_ACK){
+				if(recivedOneNotACKasConfirmation){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_NOTACK_TO_SINKS);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_ACK_TO_SINKS);
+				}
+			}
+			break;
+		case TRANSMIT_STOP_SIGNAL:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_STOP_SIGNAL/1000000){
+				msg.setMsgIsCompletelyTransferred(true);
+				return true;
+			}
+			break;
+		}
+		return false;
+	}
+	
+	protected boolean performeReceivingProcess(Layer3Message msg){
+		long timeInCurrentState = simulator.getNetworkLifetime() - msg.getStartTimeOfCurrentState();
+		
+		switch(msg.getMsgState()){
+		case TRANSMIT_START_SIGNAL:
+			if(timeInCurrentState >= (Message.TRANSMISSION_TIME_START_SIGNAL / 1000000)){
+				//transmit ACK 
+				if(this.numberDetectedTransmissions == 1){
+					for (NetworkNode node : connectedNodes) {
+						node.reciveMsg(new Acknowledge());
+					}
+				}
+				else{
+					for (NetworkNode node : connectedNodes) {
+						node.reciveMsg(new NotAcknowledge());
+					}
+				}
+				
+			}
+			break;
+		case WAITING_FOR_ACK_START_SIGNAL:
+			if(timeInCurrentState >= Message.WAITING_TIME_FOR_ACK_START_SIGNAL){
+				if(recivedOneNotACKasConfirmation){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_NOTACK_TO_SINKS);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_ACK_TO_SINKS);
+				}
+			}
+			break;
+		case TRANSMIT_NOTACK_TO_SINKS:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_1_BIT/1000000){
+				msg.setMsgIsCompletelyTransferred(false);
+				return true;
+			}
+			break;
+		case TRANSMIT_ACK_TO_SINKS:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_0_BIT/1000000){
+				if(msg.getTransmittedDataVolume() < msg.getDataVolume()){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_32_BIT_BLOCK);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_STOP_SIGNAL);
+				}
+			}
+			break;
+		case TRANSMIT_32_BIT_BLOCK:
+			if(timeInCurrentState >= (Message.TRANSMISSION_TIME_PER_BIT * (32+2)/1000000)){
+				msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+				msg.addTransmittedDataVolume(32);
+				msg.setMsgState(MessageState.WAITING_FOR_ACK);
+			}
+			 break;
+		case WAITING_FOR_ACK:
+			if(timeInCurrentState >= Message.WAITING_TIME_FOR_ACK){
+				if(recivedOneNotACKasConfirmation){
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_NOTACK_TO_SINKS);
+				}
+				else{
+					msg.setStartTimeOfCurrentState(simulator.getNetworkLifetime());
+					msg.setMsgState(MessageState.TRANSMIT_ACK_TO_SINKS);
+				}
+			}
+			break;
+		case TRANSMIT_STOP_SIGNAL:
+			if(timeInCurrentState >= Message.TRANSMISSION_TIME_STOP_SIGNAL/1000000){
+				msg.setMsgIsCompletelyTransferred(true);
+				return true;
+			}
+			break;
+		}
+		return false;
+	}
 	
 	/**
 	 * Perform network node for executionTime
@@ -250,17 +413,25 @@ public abstract class NetworkNode {
 	}
 
 	public void reciveMsg(Message msg) {
-		if (incommingMsg == null) {
-			incommingMsg = msg;
-		} else {
-			// collison
-			// System.out.println("Collision detected at Node " + this.id);
-			graph.addCollision();
+		if(msg instanceof Layer3Message){
+			if (incommingMsg == null) {
+				incommingMsg = (Layer3Message)msg;
+			} else {
+				// collison
+				// System.out.println("Collision detected at Node " + this.id);
+				graph.addCollision();
+			}
+		}
+		else{
+			if(msg instanceof NotAcknowledge){
+				this.recivedOneNotACKasConfirmation = true;
+			}
 		}
 	}
 
-	public void sendMsg(Message msg){
+	public void sendMsg(Layer3Message msg){
 		this.outputBuffer.add(msg);
+		
 	}
 
 	public void addNeighbor(NetworkNode neighbor) {
@@ -384,7 +555,7 @@ public abstract class NetworkNode {
 		return outputBuffer.size();
 	}
 
-	public Message getOutgoingMessage() {
+	public Layer3Message getOutgoingMessage() {
 		if (outgoingMsg != null) {
 			return outgoingMsg.clone();
 		}
@@ -396,7 +567,7 @@ public abstract class NetworkNode {
 	 * 
 	 * @return
 	 */
-	public Message getIncomingMessage() {
+	public Layer3Message getIncomingMessage() {
 		if (incommingMsg != null) {
 			return incommingMsg.clone();
 		}

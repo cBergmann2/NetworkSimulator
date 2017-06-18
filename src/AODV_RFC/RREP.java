@@ -1,8 +1,8 @@
 package AODV_RFC;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 
-public class RREP extends Message{
+public class RREP extends Layer3Message{
 	private int Type;
 	private int R;
 	private int A;

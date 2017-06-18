@@ -1,8 +1,8 @@
 package AODV_RFC;
 
-import SimulationNetwork.Message;
+import SimulationNetwork.Layer3Message;
 
-public class RREQ extends Message{
+public class RREQ extends Layer3Message{
 
 	private int Type;
 	private int J;
