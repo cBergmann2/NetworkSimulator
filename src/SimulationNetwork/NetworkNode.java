@@ -49,6 +49,8 @@ public abstract class NetworkNode {
 	protected int destinationNode;
 	
 	protected boolean batteryPowered;
+	
+	protected NodeState nodeState;
 
 	public NetworkNode(int id) {
 		this.id = id;
@@ -75,8 +77,39 @@ public abstract class NetworkNode {
 		destinationNode = this.id;
 		
 		batteryPowered = true;
+		
+		nodeState = NodeState.IDLE;
 	}
 
+	public boolean performAction(long executionTime){
+		
+		switch(this.nodeState){
+		case IDLE:
+			if(this.incommingMsg != null){
+				if(this.performeReceivingProcess() == false){
+					//receiving process is not completed
+					this.nodeState = NodeState.RECEIVE;
+				}
+			}
+			if(this.outputBuffer.size() > 0 ){
+				if(isMediumAccessAllowed()){
+					if(this.peroformeTransmitProcess() == false){
+						//transmit process is not completed
+						this.nodeState = NodeState.TRANSMIT;
+					}
+				}
+			}
+			break;
+		case TRANSMIT:
+			break;
+		case RECEIVE:
+			break;
+		}
+		
+		return true;
+	}
+	
+	
 	/**
 	 * Perform network node for executionTime
 	 * 
@@ -85,6 +118,7 @@ public abstract class NetworkNode {
 	 *            
 	 * @return Return true, if the simulation was possible with the given parameter. Otherwise false.
 	 */
+	/*
 	public boolean performAction(long executionTime) {
 		if((executionTime < 1) || (executionTime > 2)){
 			//It is only possible to use 1 or 2 ms steps
@@ -197,6 +231,7 @@ public abstract class NetworkNode {
 		}
 		return true;
 	}
+	*/
 
 	protected abstract void performeTimeDependentTasks(long executionTime);
 
