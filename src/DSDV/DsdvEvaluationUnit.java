@@ -16,7 +16,7 @@ import Simulator.EvaluationUnit;
 public class DsdvEvaluationUnit extends EvaluationUnit{
 
 	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {3, 4, 5, 6, 7};
+	private static final int networkWidth[] = {2};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
