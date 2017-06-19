@@ -199,7 +199,9 @@ public abstract class NetworkNode {
 						if (isMediumAccessAllowed()) {
 							// Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
-							outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
+							if((outgoingMsg instanceof PayloadMessage) && ((PayloadMessage)outgoingMsg).getPayloadSourceAdress() == this.id){
+								outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());								
+							}
 							outgoingMsg.setRemainingTransmissionTime(Message.calculateTransmissionTime(outgoingMsg.getDataVolume()));
 							//System.out.println(simulator.getNetworkLifetime() + ": Node " + id + " start sending message to destination " + outgoingMsg.getDestinationID());
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;

@@ -60,8 +60,8 @@ public class DsdvNetworkNode extends NetworkNode{
 		}
 		else{
 			if(receivedMsg instanceof PayloadMessage){
-				//this.receivePayloadMessage((PayloadMessage)receivedMsg);
-				System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payload from Node " + receivedMsg.getSenderID());
+				//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payload from Node " + receivedMsg.getSenderID());
+				this.receivePayloadMessage((PayloadMessage)receivedMsg);
 			}
 		}
 	}
@@ -69,6 +69,7 @@ public class DsdvNetworkNode extends NetworkNode{
 	private void receivePayloadMessage(PayloadMessage msg) {
 		if(msg.getPayloadDestinationAdress() == this.id){
 			this.numberRecivedPayloadMsg++;
+			msg.setEndTransmissionTime(simulator.getNetworkLifetime());
 			this.lastRecivedPayloadMessage = msg;
 		}
 		else{
@@ -135,6 +136,7 @@ public class DsdvNetworkNode extends NetworkNode{
 	
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
+		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		this.sendMsg(tmpMsg);
 		
 	}

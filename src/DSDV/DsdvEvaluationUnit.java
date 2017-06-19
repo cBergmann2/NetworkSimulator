@@ -16,7 +16,7 @@ import Simulator.EvaluationUnit;
 public class DsdvEvaluationUnit extends EvaluationUnit{
 
 	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {2};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -43,9 +43,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit{
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
-
-
-			
+			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0 + " SinkNode: 1");
 			transmissionTime_min[0][i] = numberOfNodes[i];
 			transmissionTime_min[1][i] = simulator.speedAnalysis(networkWidth[i], 0, 1)/1000;
 			transmissionTime_min_collisions[0][i] = numberOfNodes[i];
@@ -54,16 +52,19 @@ public class DsdvEvaluationUnit extends EvaluationUnit{
 			transmissionTime_msg_min[1][i] = simulator.getMsgTransmissionTime()/1000; 
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
+			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0 + " SinkNode: " + (networkWidth[i]-1));
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2)/1000;
+			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0, networkWidth[i]-1)/1000;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = simulator.getCollisions();
 			transmissionTime_msg_med[0][i] = numberOfNodes[i];
 			transmissionTime_msg_med[1][i] = simulator.getMsgTransmissionTime()/1000; 
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 	
+			
+			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0 + " SinkNode: " + (int)(Math.pow(networkWidth[i], 2) - 1));
 			transmissionTime_max[0][i] = numberOfNodes[i];
-			transmissionTime_max[1][i] = simulator.speedAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
+			transmissionTime_max[1][i] = simulator.speedAnalysis(networkWidth[i], 0,
 					(int) Math.pow(networkWidth[i], 2) - 1) /1000;
 			transmissionTime_max_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_max_collisions[1][i] = simulator.getCollisions();
