@@ -60,7 +60,7 @@ public class DsdvNetworkNode extends NetworkNode{
 		}
 		else{
 			if(receivedMsg instanceof PayloadMessage){
-				//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payload from Node " + receivedMsg.getSenderID());
+				System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payloadmsg from Node " + receivedMsg.getSenderID() + ". Source: " + ((PayloadMessage)receivedMsg).getPayloadSourceAdress() + " Sink: " + ((PayloadMessage)receivedMsg).getPayloadDestinationAdress() + " NextHop: "+ receivedMsg.getDestinationID());
 				this.receivePayloadMessage((PayloadMessage)receivedMsg);
 			}
 		}
@@ -98,7 +98,7 @@ public class DsdvNetworkNode extends NetworkNode{
 				}
 				else{
 					if((tableEntry.getSequenceNumber() == updateMessageEntry.getSequenceNumber()) && 
-							(tableEntry.getMetric() < updateMessageEntry.getMetric())){
+							(tableEntry.getMetric() > (updateMessageEntry.getMetric() +1))){
 						tableEntry.setNextHop(senderID);
 						tableEntry.setMetric(updateMessageEntry.getMetric() +1);
 						findMessageToSend(updateMessageEntry.getDestination(), updateMessageEntry.getMetric());
@@ -110,7 +110,7 @@ public class DsdvNetworkNode extends NetworkNode{
 		
 		//Forwardtable does not contailn destiantion from updateMessageEntry
 		ForwardTableEntry tableEntry = new ForwardTableEntry(updateMessageEntry.getDestination(), senderID, 
-				updateMessageEntry.getMetric(), updateMessageEntry.getSequenceNumber(), simulator.getNetworkLifetime());
+				updateMessageEntry.getMetric()+1, updateMessageEntry.getSequenceNumber(), simulator.getNetworkLifetime());
 		this.forwardTable.add(tableEntry);
 		findMessageToSend(updateMessageEntry.getDestination(), updateMessageEntry.getMetric());
 	}
@@ -160,6 +160,10 @@ public class DsdvNetworkNode extends NetworkNode{
 						&& (entry.getMetric() < Integer.MAX_VALUE)){
 					
 					msg.setDestinationID(entry.getNextHop());
+					
+					if(((PayloadMessage)msg).getPayloadSourceAdress() == this.id){
+						System.out.println("Node: " +this.id + " send msg to node " + ((PayloadMessage)msg).getPayloadDestinationAdress() + ". Distance: " + entry.getMetric());
+					}
 					
 					this.outputBuffer.add(msg);
 					this.numberTransmittedPayloadMsg++;

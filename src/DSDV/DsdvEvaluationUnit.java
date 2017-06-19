@@ -16,7 +16,7 @@ import Simulator.EvaluationUnit;
 public class DsdvEvaluationUnit extends EvaluationUnit{
 
 	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -43,6 +43,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit{
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
+			
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0 + " SinkNode: 1");
 			transmissionTime_min[0][i] = numberOfNodes[i];
 			transmissionTime_min[1][i] = simulator.speedAnalysis(networkWidth[i], 0, 1)/1000;
