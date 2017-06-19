@@ -24,6 +24,8 @@ public abstract class NetworkGraph {
 						nodes[i].addNeighbor(nodes[i + 1]);
 						nodes[i].addNeighbor(nodes[networkWidth]);
 						nodes[i].addNeighbor(nodes[networkWidth + 1]);
+						nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
+						nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
 					}
 
 					if (knotenID == this.networkWidth - 1) { // Eckknoten oben
@@ -31,6 +33,8 @@ public abstract class NetworkGraph {
 						nodes[i].addNeighbor(nodes[i - 1]);
 						nodes[i].addNeighbor(nodes[2 * networkWidth - 1]);
 						nodes[i].addNeighbor(nodes[2 * networkWidth - 2]);
+						nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+						nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 					}
 
 					if (knotenID == networkWidth * (networkWidth - 1)) { // Eckknoten
@@ -39,6 +43,8 @@ public abstract class NetworkGraph {
 						nodes[i].addNeighbor(nodes[i + 1]);
 						nodes[i].addNeighbor(nodes[i - networkWidth]);
 						nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
+						nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+						nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
 					}
 
 					if (knotenID == networkWidth * networkWidth - 1) { // Eckknoten
@@ -47,6 +53,8 @@ public abstract class NetworkGraph {
 						nodes[i].addNeighbor(nodes[i - 1]);
 						nodes[i].addNeighbor(nodes[i - networkWidth]);
 						nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
+						nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+						nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 					}
 				} else {
 					if (knotenID < networkWidth) { // Randknoten oben
@@ -55,6 +63,9 @@ public abstract class NetworkGraph {
 						nodes[i].addNeighbor(nodes[i + networkWidth]);
 						nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
 						nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
+						nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
+						nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+						nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 
 					} else {
 						if (knotenID > networkWidth * (networkWidth - 1)) { // Randknoten
@@ -64,6 +75,9 @@ public abstract class NetworkGraph {
 							nodes[i].addNeighbor(nodes[i - networkWidth]);
 							nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
 							nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
+							nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+							nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
+							nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 						} else {
 							if (knotenID % networkWidth == 0) { // Randknoten
 								// links
@@ -72,6 +86,9 @@ public abstract class NetworkGraph {
 								nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
 								nodes[i].addNeighbor(nodes[i + networkWidth]);
 								nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
+								nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+								nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
+								nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
 							} else {
 								if ((knotenID + 1) % networkWidth == 0) { // Randknoten
 									// rechts
@@ -80,6 +97,9 @@ public abstract class NetworkGraph {
 									nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
 									nodes[i].addNeighbor(nodes[i + networkWidth]);
 									nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
+									nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+									nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+									nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 								} else { // Knoten in der Mitte des Feldes
 									nodes[i].addNeighbor(nodes[i - 1]);
 									nodes[i].addNeighbor(nodes[i + 1]);
@@ -89,6 +109,11 @@ public abstract class NetworkGraph {
 									nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
 									nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
 									nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
+									nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+									nodes[i].addDestinationIrReceiver(nodes[i+1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
+									nodes[i].addDestinationIrReceiver(nodes[i+networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+									nodes[i].addDestinationIrReceiver(nodes[i-1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
+									
 								}
 							}
 						}

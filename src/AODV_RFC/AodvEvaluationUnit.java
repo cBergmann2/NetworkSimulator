@@ -178,7 +178,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			maxDistance[1][i] = aodvSimulator.energyCostAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
 					(int) Math.pow(networkWidth[i], 2) - 1);
 		
-			/*
+			
 			maxDistance_collisions[0][i] = numberOfNodes[i];
 			maxDistance_collisions[1][i] = aodvSimulator.getCollisions();
 			maxDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
@@ -221,7 +221,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ networkLifetime + " ms"
 							+ " umgesetzte Energie: " + medDistance[1][i]);
-			*/
+			
 
 		}
 
