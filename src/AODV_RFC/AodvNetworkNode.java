@@ -2,6 +2,7 @@ package AODV_RFC;
 
 import java.util.LinkedList;
 
+import SimulationNetwork.CollisionMessage;
 import SimulationNetwork.Message;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
@@ -100,25 +101,33 @@ public class AodvNetworkNode extends NetworkNode{
 	
 	@Override
 	public void processRecivedMessage() {
-		Message recivedMsg = inputBuffer.removeFirst();
-		if (recivedMsg instanceof RREQ) {
-			reciveRREQ((RREQ) recivedMsg);
-		} else {
-			if (recivedMsg instanceof RREP) {
-				reciveRREP((RREP) recivedMsg);
-			}
-			else{
-				if(recivedMsg instanceof RREP_ACK){
-					reciveRREP_ACK((RREP_ACK)recivedMsg);
+		
+		while(inputBuffer.size() > 0){
+			Message recivedMsg = inputBuffer.removeFirst();
+			if (recivedMsg instanceof RREQ) {
+				reciveRREQ((RREQ) recivedMsg);
+			} else {
+				if (recivedMsg instanceof RREP) {
+					reciveRREP((RREP) recivedMsg);
 				}
 				else{
-					if(recivedMsg instanceof RERR){
-						reciveRERR((RERR)recivedMsg);
+					if(recivedMsg instanceof RREP_ACK){
+						reciveRREP_ACK((RREP_ACK)recivedMsg);
 					}
 					else{
-						if(recivedMsg instanceof PayloadMessage){
-							recivePayloadMessage((PayloadMessage) recivedMsg);
-						}						
+						if(recivedMsg instanceof RERR){
+							reciveRERR((RERR)recivedMsg);
+						}
+						else{
+							if(recivedMsg instanceof PayloadMessage){
+								recivePayloadMessage((PayloadMessage) recivedMsg);
+							}
+							else{
+								if(recivedMsg instanceof CollisionMessage){
+									//
+								}
+							}
+						}
 					}
 				}
 			}

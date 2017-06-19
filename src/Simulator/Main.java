@@ -21,11 +21,11 @@ public class Main {
 		
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(100);
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(100);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
-		//aodvEvaluationUnit.evaluateCostAnalysis();
+		aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);

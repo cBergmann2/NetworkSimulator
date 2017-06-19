@@ -18,6 +18,7 @@ public abstract class NetworkNode {
 	
 	protected int id;
 	protected LinkedList<NetworkNode> connectedNodes;
+	protected LinkedList<IR_Receiver> destinationIrReceiver;
 	protected long elapsedTimeSinceLastReception; // Time in ms
 	protected Message incommingMsg;
 	protected Message outgoingMsg;
@@ -49,10 +50,13 @@ public abstract class NetworkNode {
 	protected int destinationNode;
 	
 	protected boolean batteryPowered;
+	
+	protected IR_Receiver irReceiver[];
 
 	public NetworkNode(int id) {
 		this.id = id;
 		connectedNodes = new LinkedList<NetworkNode>();
+		destinationIrReceiver = new LinkedList<IR_Receiver>();
 		incommingMsg = null;
 		outgoingMsg = null;
 		nodeAlive = true;
@@ -75,6 +79,11 @@ public abstract class NetworkNode {
 		destinationNode = this.id;
 		
 		batteryPowered = true;
+		
+		irReceiver = new IR_Receiver[8];
+		for(int i=0; i<irReceiver.length; i++){
+			irReceiver[i] = new IR_Receiver(i);
+		}
 	}
 
 	/**
@@ -86,16 +95,46 @@ public abstract class NetworkNode {
 	 * @return Return true, if the simulation was possible with the given parameter. Otherwise false.
 	 */
 	public boolean performAction(long executionTime) {
+		int numberOfIncommingMsg;
+
 		if((executionTime < 1) || (executionTime > 2)){
 			//It is only possible to use 1 or 2 ms steps
 			return false;
 		}
 		if (nodeAlive) {
 
+			numberOfIncommingMsg = 0;
+			for(IR_Receiver receiver: irReceiver){
+				if(receiver.isRecevingAMessage()){
+					numberOfIncommingMsg++;
+				}
+			}
+			
 			performeTimeDependentTasks(executionTime);
+			
 
-			if (incommingMsg != null) {
-				// Currently resiving a message
+			if (numberOfIncommingMsg > 0) {
+				// Currently resiving at least one message
+				
+				for(IR_Receiver receiver: irReceiver){
+					if(receiver.isMessageReceived()){
+						this.inputBuffer.add(receiver.getReceivedMessage());
+					}
+					else{
+						receiver.performeReceivingProcess(executionTime);
+					}
+				}
+				
+				if(this.inputBuffer.size() > 0){
+					processRecivedMessage();
+				}
+				
+				elapsedTimeSinceLastReception = 0;
+				availableEnery -= RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+				consumedEnergyInReciveMode += RECIVE_MODE_POWER_CONSUMPTION * executionTime;
+				reciveTime += executionTime;
+				
+				/*
 				if (incommingMsg.getRemainingTransmissionTime() <= 0) {
 					// Transmission complete
 					inputBuffer.add(incommingMsg);
@@ -123,6 +162,7 @@ public abstract class NetworkNode {
 					incommingMsg.decreaseRemainingTransmissionTime(1000000L * executionTime);
 					elapsedTimeSinceLastReception = 0;
 				}
+				*/
 			} else {
 				// No reciving process at this time
 				if (outgoingMsg != null) {
@@ -166,9 +206,16 @@ public abstract class NetworkNode {
 							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
 							transmissionTime += executionTime;
 
+							
+							/*
 							for (NetworkNode node : connectedNodes) {
 								node.reciveMsg(outgoingMsg.clone());
+							}*/
+							
+							for(IR_Receiver irReceiver:destinationIrReceiver){
+								irReceiver.receiveMessage(outgoingMsg.clone());
 							}
+							
 							
 							//System.out.println(simulator.getNetworkLifetime() + " Knoten " + this.id +": start send process, data volume: " + outgoingMsg.getDataVolume() + ", remaining transmission time: " + outgoingMsg.getRemainingTransmissionTime());
 						} else {
@@ -214,6 +261,7 @@ public abstract class NetworkNode {
 		return false;
 	}
 
+	/*
 	public void reciveMsg(Message msg) {
 		if (incommingMsg == null) {
 			incommingMsg = msg;
@@ -223,6 +271,7 @@ public abstract class NetworkNode {
 			graph.addCollision();
 		}
 	}
+	*/
 
 	public void sendMsg(Message msg){
 		this.outputBuffer.add(msg);
@@ -230,6 +279,10 @@ public abstract class NetworkNode {
 
 	public void addNeighbor(NetworkNode neighbor) {
 		connectedNodes.add(neighbor);
+	}
+	
+	public void addDestinationIrReceiver(IR_Receiver irReceiver){
+		this.destinationIrReceiver.add(irReceiver);
 	}
 
 	public int getId() {
@@ -412,5 +465,9 @@ public abstract class NetworkNode {
 
 	public void setBatteryPowered(boolean batteryPowered) {
 		this.batteryPowered = batteryPowered;
+	}
+	
+	public IR_Receiver getIrReceiver(int id){
+		return this.irReceiver[id];
 	}
 }

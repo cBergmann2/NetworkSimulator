@@ -117,6 +117,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		this.sendMessage(newMsg);
 	}
 	
+	/*
 	@Override
 	public void reciveMsg(Message msg){
 		if(incommingMsg == null){
@@ -128,6 +129,7 @@ public class FloodingNetworkNode extends NetworkNode{
 			((FloodingNetworkGraph)graph).addCollision();
 		}
 	}
+	*/
 
 	public int getNumberTransmittedMsg() {
 		return numberTransmittedMsg;
