@@ -19,8 +19,8 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 	private static final int MAX_NETWORK_WIDTH = 32;
 	
 	//private static final int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7};
+	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	private static final int networkWidth[] = {4};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;

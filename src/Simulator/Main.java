@@ -36,12 +36,13 @@ public class Main {
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(10);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
 		
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
-		dsdvEvaluationUnit.evaluateCostAnalysis();
+		//dsdvEvaluationUnit.evaluateCostAnalysis();
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
 	}
 }
