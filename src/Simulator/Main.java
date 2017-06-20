@@ -36,7 +36,7 @@ public class Main {
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(10);
-		aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
 		
 		
@@ -44,5 +44,6 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
+		dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 	}
 }

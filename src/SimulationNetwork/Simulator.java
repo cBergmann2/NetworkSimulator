@@ -415,6 +415,8 @@ public abstract class Simulator {
 			networkNodes[id].setSimulator(this);
 			networkNodes[id].setDestinationNode(destinationNode);
 		}
+		
+		networkNodes[destinationNode].setBatteryPowered(false);
 			
 		do{
 					

@@ -240,7 +240,7 @@ public class AodvSimulator extends Simulator{
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
 		
 		
-		return this.partitioningAnalysis(graph, networkWidth, transmissionPeriod, payloadSize);
+		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
 	public long getMsgTransmissionTime() {

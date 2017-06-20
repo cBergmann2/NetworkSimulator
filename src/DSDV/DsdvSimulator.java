@@ -75,6 +75,13 @@ public class DsdvSimulator extends Simulator{
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
 	}
 	
+	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
+		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
+		
+		
+		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
+	}
+	
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
 	}
