@@ -450,7 +450,7 @@ public abstract class NetworkNode {
 	}
 
 	public void resetBattery() {
-		this.availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
+		this.availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
 		consumedEnergyInIdleMode = 0L;
 		consumedEnergyInReciveMode = 0L;
 		consumedEnergyInTransmissionMode = 0L;

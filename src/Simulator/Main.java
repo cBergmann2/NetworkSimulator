@@ -41,6 +41,7 @@ public class Main {
 		
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
-		dsdvEvaluationUnit.evaluateSpeedAnalysis();
+		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
+		dsdvEvaluationUnit.evaluateCostAnalysis();
 	}
 }
