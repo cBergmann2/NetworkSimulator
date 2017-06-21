@@ -6,16 +6,16 @@ public class ForwardTableEntry {
 	private int nextHop;
 	private int metric;
 	private long sequenceNumber;
-	private long install;
+	private long installTime;
 	private int flag;
 	private int stalbeData;
 	
-	public ForwardTableEntry(int destination, int nextHop, int metric, long sequenceNumber, long install){
+	public ForwardTableEntry(int destination, int nextHop, int metric, long sequenceNumber, long installTime){
 		this.destination = destination;
 		this.nextHop = nextHop;
 		this.metric = metric;
 		this.sequenceNumber = sequenceNumber;
-		this.install = install;
+		this.installTime = installTime;
 	}
 	
 	public int getDestination() {
@@ -42,11 +42,11 @@ public class ForwardTableEntry {
 	public void setSequenceNumber(long sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 	}
-	public long getInstall() {
-		return install;
+	public long getInstallTime() {
+		return installTime;
 	}
-	public void setInstall(long install) {
-		this.install = install;
+	public void setInstallTime(long installTime) {
+		this.installTime = installTime;
 	}
 	public int getFlag() {
 		return flag;

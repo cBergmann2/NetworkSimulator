@@ -74,7 +74,8 @@ public abstract class NetworkNode {
 		elapsedTimeSinceLastGenerationOfTransmission = 0L;
 		numberRecivedPayloadMsg = 0;
 		
-		csmaWaitingTime = 10 + this.id * 50 ;
+		//csmaWaitingTime = 10 + this.id * 50 ;
+		csmaWaitingTime = 10;
 		
 		destinationNode = this.id;
 		

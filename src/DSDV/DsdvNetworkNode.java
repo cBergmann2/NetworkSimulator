@@ -8,7 +8,7 @@ import SimulationNetwork.PayloadMessage;
 
 public class DsdvNetworkNode extends NetworkNode{
 	
-	private static final long UPDATE_INTERVAL = 600000;	//in ms
+	private static final long UPDATE_INTERVAL = 5*60000;	//in ms
 	private long lastUpdate;
 	private LinkedList<ForwardTableEntry> forwardTable;
 	private long numberTransmittedUpdateMsg;
@@ -39,10 +39,41 @@ public class DsdvNetworkNode extends NetworkNode{
 				lastUpdate += executionTime;
 			}
 		}
+		/*
+		if(this.isNeighborTurnedOff()){
+			
+		}
+		*/
+	}
+	
+	private boolean isNeighborTurnedOff(){
+		boolean newTurnedOffNodeDetected = false;
+		
+		for(ForwardTableEntry entry: forwardTable){
+			if(entry.getMetric() == 1){
+				if(entry.getInstallTime() < simulator.getNetworkLifetime() - 3 * UPDATE_INTERVAL){
+					entry.setMetric(Integer.MAX_VALUE);
+					entry.setSequenceNumber(entry.getSequenceNumber() + 1);
+					newTurnedOffNodeDetected = true;
+				}
+			}
+		}
+		
+		return newTurnedOffNodeDetected;
 	}
 
 	private void sendForwardTableUpdate() {
 		UpdateMessage updateMessage = new UpdateMessage();
+
+		//update old table entry for this node
+		for(ForwardTableEntry entry: forwardTable){
+			if(entry.getDestination() == this.id){
+				//increment sequenceNumber of this node by 2
+				entry.setSequenceNumber(entry.getSequenceNumber() +2);
+				break;
+			}
+		}
+		
 		
 		for(ForwardTableEntry entry: forwardTable){
 			UpdateMessageEntry updateEntry = new UpdateMessageEntry(entry.getDestination(), entry.getMetric(),entry.getSequenceNumber());
@@ -59,14 +90,14 @@ public class DsdvNetworkNode extends NetworkNode{
 	public void processRecivedMessage() {
 		Message receivedMsg = inputBuffer.removeFirst();
 		if (receivedMsg instanceof UpdateMessage) {
-			//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
+			System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
 			this.receiveUpdateMessage((UpdateMessage)receivedMsg);
 		}
 		else{
 			if(receivedMsg instanceof PayloadMessage){
 				//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payloadmsg from Node " + receivedMsg.getSenderID() + ". Source: " + ((PayloadMessage)receivedMsg).getPayloadSourceAdress() + " Sink: " + ((PayloadMessage)receivedMsg).getPayloadDestinationAdress() + " NextHop: "+ receivedMsg.getDestinationID()
 				if(((PayloadMessage)receivedMsg).getPayloadDestinationAdress() == this.id){
-					//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payloadmsg from Node " + receivedMsg.getSenderID() + ". Source: " + ((PayloadMessage)receivedMsg).getPayloadSourceAdress() + " TransmissionTime: " + (simulator.getNetworkLifetime() - receivedMsg.getStartTransmissionTime()));
+					System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive Payloadmsg from Node " + receivedMsg.getSenderID() + ". Source: " + ((PayloadMessage)receivedMsg).getPayloadSourceAdress() + " TransmissionTime: " + (simulator.getNetworkLifetime() - receivedMsg.getStartTransmissionTime()));
 				}
 				this.receivePayloadMessage((PayloadMessage)receivedMsg);
 			}
@@ -169,10 +200,10 @@ public class DsdvNetworkNode extends NetworkNode{
 					msg.setDestinationID(entry.getNextHop());
 					
 					if(((PayloadMessage)msg).getPayloadSourceAdress() == this.id){
-						//System.out.println(simulator.getNetworkLifetime() + " Node: " +this.id + " send msg to node " + ((PayloadMessage)msg).getPayloadDestinationAdress() + ". Distance: " + entry.getMetric());
+						System.out.println(simulator.getNetworkLifetime() + " Node: " +this.id + " send msg to node " + ((PayloadMessage)msg).getPayloadDestinationAdress() + ". Distance: " + entry.getMetric());
 					}
 					else{
-						//System.out.println(simulator.getNetworkLifetime() + " Node: " +this.id + " forward msg to node " + msg.getDestinationID() + ". SinkNode: " + ((PayloadMessage)msg).getPayloadDestinationAdress() +  " Distance: " + entry.getMetric() + " TransmissionTime: " + (simulator.getNetworkLifetime() - msg.getStartTransmissionTime()));
+						System.out.println(simulator.getNetworkLifetime() + " Node: " +this.id + " forward msg to node " + msg.getDestinationID() + ". SinkNode: " + ((PayloadMessage)msg).getPayloadDestinationAdress() +  " Distance: " + entry.getMetric() + " TransmissionTime: " + (simulator.getNetworkLifetime() - msg.getStartTransmissionTime()));
 					}
 					
 					this.outputBuffer.add(msg);

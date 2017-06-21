@@ -12,6 +12,38 @@ public class DsdvSimulator extends Simulator{
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		
+		this.networkLifetime = 0L;
+		
+		for (int id = 0; id < networkNodes.length; id++) {
+			((DsdvNetworkNode)networkNodes[id]).setSimulator(this);
+		}
+		
+		//Propagate network structure
+		do {
+			// Performe 1 ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+		}while(((DsdvNetworkNode)networkNodes[networkNodes.length-1]).getForwardTable().size() < networkNodes.length);
+		
+		
+		
+		long time = this.speedAnalysis(graph, networkWidth, sourceNodeId, destinationNodeId);
+
+		setCollisions(graph.getCollisions());
+		
+		PayloadMessage transmittedMsg = graph.getNetworkNodes()[destinationNodeId].getLastRecivedPayloadMessage();
+		
+		this.msgTransmissionTime = transmittedMsg.getEndTransmissionTime() - transmittedMsg.getStartTransmissionTime();
+
+		return time;
+	}
+	
+	public long speedAnalysisWhenNetworkStarts(int networkWidth, int sourceNodeId, int destinationNodeId) {
+
+		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
 
 		long time = this.speedAnalysis(graph, networkWidth, sourceNodeId, destinationNodeId);
 
