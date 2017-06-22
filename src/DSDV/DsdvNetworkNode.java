@@ -90,7 +90,7 @@ public class DsdvNetworkNode extends NetworkNode{
 	public void processRecivedMessage() {
 		Message receivedMsg = inputBuffer.removeFirst();
 		if (receivedMsg instanceof UpdateMessage) {
-			System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
+			//System.out.println(simulator.getNetworkLifetime() + " - Node " + id + ": recive UpdateMsg from Node " + receivedMsg.getSenderID());
 			this.receiveUpdateMessage((UpdateMessage)receivedMsg);
 		}
 		else{

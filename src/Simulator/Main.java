@@ -41,8 +41,8 @@ public class Main {
 		
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
-		dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
-		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
+		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
+		dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);

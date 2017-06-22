@@ -64,7 +64,7 @@ public abstract class Simulator {
 				- networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getStartTransmissionTime();
 		*/
 
-		return networkLifetime;
+		return networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getTransmissionTime();
 	}
 
 	/**
