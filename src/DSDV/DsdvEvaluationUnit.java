@@ -484,7 +484,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.partitioningAnalysis(networkWidth[i], 60, payloadSize) / 1000 / 60;
+			sendTime_10[1][i] = simulator.partitioningAnalysis(networkWidth[i], 60, payloadSize) / 1000.0 / 60.0;
 			sendTime_10_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_10_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_10_ReciveMode[0][i] = numberOfNodes[i];
@@ -499,7 +499,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.partitioningAnalysis(networkWidth[i], 5*60, payloadSize) / 1000 / 60;
+			sendTime_60[1][i] = simulator.partitioningAnalysis(networkWidth[i], 5*60, payloadSize) / 1000.0 / 60.0;
 			sendTime_60_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_60_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_60_ReciveMode[0][i] = numberOfNodes[i];
@@ -514,7 +514,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.partitioningAnalysis(networkWidth[i], 10*60, payloadSize) / 1000 / 60;
+			sendTime_600[1][i] = simulator.partitioningAnalysis(networkWidth[i], 10*60, payloadSize) / 1000.0 / 60.0;
 			sendTime_600_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_600_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_600_ReciveMode[0][i] = numberOfNodes[i];
