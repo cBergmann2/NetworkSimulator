@@ -28,6 +28,7 @@ public abstract class NetworkNode {
 	
 	//Envergy Variables
 	protected long availableEnery; // Available energy in nAs
+	protected long startEnergy;
 	protected long consumedEnergyInTransmissionMode;
 	protected long consumedEnergyInReciveMode;
 	protected long consumedEnergyInIdleMode;
@@ -64,6 +65,7 @@ public abstract class NetworkNode {
 		outputBuffer = new LinkedList<Message>();
 		// availableEnery = 4600L*3600L*1000L*1000L;
 		availableEnery = 5 * NODE_BATTERY_ENERGY_FOR_ONE_HOUR_IN_IDLE_MODE;
+		startEnergy = availableEnery;
 		idleTime = 0L;
 		reciveTime = 0L;
 		transmissionTime = 0L;
@@ -243,6 +245,7 @@ public abstract class NetworkNode {
 		if(batteryPowered){
 			if (availableEnery <= 0) {
 				nodeAlive = false;
+				System.out.println("Node " + this.id + " is down");
 			}
 		}
 		return true;
@@ -278,6 +281,7 @@ public abstract class NetworkNode {
 
 	public void sendMsg(Message msg){
 		this.outputBuffer.add(msg);
+		
 	}
 
 	public void addNeighbor(NetworkNode neighbor) {
