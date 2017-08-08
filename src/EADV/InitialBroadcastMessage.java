@@ -12,6 +12,8 @@ public class InitialBroadcastMessage extends Message {
 		this.address = address;
 		this.hopCount = hopCount;
 		this.costs = costs;
+		
+		this.dataVolume = Message.MESSAGE_SIZE + 32*3;
 	}
 	
 	public int getAddress() {

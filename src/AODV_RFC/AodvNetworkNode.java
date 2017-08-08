@@ -10,7 +10,8 @@ import SimulationNetwork.PayloadMessage;
 public class AodvNetworkNode extends NetworkNode{
 	
 	private static final long HELLO_INTERVAL = 5*60000;	//HELLO_INTERVAL in ms
-	public static final long MAX_ROUTE_LIFETIME = 10*60*1000;
+	public static final long MAX_ROUTE_LIFETIME = 9*60*1000;
+	private static final long NEXT_ROUTE_UPDATE_INTERVAL = 30000;	//NEXT_ROUTE_UPDATE_INTERVAL in ms
 	
 	private LinkedList<RouteTableEntry> routingTable;
 	private LinkedList<Message> waitingForRouteBuffer;
@@ -25,6 +26,7 @@ public class AodvNetworkNode extends NetworkNode{
 	private int nextPayloadMsgDestination;
 	
 	private long helloInvervalCounter;
+	private long nextRouteUpdateTime;
 	private boolean sendBroadcastMessageInCurrentHelloInterval;
 
 	public AodvNetworkNode(int id) {
@@ -62,7 +64,7 @@ public class AodvNetworkNode extends NetworkNode{
 			this.sendBroadcastMessageInCurrentHelloInterval = false;
 		}
 		*/
-		//updateLifetimeOfRoutes(executionTime);
+		validateRouteLifetime(executionTime);
 		
 		
 	}
@@ -91,11 +93,13 @@ public class AodvNetworkNode extends NetworkNode{
 		}
 	}
 
-	private void updateLifetimeOfRoutes(long executionTime){
-		for(RouteTableEntry routeTableEntry: routingTable){
-			if(routeTableEntry.isValid()){
-				routeTableEntry.decrementRouteLifetime(executionTime);
+	private void validateRouteLifetime(long executionTime){
+		if(this.nextRouteUpdateTime <= simulator.getNetworkLifetime()){
+			for(RouteTableEntry routeTableEntry: routingTable){
+				routeTableEntry.isRouteValid(simulator.getNetworkLifetime());
 			}
+			
+			this.nextRouteUpdateTime = simulator.getNetworkLifetime() + NEXT_ROUTE_UPDATE_INTERVAL;
 		}
 	}
 	
@@ -241,7 +245,7 @@ public class AodvNetworkNode extends NetworkNode{
 		for(RouteTableEntry route: routingTable){
 			if(route.getDestinationAdress() == destination){
 				if(route.isValid()){
-					route.setLifetime(MAX_ROUTE_LIFETIME);
+					route.setExpirationTime(simulator.getNetworkLifetime() + MAX_ROUTE_LIFETIME);
 				}
 			}
 		}
@@ -258,13 +262,13 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
-					route.setLifetime(maxRouteLifetime);
+					route.setExpirationTime(simulator.getNetworkLifetime() + maxRouteLifetime);
 
 					routingTableUpdated = true;
 				}
 				
-				if((route.getDestinationSequenceNumber() <= sequenceNumber) && (route.getLifetime() < maxRouteLifetime)){
-					route.setLifetime(maxRouteLifetime);
+				if((route.getDestinationSequenceNumber() <= sequenceNumber) && (route.getExpirationTime() > simulator.getNetworkLifetime())){
+					route.setExpirationTime(simulator.getNetworkLifetime() + maxRouteLifetime);
 				}
 				
 				if(!route.isValid()){
@@ -272,7 +276,7 @@ public class AodvNetworkNode extends NetworkNode{
 					route.setHopCount(hopCount);
 					route.setNextHop(nextHop);
 					route.setValid(true);
-					route.setLifetime(maxRouteLifetime);
+					route.setExpirationTime(simulator.getNetworkLifetime() + maxRouteLifetime);
 
 					routingTableUpdated = true;
 				}
@@ -288,7 +292,7 @@ public class AodvNetworkNode extends NetworkNode{
 			route.setHopCount(hopCount);
 			route.setNextHop(nextHop);
 			route.setValid(true);
-			route.setLifetime(maxRouteLifetime);
+			route.setExpirationTime(simulator.getNetworkLifetime() + maxRouteLifetime);
 
 			routingTableUpdated = true;
 			routingTable.add(route);
@@ -413,6 +417,14 @@ public class AodvNetworkNode extends NetworkNode{
 					if (tempEntry.getDestinationAdress() == ((PayloadMessage)msg).getPayloadDestinationAdress()) {
 						routeTableEntry = tempEntry;
 						break;
+					}
+				}
+				
+				//check if next hop is alive
+				if(routeTableEntry != null){
+					//check if next hop selection is alive
+					if(!graph.getNetworkNodes()[routeTableEntry.getNextHop()].isNodeAlive()){
+						routeTableEntry.setValid(false);
 					}
 				}
 				

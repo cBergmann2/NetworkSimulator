@@ -5,11 +5,13 @@ public class RoutingTableEntry {
 	private int address;
 	private int hopCount;
 	private int costs;
+	private long timestamp;
 	
-	public RoutingTableEntry(int address, int hopCount, int costs){
+	public RoutingTableEntry(int address, int hopCount, int costs, long timestamp){
 		this.address = address;
 		this.hopCount = hopCount;
 		this.costs = costs;
+		this.timestamp = timestamp;
 	}
 	
 	public int getAddress() {
@@ -29,6 +31,14 @@ public class RoutingTableEntry {
 	}
 	public void setCosts(int costs) {
 		this.costs = costs;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 }

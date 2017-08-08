@@ -245,6 +245,7 @@ public abstract class NetworkNode {
 		if(batteryPowered){
 			if (availableEnery <= 0) {
 				nodeAlive = false;
+				batteryPowered = false;
 				System.out.println("Node " + this.id + " is down");
 			}
 		}

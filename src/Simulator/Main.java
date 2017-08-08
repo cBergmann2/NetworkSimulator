@@ -50,7 +50,10 @@ public class Main {
 		
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();
-		eadvEvaluationUnit.evaluateSpeedAnalysis();
-		
+		//eadvEvaluationUnit.evaluateSpeedAnalysis();
+		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
+		//eadvEvaluationUnit.evaluateCostAnalysis();
+		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
+		eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 	}
 }

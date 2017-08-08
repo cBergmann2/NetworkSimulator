@@ -15,8 +15,8 @@ import Simulator.EvaluationUnit;
 
 public class EadvEvaluationUnit extends EvaluationUnit {
 
-	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
 	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+	//private static final int networkWidth[] = {14};
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -152,9 +152,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 	}
 	
 	public void evaluateSpeedAnalysisWhenNetworkStarts() {
-		/*
+		
 		System.out.println("Start DSDV speed anylsis when network starts.");
-		DsdvSimulator simulator = new DsdvSimulator();
+		EadvSimulator simulator = new EadvSimulator();
 
 		double numberOfNodes[] = new double[networkWidth.length];
 		double transmissionTime_max[][] = new double[2][networkWidth.length];
@@ -204,20 +204,20 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart.setBackgroundPaint(Color.WHITE);
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_UebertragungszeitWennNetzwerkstartet.png"), chart, CHART_WIDTH,
+			ChartUtilities.saveChartAsPNG(new File("Output/EADV/EADV_UebertragungszeitWennNetzwerkstartet.png"), chart, CHART_WIDTH,
 					CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		 */
+		 
 	}
 
 	@Override
 	public void evaluateCostAnalysis() {
-		/*
-		DsdvSimulator simulator = new DsdvSimulator();
+		
+		EadvSimulator simulator = new EadvSimulator();
 		long networkLifetime = 0L;
 
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -306,15 +306,15 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 */
+		 
 	}
 	
 	
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
-		/*
+		
 		System.out.println("\nAODV Lifetime analysis");
 		
-		DsdvSimulator simulator = new DsdvSimulator();
+		EadvSimulator simulator = new EadvSimulator();
 		
 		double numberOfNodes[] = new double[networkWidth.length];
 
@@ -395,21 +395,21 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart.getPlot().setBackgroundPaint(Color.WHITE);
 		chart.setBackgroundPaint(Color.WHITE);
 
-		String filename = "Output/DSDV/DSDV_Lebenszeitanalyse_OneDestination_" + payloadSize + "Byte.png";
+		String filename = "Output/EADV/EADV_Lebenszeitanalyse_OneDestination_" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 */
+		 
 	}
 	
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
-		/*
+		
 		System.out.println("Start partitioning analysis");
 
-		DsdvSimulator simulator = new DsdvSimulator();
+		EadvSimulator simulator = new EadvSimulator();
 
 		double numberOfNodes[] = new double[networkWidth.length];
 
@@ -498,7 +498,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart.getPlot().setBackgroundPaint(Color.WHITE);
 		chart.setBackgroundPaint(Color.WHITE);
 
-		String filename = "Output/DSDV/DSDV_partitionierungsanalyse_" + payloadSize + "Byte.png";
+		String filename = "Output/EADV/EADV_partitionierungsanalyse_" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
@@ -521,7 +521,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_Sendemodus_" + payloadSize
+		filename = "Output/EADV/EADV_partitionierungsanalyse_prozentualeZeit_Sendemodus_" + payloadSize
 				+ "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
@@ -545,7 +545,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_IdleModus_" + payloadSize
+		filename = "Output/EADV/EADV_partitionierungsanalyse_prozentualeZeit_IdleModus_" + payloadSize
 				+ "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
@@ -569,7 +569,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_WaitingForMediumAccesPermission_"
+		filename = "Output/EADV/EADV_partitionierungsanalyse_prozentualeZeit_WaitingForMediumAccesPermission_"
 				+ payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
@@ -593,7 +593,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_ReciveModus_" + payloadSize
+		filename = "Output/EADV/EADV_partitionierungsanalyse_prozentualeZeit_ReciveModus_" + payloadSize
 				+ "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
@@ -602,7 +602,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			e.printStackTrace();
 		}
 
-		 */
+		 
 	}
 	
 	@Override

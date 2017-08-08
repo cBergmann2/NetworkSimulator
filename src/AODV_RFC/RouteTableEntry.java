@@ -9,7 +9,7 @@ public class RouteTableEntry {
 	private int validDestinationSequenceNumberFlag;
 	private int hopCount;
 	private int nextHop;
-	private long lifetime;
+	private long expirationTime;
 	private boolean valid;
 	private LinkedList<Integer> precursorList;
 	
@@ -58,12 +58,12 @@ public class RouteTableEntry {
 		this.nextHop = nextHop;
 	}
 	
-	public long getLifetime() {
-		return lifetime;
+	public long getExpirationTime() {
+		return expirationTime;
 	}
 	
-	public void setLifetime(long lifetime) {
-		this.lifetime = lifetime;
+	public void setExpirationTime(long expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 
 
@@ -85,14 +85,12 @@ public class RouteTableEntry {
 	public void addPrecursor(Integer precursor) {
 		this.precursorList.add(precursor);
 	}
-
-
-	public void decrementRouteLifetime(long executionTime) {
-		this.lifetime -= executionTime;
-		if(this.lifetime <= 0){
-			this.valid = false;
-		}
-		
-	}
 	
+	public boolean isRouteValid(long currentTime){
+		if(this.expirationTime > currentTime){
+			return true;
+		}
+		this.valid = false;
+		return false;
+	}
 }

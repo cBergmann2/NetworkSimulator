@@ -2,7 +2,6 @@ package EADV;
 
 import java.util.LinkedList;
 
-import DSDV.UpdateMessage;
 import SimulationNetwork.Message;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
@@ -13,6 +12,8 @@ public class EadvNetworkNode extends NetworkNode{
 	int nodeHopCount;
 	int xValue;
 	boolean nodeIsDataSink;
+	private LinkedList<PayloadMessage> msgWaintingBuffer;
+	long lastInitialBroadcast = 0;
 
 	public EadvNetworkNode(int id) {
 		super(id);
@@ -20,11 +21,17 @@ public class EadvNetworkNode extends NetworkNode{
 		nodeHopCount = Integer.MAX_VALUE;
 		xValue = 0;
 		nodeIsDataSink = false;
+		msgWaintingBuffer = new LinkedList<PayloadMessage>();
 	}
 
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
-		// TODO Auto-generated method stub
+		
+		if(nodeIsDataSink){
+			if(lastInitialBroadcast < simulator.getNetworkLifetime() - 9*60*1000){
+				sendInitialBroadcast();
+			}
+		}
 		
 	}
 
@@ -41,14 +48,12 @@ public class EadvNetworkNode extends NetworkNode{
 				else{
 					
 					//updateRoutingTable
-					//this.updateRoutingTable(ibm);
-					routingTable.add(new RoutingTableEntry(ibm.getAddress(), (int) (ibm.getHopCount() +1) , (int)(ibm.getCosts() + this.getCostValue())));
-					
+					this.updateRoutingTable(ibm);
 					
 					//System.out.println("Node " + this.id + " hopCount: " + nodeHopCount);
 					if(ibm.getHopCount() < this.nodeHopCount + xValue){
 						//forward the IBM
-						InitialBroadcastMessage forwardIBM = new InitialBroadcastMessage((int)this.id, (int)(ibm.getHopCount() +1), (int)(ibm.getCosts() + this.getCostValue()));
+						InitialBroadcastMessage forwardIBM = new InitialBroadcastMessage(this.id, ibm.getHopCount() +1, ibm.getCosts() + this.getCostValue());
 						forwardIBM.setSenderID(this.id);
 						forwardIBM.setDestinationID(-1);
 						//System.out.println("Node "+ this.id + " forward IBM");
@@ -63,10 +68,23 @@ public class EadvNetworkNode extends NetworkNode{
 						}
 					}
 				}
+				
+				//add all waiting payload messages to send list
+				LinkedList<PayloadMessage> msgToSend = new LinkedList<PayloadMessage>();
+
+				for (PayloadMessage msg : this.msgWaintingBuffer) {
+					msgToSend.add(msg);
+				}
+
+				for (PayloadMessage msg : msgToSend) {
+					this.msgWaintingBuffer.remove(msg);
+					this.sendMsg(msg);
+				}
+				
 			}
 			else{
 				if(receivedMsg instanceof PayloadMessage){
-					//System.out.println("Node " + this.id + " receive payloadmsg");
+					//System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + " receive payloadmsg");
 					PayloadMessage msg = (PayloadMessage)receivedMsg;
 					if(msg.getPayloadDestinationAdress() != this.id){
 						//send ACK back to transmitting node
@@ -75,10 +93,12 @@ public class EadvNetworkNode extends NetworkNode{
 						//forward msg to payload destination
 						int nextHop = this.getNextHop();		//get next hop from routing table					
 						msg.setDestinationID(nextHop);			//set next hop
+						//System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + " forward payloadmsg to node " + nextHop);
 						this.sendMsg(msg);						//forward message
 						
 					}
 					else{
+						msg.setEndTransmissionTime(simulator.getNetworkLifetime());
 						this.numberRecivedPayloadMsg++;
 						this.lastRecivedPayloadMessage = msg;
 					}
@@ -86,7 +106,7 @@ public class EadvNetworkNode extends NetworkNode{
 				else{
 					if(receivedMsg instanceof AckMessage){
 						//System.out.println("Node " + this.id + " receive ACK message");
-						
+						this.updateRoutingTable((AckMessage)receivedMsg);
 					}
 				}
 			}
@@ -126,15 +146,46 @@ public class EadvNetworkNode extends NetworkNode{
 	private void updateRoutingTable(InitialBroadcastMessage ibm){
 		//update routing table
 		boolean entryFound = false;
+		
+		
 		for(RoutingTableEntry tableEntry: routingTable){
 			if(tableEntry.getAddress() == ibm.getAddress()){
-				tableEntry.setCosts((int) (ibm.getCosts() + this.getCostValue()) );
-				tableEntry.setHopCount((int) (ibm.getHopCount() +1));
+				
+				if(ibm.getHopCount() < tableEntry.getHopCount()){
+					tableEntry.setCosts((int) (ibm.getCosts()) );
+					tableEntry.setHopCount((int) (ibm.getHopCount()));
+					System.out.println("Node " + this.id + " update routing table");
+				}
+				
+				if(ibm.getCosts() <= tableEntry.getCosts()){
+					tableEntry.setCosts((int) (ibm.getCosts()) );
+					tableEntry.setHopCount((int) (ibm.getHopCount()));
+				}
+				else{
+					if((ibm.getHopCount() > tableEntry.getHopCount())
+							&& (tableEntry.getTimestamp() < simulator.getNetworkLifetime() - 5000)){
+						tableEntry.setCosts(ibm.getCosts());
+						tableEntry.setHopCount(ibm.getHopCount());
+					}
+				}
+				
 				entryFound = true;
 			}
+			
 		}
+		
 		if(!entryFound){
-			routingTable.add(new RoutingTableEntry(ibm.getAddress(), (int) (ibm.getHopCount() +1) , (int)(ibm.getCosts() + this.getCostValue())));
+			routingTable.add(new RoutingTableEntry(ibm.getAddress(), (int) (ibm.getHopCount()) , (int)(ibm.getCosts()), simulator.getNetworkLifetime()));
+		}
+	}
+	
+	private void updateRoutingTable(AckMessage msg){
+		//update routing table
+		for(RoutingTableEntry tableEntry: routingTable){
+			if(tableEntry.getAddress() == msg.getSenderID()){
+				tableEntry.setCosts((int) (msg.getCost()) );
+				tableEntry.setHopCount((int) (msg.getHopCount()));
+			}
 		}
 		
 		//update node hop count
@@ -149,6 +200,7 @@ public class EadvNetworkNode extends NetworkNode{
 	@Override
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 		//System.out.println("Node " + this.id + " send payload msg");
+		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		this.sendMsg(tmpMsg);
 	}
 	
@@ -166,18 +218,52 @@ public class EadvNetworkNode extends NetworkNode{
 				else{
 					if(msg instanceof PayloadMessage){
 						
-						
-						//Get next hop with minimal costs
-						int nextHop = -1;
-						int costs = Integer.MAX_VALUE;
-						for(RoutingTableEntry tableEntry: routingTable){
-							if(tableEntry.getCosts() < costs){
-								costs = tableEntry.getCosts();
-								nextHop = tableEntry.getAddress();
+						if(routingTable.size() > 0){
+							
+							int nextHop = -1;
+							while(-1 == nextHop){
+								//Get next hop with minimal costs
+								int costs = Integer.MAX_VALUE;
+								for(RoutingTableEntry tableEntry: routingTable){
+									if(tableEntry.getCosts() < costs){
+										costs = tableEntry.getCosts();
+										nextHop = tableEntry.getAddress();
+									}
+								}
+								
+								if(nextHop != -1){
+									//check if next hop selection is alive
+									if(!graph.getNetworkNodes()[nextHop].isNodeAlive()){
+										//next hop selection is not alive
+										
+										//delete all routingtable entrys with next hop address == nextHop
+										LinkedList<RoutingTableEntry> toDeleteRouteTable = new LinkedList<RoutingTableEntry>();
+										for (RoutingTableEntry entry : routingTable) {
+											if(entry.getAddress() == nextHop){
+												toDeleteRouteTable.add(entry);
+											}
+										}
+										for (RoutingTableEntry entry : toDeleteRouteTable) {
+											routingTable.remove(entry);
+										}
+	
+										
+										nextHop = -1;	//erase next hop selection
+									}
+								}
+								else{
+									msgWaintingBuffer.add((PayloadMessage) msg);
+									return;
+								}
+								
 							}
+							
+							
+							msg.setDestinationID(nextHop);
 						}
-						
-						msg.setDestinationID(nextHop);
+						else{
+							msgWaintingBuffer.add((PayloadMessage) msg);
+						}
 					}					
 				}
 					
@@ -214,7 +300,7 @@ public class EadvNetworkNode extends NetworkNode{
 		InitialBroadcastMessage newIbm = new InitialBroadcastMessage(this.id, 0, 0);
 		newIbm.setDestinationID(-1);
 		this.sendMsg(newIbm);
-		
+		this.lastInitialBroadcast = simulator.getNetworkLifetime(); 
 	}
 
 	public boolean isNodeIsDataSink() {
