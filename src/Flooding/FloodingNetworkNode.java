@@ -25,14 +25,18 @@ public class FloodingNetworkNode extends NetworkNode{
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
 		long currentTime = simulator.getNetworkLifetime();
-		LinkedList<PayloadMessage> msgToDelete = new LinkedList<PayloadMessage>();
-		for(PayloadMessage msg: recivedMessages){
-			if(msg.getStartTransmissionTime()-currentTime > 3600000){
-				msgToDelete.add(msg);			}
-		}
 		
-		for(PayloadMessage msg: msgToDelete){
-			recivedMessages.remove(msg);
+		if(currentTime % 60000 == 1){	//Perform cleaning task every minute
+			
+			LinkedList<PayloadMessage> msgToDelete = new LinkedList<PayloadMessage>();
+			for(PayloadMessage msg: recivedMessages){
+				if(msg.getStartTransmissionTime()-currentTime > 3600000){
+					msgToDelete.add(msg);			}
+			}
+			
+			for(PayloadMessage msg: msgToDelete){
+				recivedMessages.remove(msg);
+			}
 		}
 		
 	}
@@ -46,6 +50,7 @@ public class FloodingNetworkNode extends NetworkNode{
 			PayloadMessageWithRoute msg = new PayloadMessageWithRoute(((PayloadMessage) recivedMsg).getPayloadSourceAdress(), ((PayloadMessage) recivedMsg).getPayloadDestinationAdress(), null);
 			msg.setPayloadHash(((PayloadMessage)recivedMsg).getPayloadHash());
 			
+			this.numberRecivedPayloadMsg++;
 			
 			if(!doMessageAlreadyExists(msg)){
 				this.recivedMessages.add(msg);
@@ -112,7 +117,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		newMsg.setStartTransmissionTime(this.simulator.getNetworkLifetime());
 		newMsg.addNodeToRoute(this.id);
 		newMsg.setPayloadSize(msg.getPayloadSize());
-		newMsg.setDataVolume(msg.getPayloadSize()*8);
+		newMsg.setDataVolume(msg.getDataVolume());
 		newMsg.setPayloadHash(msg.getPayloadHash());
 		this.sendMessage(newMsg);
 	}

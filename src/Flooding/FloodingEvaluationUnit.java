@@ -15,9 +15,9 @@ import Simulator.EvaluationUnit;
 
 public class FloodingEvaluationUnit extends EvaluationUnit {
 
-	private static final int MAX_NETWORK_WIDTH = 10;
+	//private static final int MAX_NETWORK_WIDTH = 10;
 	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -29,6 +29,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 		double transmissionTime_max[][] = new double[2][networkWidth.length];
 		double transmissionTime_max_collisions[][] = new double[2][networkWidth.length];
+		double transmissionTime_vs_distance_max[][] = new double[2][networkWidth.length];
 
 		double min[][] = new double[2][networkWidth.length];
 
@@ -37,24 +38,42 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		double transmissionTime_med[][] = new double[2][networkWidth.length];
 		double transmissionTime_med_collisions[][] = new double[2][networkWidth.length];
+		
+		double sendTime_IdleMode[][] = new double[2][networkWidth.length];
+		double sendTime_ReciveMode[][] = new double[2][networkWidth.length];
+		double sendTime_TransmissionMode[][] = new double[2][networkWidth.length];
+		double sendTime_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
 
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 			transmissionTime_max[0][i] = numberOfNodes[i];
-			transmissionTime_max[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
-					(int) Math.pow(networkWidth[i], 2) - 1) /1000;
+			transmissionTime_max[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0,
+					(int) Math.pow(networkWidth[i], 2) - 1) /1000.0;
 			transmissionTime_max_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_max_collisions[1][i] = floodingSimulator.getCollisions();
-			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
+			transmissionTime_vs_distance_max[0][i] = 2*(Math.sqrt(numberOfNodes[i])-1);
+			transmissionTime_vs_distance_max[1][i] = transmissionTime_max[1][i];
+			
+			sendTime_IdleMode[0][i] = numberOfNodes[i];
+			sendTime_IdleMode[1][i] = floodingSimulator.getAverageTimeInIdleMode();
+			sendTime_ReciveMode[0][i] = numberOfNodes[i];
+			sendTime_ReciveMode[1][i] = floodingSimulator.getAverageTimeInReciveMode();
+			sendTime_TransmissionMode[0][i] = numberOfNodes[i];
+			sendTime_TransmissionMode[1][i] = floodingSimulator.getAverageTimeInTransmissionMode();
+			sendTime_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
+			sendTime_WaitingForMediumAccesPermission[1][i] = floodingSimulator
+					.getAverageTimeWaitingForMediumAccesPermission();
+			
+			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Transmission time: " + transmissionTime_max[1][i] +" s");
 
 			transmissionTime_min[0][i] = numberOfNodes[i];
-			transmissionTime_min[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, 1) /1000;
+			transmissionTime_min[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, 1) /1000.0;
 			transmissionTime_min_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_min_collisions[1][i] = floodingSimulator.getCollisions();
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) /1000;
+			transmissionTime_med[1][i] = floodingSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) /1000.0;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = floodingSimulator.getCollisions();
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
@@ -69,7 +88,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
-		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 
@@ -109,6 +128,117 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		// Übertragungszeit vs. Distance
+		dataset2 = new DefaultXYDataset();
+		dataset2.addSeries("maximale Distanz", transmissionTime_vs_distance_max);
+
+		// XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		xAxis2 = new NumberAxis("Distanz");
+		yAxis2 = new NumberAxis("Übertragungszeit[s]");
+		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+		chart2 = new JFreeChart(plot2);
+
+		chart2.getPlot().setBackgroundPaint(Color.WHITE);
+		chart2.setBackgroundPaint(Color.WHITE);
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Flooding/Flooding_Max_Uebertragungszeit_vs_Distanz.png"),
+					chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Average time in transmission mode
+				dataset2 = new DefaultXYDataset();
+				dataset2.addSeries("maximale Distanz", sendTime_TransmissionMode);
+
+
+				xAxis2 = new NumberAxis("Anzahl Knoten");
+				yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
+				plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+				chart2 = new JFreeChart(plot2);
+
+				chart2.getPlot().setBackgroundPaint(Color.WHITE);
+				chart2.setBackgroundPaint(Color.WHITE);
+
+				String filename = "Output/Flooding/Flooding_Speedanalyse_prozentualeZeit_Sendemodus.png";
+				try {
+					ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Average time in idle mode
+				dataset2 = new DefaultXYDataset();
+				dataset2.addSeries("maximale Distanz", sendTime_IdleMode);
+
+
+				xAxis2 = new NumberAxis("Anzahl Knoten");
+				yAxis2 = new NumberAxis("Knoten im Idle-Modus [%]");
+				plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+				chart2 = new JFreeChart(plot2);
+
+				chart2.getPlot().setBackgroundPaint(Color.WHITE);
+				chart2.setBackgroundPaint(Color.WHITE);
+
+				filename = "Output/Flooding/Flooding_Speedanalyse_prozentualeZeit_IdleModus.png";
+				try {
+					ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Average time Waiting For MediumAccesPermission
+				dataset2 = new DefaultXYDataset();
+				dataset2.addSeries("maximale Distanz", sendTime_WaitingForMediumAccesPermission);
+
+
+				xAxis2 = new NumberAxis("Anzahl Knoten");
+				yAxis2 = new NumberAxis("Knoten wartet auf Medium [%]");
+				plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+				chart2 = new JFreeChart(plot2);
+
+				chart2.getPlot().setBackgroundPaint(Color.WHITE);
+				chart2.setBackgroundPaint(Color.WHITE);
+
+				filename = "Output/Flooding/Flooding_Speedanalyse_prozentualeZeit_WaitingForMediumAccesPermission.png";
+				try {
+					ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Average time in recive mode
+				dataset2 = new DefaultXYDataset();
+				dataset2.addSeries("maximale Distanz", sendTime_ReciveMode);
+		
+				xAxis2 = new NumberAxis("Anzahl Knoten");
+				yAxis2 = new NumberAxis("Knoten im Empfangs-Modus [%]");
+				plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+
+				chart2 = new JFreeChart(plot2);
+
+				chart2.getPlot().setBackgroundPaint(Color.WHITE);
+				chart2.setBackgroundPaint(Color.WHITE);
+
+				filename = "Output/Flooding/Flooding_Speedanalyse_prozentualeZeit_ReciveModus.png";
+				try {
+					ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 	}
 	
 	
@@ -137,7 +267,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			maxDistance_collisions[0][i] = numberOfNodes[i];
 			maxDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			maxDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			//maxDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms"
@@ -148,7 +278,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			minDistance_collisions[0][i] = numberOfNodes[i];
 			minDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			minDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			//minDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms"
@@ -159,7 +289,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			medDistance_collisions[0][i] = numberOfNodes[i];
 			medDistance_collisions[1][i] = floodingSimulator.getCollisions();
 			medDistance_onlyTransmissionEnergy[0][i] = numberOfNodes[i];
-			medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInReciveMode() + floodingSimulator.getConsumedEnergyInTransmissionMode();
+			medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			//medDistance_onlyTransmissionEnergy[1][i] = floodingSimulator.getConsumedEnergyInTransmissionMode();
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed. Ausführungszeit des Netzwerks: "
 					+ floodingSimulator.getNetworkLifetime() + " ms"
@@ -626,9 +756,6 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		double sendTime_10_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_10_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
 		
 
 		double sendTime_60[][] = new double[2][networkWidth.length];
@@ -636,29 +763,15 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		double sendTime_60_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_60_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
+
 
 		double sendTime_600[][] = new double[2][networkWidth.length];
 		double sendTime_600_IdleMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_ReciveMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
 		double sendTime_600_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		
-		/*
-		double sendTime_1200[][] = new double[2][networkWidth.length];
-		double sendTime_1200_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		 */
+
+
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
@@ -675,14 +788,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_10_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_10_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
-			/*
-			sendTime_10_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_10_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_10_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			*/
+
 			System.out.println(
 					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
@@ -698,14 +804,7 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_60_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_60_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
-			/*
-			sendTime_60_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_60_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_60_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_60_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_60_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_60_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			*/
+
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
@@ -721,40 +820,11 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			sendTime_600_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
 			sendTime_600_WaitingForMediumAccesPermission[1][i] = simulator
 					.getAverageTimeWaitingForMediumAccesPermission();
-			/*
-			sendTime_600_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_600_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_600_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			*/
+
 			System.out.println(
 					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
-			
-			/*
-			sendTime_1200[0][i] = numberOfNodes[i];
-			sendTime_1200[1][i] = simulator.lifetimeAnalysisStaticSendBehavior(networkWidth[i], 20*60, payloadSize) / 1000 / 60;
-			sendTime_1200_IdleMode[0][i] = numberOfNodes[i];
-			sendTime_1200_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
-			sendTime_1200_ReciveMode[0][i] = numberOfNodes[i];
-			sendTime_1200_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
-			sendTime_1200_TransmissionMode[0][i] = numberOfNodes[i];
-			sendTime_1200_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
-			sendTime_1200_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
-			sendTime_1200_WaitingForMediumAccesPermission[1][i] = simulator
-					.getAverageTimeWaitingForMediumAccesPermission();
-			sendTime_1200_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_1200_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_1200_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_1200_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_1200_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_1200_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			System.out.println(
-					"20m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
-							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
-			*/
+		
 		}
 
 		// Network Lifetime
@@ -882,51 +952,6 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		
-		// Comparison of data packages
-		
-		double sendTime_10_PercentageProtocolMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageProtocolMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageProtocolMsg[][] = new double[2][networkWidth.length];
-		for(int i=0; i<networkWidth.length; i++){
-			sendTime_10_PercentageProtocolMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentageProtocolMsg[0][i] = sendTime_10_PercentageRREPMsg[1][i] + sendTime_10_PercentageRREQMsg[1][i];
-			sendTime_60_PercentageProtocolMsg[0][i] = numberOfNodes[i];
-			sendTime_60_PercentageProtocolMsg[0][i] = sendTime_60_PercentageRREPMsg[1][i] + sendTime_60_PercentageRREQMsg[1][i];
-			sendTime_600_PercentageProtocolMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentageProtocolMsg[0][i] = sendTime_600_PercentageRREPMsg[1][i] + sendTime_600_PercentageRREQMsg[1][i];
-		}
-		
-		dataset2 = new DefaultXYDataset();
-		//dataset2.addSeries("Knoten Sendet alle 10 s (Routinginformationen)", sendTime_10_PercentageProtocolMsg);
-		dataset2.addSeries("Knoten Sendet alle 10 s (Nachrichten)", sendTime_10_PercentagePayloadMsg);
-		//dataset2.addSeries("Knoten Sendet alle 60 s (Routinginformationen)", sendTime_60_PercentageProtocolMsg);
-		dataset2.addSeries("Knoten Sendet alle 60 s (Nachrichten)", sendTime_60_PercentagePayloadMsg);
-		//dataset2.addSeries("Knoten Sendet alle 600 s (Routinginformationen)", sendTime_600_PercentageProtocolMsg);
-		dataset2.addSeries("Knoten Sendet alle 10 min (Nachrichten)", sendTime_600_PercentagePayloadMsg);
-		
-		//dataset2.addSeries("Knoten Sendet alle 20 min (Nachrichten)", sendTime_1200_PercentagePayloadMsg);
-		
-		
-		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
-		yAxis2 = new NumberAxis("Gesendete Nachrichten [%]");
-		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
-
-		chart2 = new JFreeChart(plot2);
-
-		chart2.getPlot().setBackgroundPaint(Color.WHITE);
-		chart2.setBackgroundPaint(Color.WHITE);
-
-		filename = "Output/AODV_RFC/AODV_Lebenszeitanalyse_prozentualeNachrichtenVerteilung" + payloadSize
-				+ "Byte.png";
-		try {
-			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 		
 	}
 	

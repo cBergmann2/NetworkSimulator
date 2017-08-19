@@ -5,9 +5,9 @@ import java.util.LinkedList;
 
 public abstract class NetworkNode {
 
-	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 74000;
-	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400;
-	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400;
+	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 16067;	//nA
+	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400; //nA
+	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400; //nA
 
 	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = RECIVE_MODE_POWER_CONSUMPTION * 1000L * 60L
 			* 60L * 24L;
@@ -183,13 +183,14 @@ public abstract class NetworkNode {
 						// Transmission is still in progress
 
 						if (outgoingMsg.getRemainingTransmissionTime() < (1000000L * executionTime)) {
-							// Transmission takes less than 1 ms
-							// TODO: Calculate exact power consumption
-							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
-							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
+							// Transmission takes less than one execution unit
+							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * (outgoingMsg.getRemainingTransmissionTime()*1.0/(1000000L *executionTime));
+							availableEnery -= IDLE_MODE_POWER_CONSUMPTION * ((1000000L *executionTime - outgoingMsg.getRemainingTransmissionTime())*1.0/(1000000L *executionTime));
+							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * (outgoingMsg.getRemainingTransmissionTime()*1.0/(1000000L *executionTime));
+							consumedEnergyInIdleMode += IDLE_MODE_POWER_CONSUMPTION * ((1000000L *executionTime - outgoingMsg.getRemainingTransmissionTime())*1.0/(1000000L *executionTime));
 							transmissionTime += executionTime;
 						} else {
-							// Transmission still takes at least 1 ms
+							// Transmission still takes at least one node execution unit
 							availableEnery -= TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
 							consumedEnergyInTransmissionMode += TRANSMISSION_MODE_POWER_CONSUMPTION * executionTime;
 							transmissionTime += executionTime;
@@ -221,7 +222,7 @@ public abstract class NetworkNode {
 								irReceiver.receiveMessage(outgoingMsg.clone());
 							}
 							
-							
+							outgoingMsg.decreaseRemainingTransmissionTime(1000000L * executionTime);
 							//System.out.println(simulator.getNetworkLifetime() + " Knoten " + this.id +": start send process, data volume: " + outgoingMsg.getDataVolume() + ", remaining transmission time: " + outgoingMsg.getRemainingTransmissionTime());
 						} else {
 							availableEnery -= IDLE_MODE_POWER_CONSUMPTION * executionTime;
@@ -246,7 +247,7 @@ public abstract class NetworkNode {
 			if (availableEnery <= 0) {
 				nodeAlive = false;
 				batteryPowered = false;
-				System.out.println("Node " + this.id + " is down");
+				System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + " is down");
 			}
 		}
 		return true;
@@ -477,5 +478,9 @@ public abstract class NetworkNode {
 	
 	public IR_Receiver getIrReceiver(int id){
 		return this.irReceiver[id];
+	}
+
+	public LinkedList<Message> getInputBuffer() {
+		return inputBuffer;
 	}
 }

@@ -33,6 +33,8 @@ public class EadvNetworkNode extends NetworkNode{
 			}
 		}
 		
+		//TODO: Check if current routing table is up to date
+		
 	}
 
 	@Override

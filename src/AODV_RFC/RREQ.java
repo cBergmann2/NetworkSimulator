@@ -17,6 +17,7 @@ public class RREQ extends Message{
 	private int Destination_Sequence_Number;
 	private int Originator_IP_Adress;
 	private int Originator_Sequence_Number;
+	private int timeToLive;
 	
 	public RREQ(){
 		this.setDataVolume(192);	
@@ -215,5 +216,11 @@ public class RREQ extends Message{
 		Originator_Sequence_Number = originator_Sequence_Number;
 	}
 	
-	
+	public int getTimeToLive() {
+		return timeToLive;
+	}
+
+	public void setTimeToLive(int timeToLive) {
+		this.timeToLive = timeToLive;
+	}
 }

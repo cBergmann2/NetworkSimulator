@@ -28,10 +28,8 @@ public abstract class NetworkGraph {
 						if (knotenID == 0) { // Eckknoten links oben
 							nodes[i].addNeighbor(nodes[i + 1]);
 							nodes[i].addNeighbor(nodes[networkWidth]);
-							nodes[i].addNeighbor(nodes[networkWidth + 1]);
 							nodes[i].addDestinationIrReceiver(nodes[i + 1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
-							nodes[i].addDestinationIrReceiver(
-									nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+							nodes[i].addDestinationIrReceiver(nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
 						}
 
 						if (knotenID == this.networkWidth - 1) { // Eckknoten
@@ -39,9 +37,7 @@ public abstract class NetworkGraph {
 							// rechts
 							nodes[i].addNeighbor(nodes[i - 1]);
 							nodes[i].addNeighbor(nodes[2 * networkWidth - 1]);
-							nodes[i].addNeighbor(nodes[2 * networkWidth - 2]);
-							nodes[i].addDestinationIrReceiver(
-									nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+							nodes[i].addDestinationIrReceiver(nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
 							nodes[i].addDestinationIrReceiver(nodes[i - 1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 						}
 
@@ -50,9 +46,7 @@ public abstract class NetworkGraph {
 							// links
 							nodes[i].addNeighbor(nodes[i + 1]);
 							nodes[i].addNeighbor(nodes[i - networkWidth]);
-							nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
-							nodes[i].addDestinationIrReceiver(
-									nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+							nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 							nodes[i].addDestinationIrReceiver(nodes[i + 1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
 						}
 
@@ -61,9 +55,7 @@ public abstract class NetworkGraph {
 							// rechts
 							nodes[i].addNeighbor(nodes[i - 1]);
 							nodes[i].addNeighbor(nodes[i - networkWidth]);
-							nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
-							nodes[i].addDestinationIrReceiver(
-									nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
+							nodes[i].addDestinationIrReceiver(nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 							nodes[i].addDestinationIrReceiver(nodes[i - 1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 						}
 					} else {
@@ -71,11 +63,8 @@ public abstract class NetworkGraph {
 							nodes[i].addNeighbor(nodes[i - 1]);
 							nodes[i].addNeighbor(nodes[i + 1]);
 							nodes[i].addNeighbor(nodes[i + networkWidth]);
-							nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
-							nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
 							nodes[i].addDestinationIrReceiver(nodes[i + 1].getIrReceiver(IR_Receiver.RECEIVER_WEST));
-							nodes[i].addDestinationIrReceiver(
-									nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
+							nodes[i].addDestinationIrReceiver(nodes[i + networkWidth].getIrReceiver(IR_Receiver.RECEIVER_NORTH));
 							nodes[i].addDestinationIrReceiver(nodes[i - 1].getIrReceiver(IR_Receiver.RECEIVER_EAST));
 
 						} else {
@@ -84,8 +73,6 @@ public abstract class NetworkGraph {
 								nodes[i].addNeighbor(nodes[i - 1]);
 								nodes[i].addNeighbor(nodes[i + 1]);
 								nodes[i].addNeighbor(nodes[i - networkWidth]);
-								nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
-								nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
 								nodes[i].addDestinationIrReceiver(
 										nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 								nodes[i].addDestinationIrReceiver(
@@ -97,9 +84,7 @@ public abstract class NetworkGraph {
 									// links
 									nodes[i].addNeighbor(nodes[i + 1]);
 									nodes[i].addNeighbor(nodes[i - networkWidth]);
-									nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
 									nodes[i].addNeighbor(nodes[i + networkWidth]);
-									nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
 									nodes[i].addDestinationIrReceiver(
 											nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 									nodes[i].addDestinationIrReceiver(
@@ -111,9 +96,7 @@ public abstract class NetworkGraph {
 										// rechts
 										nodes[i].addNeighbor(nodes[i - 1]);
 										nodes[i].addNeighbor(nodes[i - networkWidth]);
-										nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
 										nodes[i].addNeighbor(nodes[i + networkWidth]);
-										nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
 										nodes[i].addDestinationIrReceiver(
 												nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 										nodes[i].addDestinationIrReceiver(
@@ -125,10 +108,6 @@ public abstract class NetworkGraph {
 										nodes[i].addNeighbor(nodes[i + 1]);
 										nodes[i].addNeighbor(nodes[i - networkWidth]);
 										nodes[i].addNeighbor(nodes[i + networkWidth]);
-										nodes[i].addNeighbor(nodes[i - networkWidth - 1]);
-										nodes[i].addNeighbor(nodes[i - networkWidth + 1]);
-										nodes[i].addNeighbor(nodes[i + networkWidth - 1]);
-										nodes[i].addNeighbor(nodes[i + networkWidth + 1]);
 										nodes[i].addDestinationIrReceiver(
 												nodes[i - networkWidth].getIrReceiver(IR_Receiver.RECEIVER_SOUTH));
 										nodes[i].addDestinationIrReceiver(

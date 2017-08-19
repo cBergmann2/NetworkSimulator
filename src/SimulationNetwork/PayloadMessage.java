@@ -18,7 +18,7 @@ public class PayloadMessage extends Message{
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress, char dataToSend[]){
-		super(senderID, destinationID, calculateTransmissionTime(dataToSend.length*8),dataToSend.length*8);
+		super(senderID, destinationID, calculateTransmissionTime(MESSAGE_SIZE + dataToSend.length*8),MESSAGE_SIZE + dataToSend.length*8);
 		this.payloadSourceAdress = payloadSourceAdress;
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payload = dataToSend;
@@ -27,7 +27,7 @@ public class PayloadMessage extends Message{
 	}
 	
 	public PayloadMessage(int senderID, int destinationID, int payloadSourceAdress, int payloadDestinationAdress,int payloadSize){
-		super(senderID, destinationID, calculateTransmissionTime(payloadSize*8),payloadSize*8);
+		super(senderID, destinationID, calculateTransmissionTime(MESSAGE_SIZE + payloadSize),MESSAGE_SIZE + payloadSize);
 		this.payloadSourceAdress = payloadSourceAdress;
 		this.payloadDestinationAdress = payloadDestinationAdress;
 		this.payloadSize = payloadSize;
@@ -83,7 +83,7 @@ public class PayloadMessage extends Message{
 		copy.setRemainingTransmissionTime(remainingTransmissionTime);
 		copy.setSenderID(senderID);
 		copy.setStartTransmissionTime(startTransmissionTime);
-		copy.setTimeToLive(timeToLive);
+		//copy.setTimeToLive(timeToLive);
 		
 		copy.setDataVolume(dataVolume);
 		
@@ -104,8 +104,8 @@ public class PayloadMessage extends Message{
 
 	public void setPayloadSize(int payloadSize) {
 		this.payloadSize = payloadSize;
-		this.setDataVolume(payloadSize*8);
-		this.remainingTransmissionTime = this.calculateTransmissionTime(payloadSize*8);
+		this.setDataVolume(MESSAGE_SIZE + payloadSize);
+		this.remainingTransmissionTime = calculateTransmissionTime(MESSAGE_SIZE + payloadSize);
 	}
 
 	public long getTransmissionTime() {

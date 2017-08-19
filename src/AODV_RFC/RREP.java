@@ -13,6 +13,7 @@ public class RREP extends Message{
 	private int Destination_Sequence_Number;
 	private int Orignator_IP_Adress;
 	private long Lifetime;
+	private int timeToLive;
 	
 	public RREP(){
 		this.setDataVolume(5*32);
@@ -154,5 +155,13 @@ public class RREP extends Message{
 	 */
 	public void setLifetime(long lifetime) {
 		Lifetime = lifetime;
+	}
+	
+	public int getTimeToLive() {
+		return timeToLive;
+	}
+
+	public void setTimeToLive(int timeToLive) {
+		this.timeToLive = timeToLive;
 	}
 }

@@ -1,6 +1,9 @@
 package Flooding;
 
 
+import SimulationNetwork.NetworkGraph;
+import SimulationNetwork.NetworkNode;
+import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
 
 public class FloodingSimulator extends Simulator {
@@ -27,53 +30,72 @@ public class FloodingSimulator extends Simulator {
 		
 		return energyCosts;
 	}
-/*
-	public long energyCostAnalysis(NetworkGraph graph, int networkWidth, int sourceNodeId, int destinationNodeId) {
 
+	/**
+	 * Calculates energy costs for all nodes in the network to deliver a payload
+	 * message.
+	 * 
+	 * @param graph
+	 * @param networkWidth
+	 * @param sourceNodeID	
+	 * @param destinationNodeID
+	 * @return consumed energy in nAs;
+	 */
+	public long energyCostAnalysis(NetworkGraph graph, int networkWidth, int sourceNodeId, int destinationNodeId){
 		long consumedEnergy = 0L;
-		boolean msgFromAllNodesTransmitted;
+		boolean transmissionInNetworkDetected;
+		
+		consumedEnergyInIdleMode = 0L;
+		consumedEnergyInReciveMode = 0L;
+		consumedEnergyInTransmissionMode = 0L;
 
 		networkLifetime = 0;
 
-		FloodingNetworkNode networkNodes[] = (FloodingNetworkNode[])graph.getNetworkNodes();
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		for (int id = 0; id < networkNodes.length; id++) {
 			networkNodes[id].setSimulator(this);
 		}
 
-		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
+		char dataToSend[] = { 'A' };
 
-		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
+		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
 
 		do {
 			// Performe 1 ms every iteration
-
 			for (int id = 0; id < networkNodes.length; id++) {
-				networkNodes[id].performAction();
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
 			}
 
-			networkLifetime++;
+			networkLifetime += NODE_EXECUTION_TIME;
 			
-			//Check if all nodes have transmit the message
-			msgFromAllNodesTransmitted = true;
+			//Check if there is any transmission process in the network
+			transmissionInNetworkDetected = false;
 			for (int id = 0; id < networkNodes.length; id++) {
-				if(id != destinationNodeId){
-					if(networkNodes[id].getNumberTransmittedMsg() < 1){
-						msgFromAllNodesTransmitted = false;
+
+					if(networkNodes[id].getNumberOfRecivedPayloadMessages() == 0){
+						transmissionInNetworkDetected = true;
+						break;
 					}
-				}
 			}
 
-		} while (!msgFromAllNodesTransmitted);
+		} while (transmissionInNetworkDetected);
 
 		for (int id = 0; id < networkNodes.length; id++) {
-			consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
-					- networkNodes[id].getAvailableEnery();
+			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
+			//System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode() + ", time in idleMode " + (networkNodes[id].getIdleTime() +networkNodes[id].getWaitingTimeForMediumAccesPermission()) + ", time in recive mode "+ networkNodes[id].getReciveTime() + ", time in transmit mode " + networkNodes[id].getTransmissionTime() );
+			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
+			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
 		}
+		
+		calculateAverageNodeTimes(graph.getNetworkNodes());
+		
+		//System.out.println("Consumed energy idle mode: " + consumedEnergyInIdleMode + ", time in idle mode: " + (this.averageTimeInIdleMode + this.averageTimeWaitingForMediumAccesPermission));
+		//System.out.println("Consumed energy recive mode: " + consumedEnergyInReciveMode + ", time in recive mode: " + this.averageTimeInTransmissionMode);
+		//System.out.println("Consumed energy transmit mode: " + consumedEnergyInTransmissionMode + ", time in transmit mode: " + this.averageTimeInReciveMode);
 
-		return consumedEnergy;
+		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}
-	*/
 
 	public long lifetimeAnalysisStochasitcSendBehavior(int networkWidth, double sendProbability){
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);

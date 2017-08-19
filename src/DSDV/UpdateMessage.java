@@ -31,7 +31,7 @@ public class UpdateMessage extends Message{
 		copy.remainingTransmissionTime = remainingTransmissionTime;
 		copy.senderID = senderID;
 		copy.startTransmissionTime = startTransmissionTime;
-		copy.timeToLive = timeToLive;
+		//copy.timeToLive = timeToLive;
 		copy.updates = new LinkedList<UpdateMessageEntry>();
 		for(UpdateMessageEntry entry: updates){
 			copy.updates.add(new UpdateMessageEntry(entry.getDestination(), entry.getMetric(), entry.getSequenceNumber()));

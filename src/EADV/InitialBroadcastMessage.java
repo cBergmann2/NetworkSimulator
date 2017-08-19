@@ -43,7 +43,7 @@ public class InitialBroadcastMessage extends Message {
 		copy.setRemainingTransmissionTime(remainingTransmissionTime);
 		copy.setSenderID(senderID);
 		copy.setStartTransmissionTime(startTransmissionTime);
-		copy.setTimeToLive(timeToLive);
+		//copy.setTimeToLive(timeToLive);
 		
 		return copy;
 	}

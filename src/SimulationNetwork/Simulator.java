@@ -43,8 +43,9 @@ public abstract class Simulator {
 			networkNodes[id].setSimulator(this);
 		}
 
-		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
-
+		//char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
+		char dataToSend[] = {'A'};
+		
 		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
 
@@ -63,6 +64,8 @@ public abstract class Simulator {
 		long transmissionTime = networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getEndTransmissionTime()
 				- networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getStartTransmissionTime();
 		*/
+		
+		calculateAverageNodeTimes(graph.getNetworkNodes());
 
 		return networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getTransmissionTime();
 	}
@@ -92,7 +95,7 @@ public abstract class Simulator {
 			networkNodes[id].setSimulator(this);
 		}
 
-		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
+		char dataToSend[] = { 'A' };
 
 		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
@@ -406,7 +409,7 @@ public abstract class Simulator {
 		int simulatedMinutes = 0;
 		int simulatedHours = 0;
 		int simulatedDays = 0;
-		numberOfInactiveNodes = 0;
+		this.numberOfInactiveNodes = 0;
 
 		int destinationNode = networkWidth / 2;
 		
@@ -462,7 +465,7 @@ public abstract class Simulator {
 	private boolean isNetworkPartitioned(NetworkGraph graph){
 		LinkedList<Integer> inactiveNodes = getInactiveNodes(graph.getNetworkNodes());
 		int numberOfInactiveNodes = inactiveNodes.size();
-		if((numberOfInactiveNodes >= 3) && (numberOfInactiveNodes > this.numberOfInactiveNodes)){
+		if((numberOfInactiveNodes >= 2) && (numberOfInactiveNodes > this.numberOfInactiveNodes)){
 			System.out.print("Partitioning analysis: " + numberOfInactiveNodes + " nodes are inactive. Inactive Nodes: ");
 			for(int node: inactiveNodes){
 				System.out.print(" " + node);

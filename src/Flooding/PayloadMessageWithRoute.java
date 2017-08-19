@@ -45,7 +45,7 @@ public class PayloadMessageWithRoute extends PayloadMessage{
 		copy.setPayloadSourceAdress(payloadSourceAdress);
 		copy.setSenderID(senderID);
 		copy.setStartTransmissionTime(startTransmissionTime);
-		copy.setTimeToLive(timeToLive);
+		//copy.setTimeToLive(timeToLive);
 
 		
 		for(int i=0; i<route.size(); i++){

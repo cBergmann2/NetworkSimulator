@@ -20,10 +20,11 @@ public class Main {
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
+		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
 		
-		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(100);
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(1);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
@@ -54,6 +55,6 @@ public class Main {
 		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
 	}
 }

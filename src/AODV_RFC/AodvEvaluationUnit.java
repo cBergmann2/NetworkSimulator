@@ -19,8 +19,8 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 	private static final int MAX_NETWORK_WIDTH = 32;
 	
 	//private static final int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 	
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -47,29 +47,29 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 			transmissionTime_max[0][i] = numberOfNodes[i];
-			transmissionTime_max[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], (int) Math.pow(networkWidth[i], 2) - networkWidth[i],
-					(int) Math.pow(networkWidth[i], 2) - 1) /1000;
+			transmissionTime_max[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0,
+					(int) Math.pow(networkWidth[i], 2) - 1) /1000.0;
 			transmissionTime_max_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_max_collisions[1][i] = aodvSimulator.getCollisions();
 			transmissionTime_msg_max[0][i] = numberOfNodes[i];
-			transmissionTime_msg_max[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
+			transmissionTime_msg_max[1][i] = aodvSimulator.getMsgTransmissionTime()/1000.0; 
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			
 			transmissionTime_min[0][i] = numberOfNodes[i];
-			transmissionTime_min[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, 1)/1000;
+			transmissionTime_min[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, 1)/1000.0;
 			transmissionTime_min_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_min_collisions[1][i] = aodvSimulator.getCollisions();
 			transmissionTime_msg_min[0][i] = numberOfNodes[i];
-			transmissionTime_msg_min[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
+			transmissionTime_msg_min[1][i] = aodvSimulator.getMsgTransmissionTime()/1000.0; 
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2)/1000;
+			transmissionTime_med[1][i] = aodvSimulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2)/1000.0;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = aodvSimulator.getCollisions();
 			transmissionTime_msg_med[0][i] = numberOfNodes[i];
-			transmissionTime_msg_med[1][i] = aodvSimulator.getMsgTransmissionTime()/1000; 
+			transmissionTime_msg_med[1][i] = aodvSimulator.getMsgTransmissionTime()/1000.0; 
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 			
 
