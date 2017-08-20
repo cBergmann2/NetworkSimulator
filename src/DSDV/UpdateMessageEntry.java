@@ -1,7 +1,7 @@
 package DSDV;
 
 public class UpdateMessageEntry{
-	public static final int SIZE = 32 + 32 + 64;
+	public static final int SIZE = 8 + 8 + 8;
 	
 	private int destination;
 	private int metric;

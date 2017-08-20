@@ -204,7 +204,7 @@ public abstract class NetworkNode {
 							// Start message transmission
 							outgoingMsg = outputBuffer.removeFirst();
 							if((outgoingMsg instanceof PayloadMessage) && ((PayloadMessage)outgoingMsg).getPayloadSourceAdress() == this.id){
-								outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());								
+								//outgoingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());								
 							}
 							outgoingMsg.setRemainingTransmissionTime(Message.calculateTransmissionTime(outgoingMsg.getDataVolume()));
 							//System.out.println(simulator.getNetworkLifetime() + ": Node " + id + " start sending message to destination " + outgoingMsg.getDestinationID());

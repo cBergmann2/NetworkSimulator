@@ -9,6 +9,7 @@ import SimulationNetwork.PayloadMessage;
 public class DsdvNetworkNode extends NetworkNode{
 	
 	private static final long UPDATE_INTERVAL = 5*60000;	//in ms
+	//private static final long UPDATE_INTERVAL = 30000;	//in ms -> every 30 seconds
 	private long lastUpdate;
 	private LinkedList<ForwardTableEntry> forwardTable;
 	private long numberTransmittedUpdateMsg;
@@ -20,7 +21,7 @@ public class DsdvNetworkNode extends NetworkNode{
 	
 	public DsdvNetworkNode(int id) {
 		super(id);
-		lastUpdate = 600000;
+		lastUpdate = UPDATE_INTERVAL;
 		forwardTable = new LinkedList<ForwardTableEntry>();
 		numberTransmittedUpdateMsg = 0L;
 		msgWaintingBuffer = new LinkedList<PayloadMessage>();
@@ -139,17 +140,44 @@ public class DsdvNetworkNode extends NetworkNode{
 
 	private void receiveUpdateMessage(UpdateMessage msg) {
 		boolean brokenLinkDetected = false;
+		boolean newDestinationDetected = false;
 		incrementalUpdateMessage = new UpdateMessage();
 		
+		
+		
+		
 		for(UpdateMessageEntry entry: msg.getUpdates()){
+			
+			if(checkForNewDestination(entry)){
+				UpdateMessageEntry updateMessageEntry = new UpdateMessageEntry(entry.getDestination(), entry.getMetric()+1, entry.getSequenceNumber());
+				incrementalUpdateMessage.addUpdate(updateMessageEntry);
+				newDestinationDetected = true;
+			}
+			
 			if(this.updateForwardTable(entry, msg.getSenderID())){
 				brokenLinkDetected = true;
+				UpdateMessageEntry updateMessageEntry = new UpdateMessageEntry(entry.getDestination(), entry.getMetric(), entry.getSequenceNumber());
+				incrementalUpdateMessage.addUpdate(updateMessageEntry);
 			}
 		}
 		
-		if(brokenLinkDetected){
-			this.sendMsg(incrementalUpdateMessage);
+		//if (this.propagateNetworkStructure){
+			if(brokenLinkDetected || newDestinationDetected){
+				
+				this.sendMsg(incrementalUpdateMessage);
+			}
+		//}
+	}
+	
+	private boolean checkForNewDestination(UpdateMessageEntry updateMsgEntry){
+		for(ForwardTableEntry forwartTableEntry: this.forwardTable){
+			if((forwartTableEntry.getDestination() == updateMsgEntry.getDestination()) && 
+					(forwartTableEntry.getMetric() < Integer.MAX_VALUE)){
+				return false;
+				
+			}
 		}
+		return true;
 	}
 	
 	private boolean updateForwardTable(UpdateMessageEntry updateMessageEntry, int senderID){
@@ -273,6 +301,10 @@ public class DsdvNetworkNode extends NetworkNode{
 
 	public void setPropagateNetworkStructure(boolean propagateNetworkStructure) {
 		this.propagateNetworkStructure = propagateNetworkStructure;
+	}
+
+	public void forceTheNodeToSendPeriodicUpdateMessage() {
+		this.lastUpdate = Long.MAX_VALUE;
 	}
 
 }
