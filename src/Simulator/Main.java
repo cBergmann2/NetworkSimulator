@@ -1,4 +1,5 @@
 package Simulator;
+import AODVM.AodvmEvaluationUnit;
 //import AODV.AodvEvaluationUnit;
 import AODV_RFC.AodvEvaluationUnit;
 import DSDV.DsdvEvaluationUnit;
@@ -41,12 +42,15 @@ public class Main {
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
 		
+		AodvmEvaluationUnit aodvmEvaluationUnit = new AodvmEvaluationUnit();
+		//aodvmEvaluationUnit.evaluateSpeedAnalysis();
+		aodvmEvaluationUnit.evaluateCostAnalysis();
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
-		dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		
 		
