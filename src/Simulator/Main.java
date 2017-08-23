@@ -20,7 +20,7 @@ public class Main {
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
+		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
 		
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
@@ -46,7 +46,7 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
-		dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		
 		
