@@ -24,7 +24,7 @@ public class RREQ extends Message{
 	public RREQ(){
 		this.setDataVolume(64);	
 		this.Hop_Count = 0;
-		this.Min_RE = -1;
+		this.Min_RE = 100;
 	}
 	
 	public RREQ(int originatorIpAdress, int originatorSequenceNumber, int destinationIpAddress, int destinationSequnceNumber, int rreqId){

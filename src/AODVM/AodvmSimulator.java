@@ -9,6 +9,7 @@ public class AodvmSimulator extends Simulator{
 	private double percentageTransmittedRREQMsg;
 	private double percentageTransmittedRREPMsg;
 	private double percentageTransmittedPayloadMsg;
+	private double routeDistance;
 	
 	private long msgTransmissionTime; 
 
@@ -67,7 +68,7 @@ public class AodvmSimulator extends Simulator{
 			networkNodes[id].setSimulator(this);
 		}
 
-		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
+		char dataToSend[] = { 'A' };
 
 		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
@@ -82,7 +83,38 @@ public class AodvmSimulator extends Simulator{
 		}while(((AodvmNetworkNode)networkNodes[sourceNodeId]).getNumberRecivedRREPdMsg() == 0);
 		
 		//Reset transmission units and battery of all nodes
-		this.resetTransmissionUnitFromAllNodes();
+		//this.resetTransmissionUnitFromAllNodes();
+		
+		this.routeDistance = ((AodvmNetworkNode)networkNodes[sourceNodeId]).getRouteTableEntry(destinationNodeId).getHopCount();
+		
+		do {
+			
+			// Performe NODE_EXECUTION_TIME ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+						
+			transmissionInNetworkDetected = false;
+			for (int id = 0; id < networkNodes.length; id++) {
+				if (id != destinationNodeId) {
+					if (networkNodes[id].getOutgoingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getIncomingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getOutputBufferSize() > 0) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+				}
+			}
+
+		} while (transmissionInNetworkDetected);
+		
+		
 		for (int id = 0; id < networkNodes.length; id++) {
 			networkNodes[id].resetBattery();
 		}
@@ -118,7 +150,7 @@ public class AodvmSimulator extends Simulator{
 				}
 			}
 
-		} while (transmissionInNetworkDetected);
+		} while (networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
 
 		for (int id = 0; id < networkNodes.length; id++) {
 			/*consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
@@ -135,7 +167,7 @@ public class AodvmSimulator extends Simulator{
 		}
 		
 
-		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
+		return (consumedEnergyInTransmissionMode);
 		
 	}
 	
@@ -278,6 +310,14 @@ public class AodvmSimulator extends Simulator{
 
 	public double getPercentageTransmittedPayloadMsg() {
 		return percentageTransmittedPayloadMsg;
+	}
+
+	public double getRouteDistance() {
+		return routeDistance;
+	}
+
+	public void setRouteDistance(double routeDistance) {
+		this.routeDistance = routeDistance;
 	}
 
 

@@ -44,7 +44,7 @@ public class DataCollectionTimer {
 		double maxAlpha = 0;
 		RREQ tempRreq = null;
 		
-		System.out.println("Number of Received RREQs: " + receivedRREQs.size());
+		//System.out.println("Number of Received RREQs: " + receivedRREQs.size());
 		
 		for(RREQ rreq :receivedRREQs){
 			if(rreq.getAlpha() > maxAlpha){

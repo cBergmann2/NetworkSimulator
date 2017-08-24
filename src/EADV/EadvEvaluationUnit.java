@@ -15,7 +15,7 @@ import Simulator.EvaluationUnit;
 
 public class EadvEvaluationUnit extends EvaluationUnit {
 
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 	//private static final int networkWidth[] = {14};
 
 	private static final int CHART_HIGHT = 300;
@@ -492,6 +492,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -515,6 +518,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
 		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart2 = new JFreeChart(plot2);
 
@@ -539,6 +545,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Idle-Modus [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart2 = new JFreeChart(plot2);
 
@@ -563,7 +572,10 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten wartet auf Medium [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
-
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
+		
 		chart2 = new JFreeChart(plot2);
 
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
@@ -587,7 +599,10 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Empfangsmodus [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
-
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
+		
 		chart2 = new JFreeChart(plot2);
 
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);

@@ -73,7 +73,7 @@ public class AodvmNetworkNode extends NetworkNode{
 		validateRouteLifetime(executionTime);
 		
 		
-		if(simulator.getNetworkLifetime() % 500 == 0){
+		if(simulator.getNetworkLifetime() % 1000 == 0){
 			
 			LinkedList<DataCollectionTimer> toDeleteTimer = new LinkedList<>();
 			
@@ -102,7 +102,7 @@ public class AodvmNetworkNode extends NetworkNode{
 					rrep.setDestinationID(msg.getSenderID());
 					rrep.setSenderID(this.id);
 					rrep.setTimeToLive(msg.getHop_Count() *2);
-					rrep.setLifetime(MAX_ROUTE_LIFETIME); //Lifetime of Route = 9 minutes
+					rrep.setLifetime(MAX_ROUTE_LIFETIME); 
 					
 					this.addNodeAsPrecursor(rrep.getDestinationID(), rrep.getDestination_IP_Adress());
 					
@@ -205,7 +205,7 @@ public class AodvmNetworkNode extends NetworkNode{
 	
 			
 			if(msg.getDestination_IP_Addresse() == this.id){
-				System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + ": This node ist destination. Received RREQ from node " + msg.getSenderID());
+				//System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + ": This node ist destination. Received RREQ from node " + msg.getSenderID());
 				
 				//Start data collection timer
 				this.startDataCollectionTimer(msg.getOriginator_IP_Adress(), msg.getRREQ_ID());
@@ -380,6 +380,15 @@ public class AodvmNetworkNode extends NetworkNode{
 		return -1;
 	}
 	
+	public RouteTableEntry getRouteTableEntry(int destination){
+		for(RouteTableEntry route: routingTable){
+			if(route.getDestinationAdress() == destination && route.isValid()){
+				return route;
+			}
+		}
+		return null;
+	}
+	
 	private void reciveRREP(RREP msg){
 		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
 		this.numberRecivedRREPdMsg++;
@@ -450,12 +459,12 @@ public class AodvmNetworkNode extends NetworkNode{
 
 			if(msg.getPayloadDestinationAdress() != this.id){
 				//forward message to next hop
-				System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
+				//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward payloadMessage from node " + msg.getPayloadSourceAdress() + " to node " + msg.getPayloadDestinationAdress());
 				this.sendMsg(msg);
 			}
 			else{
 				long transmissionTime = simulator.getNetworkLifetime() - msg.getStartTransmissionTime();
-				System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived. Transmissiontime: " + transmissionTime);
+				//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": message from node " + msg.getPayloadSourceAdress() + " recived. Transmissiontime: " + transmissionTime);
 				msg.setEndTransmissionTime(simulator.getNetworkLifetime());
 				this.lastRecivedPayloadMessage = msg;
 				numberRecivedPayloadMsg++;

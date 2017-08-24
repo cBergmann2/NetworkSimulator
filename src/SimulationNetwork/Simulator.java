@@ -136,7 +136,7 @@ public abstract class Simulator {
 			//System.out.println("Node " + id + ": consumedEnergy idle: " + networkNodes[id].getConsumedEnergyInIdleMode() + ", time in idleMode " + (networkNodes[id].getIdleTime() +networkNodes[id].getWaitingTimeForMediumAccesPermission()) + ", time in recive mode "+ networkNodes[id].getReciveTime() + ", time in transmit mode " + networkNodes[id].getTransmissionTime() );
 			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
 			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
-			System.out.println("Node " + id + ": energy consumption in transmission mode = " + networkNodes[id].getConsumedEnergyInTransmissionMode());
+			//System.out.println("Node " + id + ": energy consumption in transmission mode = " + networkNodes[id].getConsumedEnergyInTransmissionMode());
 		}
 		
 		calculateAverageNodeTimes(graph.getNetworkNodes());
@@ -579,6 +579,7 @@ public abstract class Simulator {
 			if (!node.isNodeAlive()) {
 								
 				System.out.println("Node " + node.getId() + " is down: "
+						+ "Number transmitted msg : " + node.getNumberTransmittedPayloadMsg() + " "+ 
 						+ ((double) node.getIdleTime() / (double) networkLifetime) + "% idle time"
 						+ ((double) node.getReciveTime() / (double) networkLifetime) + "% recive time"
 						+ ((double) node.getTransmissionTime() / (double) networkLifetime) + "% transmit time"
