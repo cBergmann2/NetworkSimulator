@@ -373,98 +373,33 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
-		double sendTime_10_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		
-
 		double sendTime_60[][] = new double[2][networkWidth.length];
-		double sendTime_60_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-
 		double sendTime_600[][] = new double[2][networkWidth.length];
-		double sendTime_600_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
+	
 		
-		/*
-		double sendTime_1200[][] = new double[2][networkWidth.length];
-		double sendTime_1200_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_1200_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_1200_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		 */
+		
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
 			System.out.println("DSDV - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000 / 60;
-			/*
-			sendTime_10_IdleMode[0][i] = numberOfNodes[i];
-			sendTime_10_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
-			sendTime_10_ReciveMode[0][i] = numberOfNodes[i];
-			sendTime_10_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
-			sendTime_10_TransmissionMode[0][i] = numberOfNodes[i];
-			sendTime_10_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
-			sendTime_10_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
-			sendTime_10_WaitingForMediumAccesPermission[1][i] = simulator
-					.getAverageTimeWaitingForMediumAccesPermission();
-			sendTime_10_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_10_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_10_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_10_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			*/
+			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000.0 / 60.0;
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			System.out.println("DSDV - Lifetimeanalysis, transmission period : 300 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 5*60, payloadSize) / 1000 / 60;
+			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 5*60, payloadSize) / 1000.0 / 60.0;
 
 			System.out.println(
-					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+					"5m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			System.out.println("DSDV - Lifetimeanalysis, transmission period : 600 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 10*60, payloadSize) / 1000 / 60;
-			/*
-			sendTime_600_IdleMode[0][i] = numberOfNodes[i];
-			sendTime_600_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
-			sendTime_600_ReciveMode[0][i] = numberOfNodes[i];
-			sendTime_600_ReciveMode[1][i] = simulator.getAverageTimeInReciveMode();
-			sendTime_600_TransmissionMode[0][i] = numberOfNodes[i];
-			sendTime_600_TransmissionMode[1][i] = simulator.getAverageTimeInTransmissionMode();
-			sendTime_600_WaitingForMediumAccesPermission[0][i] = numberOfNodes[i];
-			sendTime_600_WaitingForMediumAccesPermission[1][i] = simulator
-					.getAverageTimeWaitingForMediumAccesPermission();
-			sendTime_600_PercentageRREQMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentageRREQMsg[1][i] = simulator.getPercentageTransmittedRREQMsg();
-			sendTime_600_PercentageRREPMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentageRREPMsg[1][i] = simulator.getPercentageTransmittedRREPMsg();
-			sendTime_600_PercentagePayloadMsg[0][i] = numberOfNodes[i];
-			sendTime_600_PercentagePayloadMsg[1][i] = simulator.getPercentageTransmittedPayloadMsg();
-			*/
+			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 10*60, payloadSize) / 1000.0 / 60.0;
+
 			System.out.println(
 					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
@@ -484,13 +419,16 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
 		chart.getPlot().setBackgroundPaint(Color.WHITE);
 		chart.setBackgroundPaint(Color.WHITE);
 
-		String filename = "Output/DSDV/DSDV_Lebenszeitanalyse_OneDestination_" + payloadSize + "Byte.png";
+		String filename = "Output/DSDV/DSDV_Lebenszeitanalyse_OneDestination_" + payloadSize + "Bit.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {

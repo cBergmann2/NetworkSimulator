@@ -8,7 +8,7 @@ import SimulationNetwork.PayloadMessage;
 
 public class DsdvNetworkNode extends NetworkNode{
 	
-	private static final long UPDATE_INTERVAL = 5*60000;	//in ms
+	private static final long UPDATE_INTERVAL = 10*60000;	//in ms
 	//private static final long UPDATE_INTERVAL = 30000;	//in ms -> every 30 seconds
 	private long lastUpdate;
 	private LinkedList<ForwardTableEntry> forwardTable;

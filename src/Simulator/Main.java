@@ -46,7 +46,7 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
-		dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
+		dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
 		
 		
