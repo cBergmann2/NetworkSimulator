@@ -33,7 +33,7 @@ public class Main {
 		//aodvmEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvmEvaluationUnit.evaluateCostAnalysis();
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
@@ -41,6 +41,7 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		
