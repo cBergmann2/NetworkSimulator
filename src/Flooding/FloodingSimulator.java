@@ -138,5 +138,10 @@ public class FloodingSimulator extends Simulator {
 		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
+	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize, int maxPairs) {
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+
+		return this.partitioningAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
+	}
 
 }
