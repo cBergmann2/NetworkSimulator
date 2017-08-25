@@ -22,7 +22,7 @@ public class RREQ extends Message{
 	private double alpha;
 	
 	public RREQ(){
-		this.setDataVolume(64);	
+		this.setDataVolume(8*8);	
 		this.Hop_Count = 0;
 		this.Min_RE = 100;
 	}

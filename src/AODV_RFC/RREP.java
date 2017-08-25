@@ -16,7 +16,7 @@ public class RREP extends Message{
 	private int timeToLive;
 	
 	public RREP(){
-		this.setDataVolume(5*32);
+		this.setDataVolume(6*8);
 	}
 	
 	public RREP clone(){

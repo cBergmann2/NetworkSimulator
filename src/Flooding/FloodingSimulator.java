@@ -108,6 +108,14 @@ public class FloodingSimulator extends Simulator {
 
 		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
+	
+	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
+			int payloadSize, int maxPairs) {
+		
+		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
+
+		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
+	}
 
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);

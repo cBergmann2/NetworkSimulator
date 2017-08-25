@@ -169,9 +169,11 @@ public class AodvNetworkNode extends NetworkNode{
 				//search for route in routing table
 				for(RouteTableEntry route: routingTable){
 					if(msg.getDestination_IP_Addresse() == route.getDestinationAdress() && msg.getDestination_Sequence_Number() <= route.getDestinationSequenceNumber() && !msg.isDestinationOnly()){
-						//System.out.println("Node " + this.id + ": Route for destination found");
-						routeToDestination = route;
-						createRREP = true;
+						if(route.isValid()){
+							//System.out.println("Node " + this.id + ": Route for destination found");
+							routeToDestination = route;
+							createRREP = true;
+						}
 					}
 				}
 			}
@@ -197,7 +199,7 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 				rrep.setDestinationID(getNextHopToDestination(msg.getOriginator_IP_Adress()));
 				rrep.setSenderID(this.id);
-				rrep.setTimeToLive(msg.getHop_Count() *2);
+				rrep.setTimeToLive(msg.getHop_Count() +1);
 				rrep.setLifetime(MAX_ROUTE_LIFETIME); //Lifetime of Route = 9 minutes
 				
 				this.addNodeAsPrecursor(rrep.getDestinationID(), rrep.getDestination_IP_Adress());
@@ -318,7 +320,7 @@ public class AodvNetworkNode extends NetworkNode{
 		
 		int nextHopCount = msg.getHop_Count() +1;
 		
-		//Update routing table for desintation node
+		//Update routing table for destination node
 		if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID(), msg.getLifetime())){
 			//Forward RREP if routing table was updated
 			

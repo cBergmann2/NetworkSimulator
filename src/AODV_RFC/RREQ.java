@@ -20,7 +20,7 @@ public class RREQ extends Message{
 	private int timeToLive;
 	
 	public RREQ(){
-		this.setDataVolume(192);	
+		this.setDataVolume(7*8);	
 		this.Hop_Count = 0;
 	}
 	

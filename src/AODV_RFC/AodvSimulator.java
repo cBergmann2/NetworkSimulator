@@ -1,5 +1,6 @@
 package AODV_RFC;
 
+import AODVM.AodvmNetworkGraph;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
@@ -234,6 +235,14 @@ public class AodvSimulator extends Simulator{
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
 		
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
+	}
+	
+	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
+			int payloadSize, int maxPairs) {
+		
+		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+
+		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 	
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {

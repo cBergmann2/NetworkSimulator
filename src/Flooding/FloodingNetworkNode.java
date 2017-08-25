@@ -59,15 +59,16 @@ public class FloodingNetworkNode extends NetworkNode{
 					this.numberRecivedPayloadMsg++;
 					this.lastRecivedPayloadMessage = (PayloadMessage) recivedMsg;
 					recivedMsg.setEndTransmissionTime(simulator.getNetworkLifetime());
-					
-					//System.out.println("Node " + this.id + ": recive payload msg");
-					//System.out.print("Message path: ");
-					//msg = (PayloadMessageWithRoute) recivedMsg;
-					//LinkedList<Integer> msgRoute = msg.getMesageRoute();
-					//for(int i=0; i<msgRoute.size(); i++){
-					//	System.out.print(" " + msgRoute.get(i) + ",");
-					//}
-					//System.out.println();
+					/*
+					System.out.print("Node " + this.id + ": recive payload msg. ");
+					System.out.print("Message path: ");
+					msg = (PayloadMessageWithRoute) recivedMsg;
+					LinkedList<Integer> msgRoute = msg.getMesageRoute();
+					for(int i=0; i<msgRoute.size(); i++){
+						System.out.print(" " + msgRoute.get(i) + ",");
+					}
+					System.out.println();
+					*/
 					
 				}else{
 					//System.out.println("Node "+ this.id + ": forward msg");

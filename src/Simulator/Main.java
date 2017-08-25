@@ -15,14 +15,17 @@ public class Main {
 		FloodingEvaluationUnit floodingEvaluationUnit = new FloodingEvaluationUnit();
 		//floodingEvaluationUnit.evaluateSpeedAnalysis();
 		//floodingEvaluationUnit.evaluateCostAnalysis();
-		floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
 
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 
 		
@@ -30,6 +33,7 @@ public class Main {
 		//aodvmEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvmEvaluationUnit.evaluateCostAnalysis();
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();

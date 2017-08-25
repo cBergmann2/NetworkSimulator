@@ -1,5 +1,6 @@
 package AODVM;
 
+import Flooding.FloodingNetworkGraph;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
@@ -266,6 +267,14 @@ public class AodvmSimulator extends Simulator{
 		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
+	}
+	
+	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
+			int payloadSize, int maxPairs) {
+		
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
+
+		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 	
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
