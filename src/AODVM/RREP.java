@@ -1,4 +1,4 @@
-package AODV_RFC;
+package AODVM;
 
 import SimulationNetwork.Message;
 
@@ -9,6 +9,7 @@ public class RREP extends Message{
 	private int Reserved;
 	private int Prefix_Size;
 	private int Hop_Count;
+	private int Min_RE;
 	private int Destination_IP_Adress;
 	private int Destination_Sequence_Number;
 	private int Orignator_IP_Adress;
@@ -16,7 +17,7 @@ public class RREP extends Message{
 	private int timeToLive;
 	
 	public RREP(){
-		this.setDataVolume(6*8);
+		this.setDataVolume(7*8);
 	}
 	
 	public RREP clone(){
@@ -36,6 +37,7 @@ public class RREP extends Message{
 		clone.setStartTransmissionTime(startTransmissionTime);
 		clone.setTimeToLive(timeToLive);
 		clone.setType(Type);
+		clone.setMin_RE(Min_RE);
 		
 		return clone;
 	}
@@ -163,5 +165,13 @@ public class RREP extends Message{
 
 	public void setTimeToLive(int timeToLive) {
 		this.timeToLive = timeToLive;
+	}
+
+	public int getMin_RE() {
+		return Min_RE;
+	}
+
+	public void setMin_RE(int min_RE) {
+		Min_RE = min_RE;
 	}
 }

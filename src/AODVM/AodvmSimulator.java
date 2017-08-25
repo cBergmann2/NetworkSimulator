@@ -1,21 +1,22 @@
-package AODV_RFC;
+package AODVM;
 
-import AODVM.AodvmNetworkGraph;
+import Flooding.FloodingNetworkGraph;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
 
-public class AodvSimulator extends Simulator{
+public class AodvmSimulator extends Simulator{
 	
 	private double percentageTransmittedRREQMsg;
 	private double percentageTransmittedRREPMsg;
 	private double percentageTransmittedPayloadMsg;
+	private double routeDistance;
 	
 	private long msgTransmissionTime; 
 
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 
 		long time = this.speedAnalysis(graph, networkWidth, sourceNodeId, destinationNodeId);
 
@@ -25,12 +26,12 @@ public class AodvSimulator extends Simulator{
 		
 		this.msgTransmissionTime = transmittedMsg.getEndTransmissionTime() - transmittedMsg.getStartTransmissionTime();
 
-		return time;
+		return this.networkLifetime;
 	}
 	
 	public long energyCostAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 
 		long energyCosts = this.energyCostAnalysis(graph, networkWidth, sourceNodeId, destinationNodeId);
 		
@@ -50,7 +51,7 @@ public class AodvSimulator extends Simulator{
 	 */
 	public long energyCostAnalysisWithoutRDP(int networkWidth, int sourceNodeId, int destinationNodeId) {
 		
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		this.graph = graph;
 		
@@ -68,7 +69,7 @@ public class AodvSimulator extends Simulator{
 			networkNodes[id].setSimulator(this);
 		}
 
-		char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L', 'D' };
+		char dataToSend[] = { 'A' };
 
 		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
 		networkNodes[sourceNodeId].startSendingProcess(msg);
@@ -80,10 +81,41 @@ public class AodvSimulator extends Simulator{
 			}
 
 			networkLifetime += NODE_EXECUTION_TIME;
-		}while(((AodvNetworkNode)networkNodes[sourceNodeId]).getNumberRecivedRREPdMsg() == 0);
+		}while(((AodvmNetworkNode)networkNodes[sourceNodeId]).getNumberRecivedRREPdMsg() == 0);
 		
 		//Reset transmission units and battery of all nodes
-		this.resetTransmissionUnitFromAllNodes();
+		//this.resetTransmissionUnitFromAllNodes();
+		
+		this.routeDistance = ((AodvmNetworkNode)networkNodes[sourceNodeId]).getRouteTableEntry(destinationNodeId).getHopCount();
+		
+		do {
+			
+			// Performe NODE_EXECUTION_TIME ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+						
+			transmissionInNetworkDetected = false;
+			for (int id = 0; id < networkNodes.length; id++) {
+				if (id != destinationNodeId) {
+					if (networkNodes[id].getOutgoingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getIncomingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getOutputBufferSize() > 0) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+				}
+			}
+
+		} while (transmissionInNetworkDetected);
+		
+		
 		for (int id = 0; id < networkNodes.length; id++) {
 			networkNodes[id].resetBattery();
 		}
@@ -119,7 +151,7 @@ public class AodvSimulator extends Simulator{
 				}
 			}
 
-		} while (transmissionInNetworkDetected);
+		} while (networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
 
 		for (int id = 0; id < networkNodes.length; id++) {
 			/*consumedEnergy += NetworkNode.NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE
@@ -136,12 +168,12 @@ public class AodvSimulator extends Simulator{
 		}
 		
 
-		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
+		return (consumedEnergyInTransmissionMode);
 		
 	}
 	
 	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSize){
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		networkLifetime = 0;
 		int simulatedHours = 0;
@@ -158,7 +190,7 @@ public class AodvSimulator extends Simulator{
 					
 			for(int id=0; id<networkNodes.length; id++){
 				//Generate static transmission of data
-				((AodvNetworkNode)networkNodes[id]).generateTransmissionEveryTSecondsChangingDestination(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
+				((AodvmNetworkNode)networkNodes[id]).generateTransmissionEveryTSecondsChangingDestination(transmissionPeriod, NODE_EXECUTION_TIME, networkNodes.length, payloadSize);
 			}
 			
 
@@ -198,8 +230,8 @@ public class AodvSimulator extends Simulator{
 		int sendPayloadMsg = 0;
 		int sendRoutingMsg = 0;
 		for(int id=0; id<networkNodes.length; id++){
-			sendPayloadMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
-			sendRoutingMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
+			sendPayloadMsg += ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
+			sendRoutingMsg += ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
 		}
 		System.out.println("Number send payload msg: " + sendPayloadMsg + ", number send routing msg: " + sendRoutingMsg);
 		
@@ -210,7 +242,7 @@ public class AodvSimulator extends Simulator{
 	}
 	
 	public long lifetimeAnalysisStaticSendBehaviorChangingDestination(int networkWidth, int transmissionPeriod,int payloadSIze){
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		long lifetime = this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSIze); 
 
@@ -219,8 +251,8 @@ public class AodvSimulator extends Simulator{
 		int sendPayloadMsg = 0;
 		int sendRoutingMsg = 0;
 		for(int id=0; id<networkNodes.length; id++){
-			sendPayloadMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
-			sendRoutingMsg += ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
+			sendPayloadMsg += ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedPayloadMsg();
+			sendRoutingMsg += ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedRREPMsg() + ((AodvmNetworkNode)networkNodes[id]).getNumberTransmittedRREQMsg();
 		}
 		System.out.println("Number send payload msg: " + sendPayloadMsg + ", number send routing msg: " + sendRoutingMsg);
 		
@@ -232,7 +264,7 @@ public class AodvSimulator extends Simulator{
 
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){
 		
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
 	}
@@ -240,13 +272,13 @@ public class AodvSimulator extends Simulator{
 	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
 			int payloadSize, int maxPairs) {
 		
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 	
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
-		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
 		
 		
 		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
@@ -266,10 +298,10 @@ public class AodvSimulator extends Simulator{
 		this.percentageTransmittedPayloadMsg = 0.0;
 
 		for(NetworkNode node: networkNodes){
-			numberTransmittedRREQMsg += ((AodvNetworkNode)node).getNumberTransmittedRREQMsg();
-			numberTransmittedRREPMsg += ((AodvNetworkNode)node).getNumberTransmittedRREPMsg();
-			numberTransmittedPayloadMsg += ((AodvNetworkNode)node).getNumberTransmittedPayloadMsg();
-			numberTransmittedMsg += ((AodvNetworkNode)node).getNumberTransmittedRREQMsg() + ((AodvNetworkNode)node).getNumberTransmittedRREPMsg() + ((AodvNetworkNode)node).getNumberTransmittedPayloadMsg();
+			numberTransmittedRREQMsg += ((AodvmNetworkNode)node).getNumberTransmittedRREQMsg();
+			numberTransmittedRREPMsg += ((AodvmNetworkNode)node).getNumberTransmittedRREPMsg();
+			numberTransmittedPayloadMsg += ((AodvmNetworkNode)node).getNumberTransmittedPayloadMsg();
+			numberTransmittedMsg += ((AodvmNetworkNode)node).getNumberTransmittedRREQMsg() + ((AodvmNetworkNode)node).getNumberTransmittedRREPMsg() + ((AodvmNetworkNode)node).getNumberTransmittedPayloadMsg();
 		}
 		
 		percentageTransmittedRREQMsg = numberTransmittedRREQMsg / (double)numberTransmittedMsg;
@@ -287,6 +319,14 @@ public class AodvSimulator extends Simulator{
 
 	public double getPercentageTransmittedPayloadMsg() {
 		return percentageTransmittedPayloadMsg;
+	}
+
+	public double getRouteDistance() {
+		return routeDistance;
+	}
+
+	public void setRouteDistance(double routeDistance) {
+		this.routeDistance = routeDistance;
 	}
 
 

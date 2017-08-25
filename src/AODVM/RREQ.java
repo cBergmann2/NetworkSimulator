@@ -1,4 +1,4 @@
-package AODV_RFC;
+package AODVM;
 
 import SimulationNetwork.Message;
 
@@ -18,10 +18,13 @@ public class RREQ extends Message{
 	private int Originator_IP_Adress;
 	private int Originator_Sequence_Number;
 	private int timeToLive;
+	private int Min_RE;
+	private double alpha;
 	
 	public RREQ(){
-		this.setDataVolume(7*8);	
+		this.setDataVolume(8*8);	
 		this.Hop_Count = 0;
+		this.Min_RE = 100;
 	}
 	
 	public RREQ(int originatorIpAdress, int originatorSequenceNumber, int destinationIpAddress, int destinationSequnceNumber, int rreqId){
@@ -55,6 +58,7 @@ public class RREQ extends Message{
 		copy.setTimeToLive(timeToLive);
 		copy.setType(Type);
 		copy.setU(U);
+		copy.setMin_RE(Min_RE);
 		
 		return copy;
 	}
@@ -222,5 +226,34 @@ public class RREQ extends Message{
 
 	public void setTimeToLive(int timeToLive) {
 		this.timeToLive = timeToLive;
+	}
+
+	public int getMin_RE() {
+		return Min_RE;
+	}
+
+	public void setMin_RE(int min_RE) {
+		if(min_RE > 0){
+			if(this.Min_RE == -1 || this.Min_RE > min_RE){
+				Min_RE = min_RE;
+			}
+		}
+	}
+
+	/**
+	 * Set alpha equal to Min_RE/Hop_Count, when Hop_Count is greater than 0
+	 * Otherwise set alpha equal to 100.
+	 */
+	public void calculateAlpha() {
+		if(Hop_Count > 0){
+			this.alpha = ((double)Min_RE*1.0)/((double)Hop_Count*1.0);
+		}
+		else{
+			this.alpha = 100;
+		}
+	}
+	
+	public double getAlpha(){
+		return this.alpha;
 	}
 }

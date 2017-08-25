@@ -955,6 +955,71 @@ public class FloodingEvaluationUnit extends EvaluationUnit {
 		
 	}
 	
+	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs){
+		System.out.println("\nFlooding Lifetime analysis random source and destination node");
+		
+		FloodingSimulator simulator = new FloodingSimulator();
+		
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_600[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*30, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*60, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 5*60, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+		
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 30 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_600);
+		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		String filename = "Output/Flooding/Flooding_Lebenszeitanalyse_randomSourceAndDest_" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
 		System.out.println("Start partitioning analysis");
 

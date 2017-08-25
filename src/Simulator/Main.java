@@ -1,4 +1,5 @@
 package Simulator;
+import AODVM.AodvmEvaluationUnit;
 //import AODV.AodvEvaluationUnit;
 import AODV_RFC.AodvEvaluationUnit;
 import DSDV.DsdvEvaluationUnit;
@@ -14,49 +15,41 @@ public class Main {
 		FloodingEvaluationUnit floodingEvaluationUnit = new FloodingEvaluationUnit();
 		//floodingEvaluationUnit.evaluateSpeedAnalysis();
 		//floodingEvaluationUnit.evaluateCostAnalysis();
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
-		
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior();
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
-		
-		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
-		//floodingEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(1);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
+
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(100);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(1000);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehavior(10000);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorChangingDestination(100);
-		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(10);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1000);
+		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+
 		
+		AodvmEvaluationUnit aodvmEvaluationUnit = new AodvmEvaluationUnit();
+		//aodvmEvaluationUnit.evaluateSpeedAnalysis();
+		//aodvmEvaluationUnit.evaluateCostAnalysis();
+		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
-
-		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(1);
-
-		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(100);
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
 		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
-		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(100);
-		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(1);
+		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 	}
 }
+
