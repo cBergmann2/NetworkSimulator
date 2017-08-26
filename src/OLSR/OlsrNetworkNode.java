@@ -17,6 +17,9 @@ public class OlsrNetworkNode extends NetworkNode {
 	LinkedList<PayloadMessage> msgWaintingBuffer;
 	LinkedList<TopologyDiscoveryMessage> receivedTopologyDiscoveryMessages;
 	int topologyDiscoverySequenceNumber;
+	int networkSize;
+	boolean networkStructureDiscovered;
+	boolean sendControlMessages;
 
 
 	public OlsrNetworkNode(int id) {
@@ -28,7 +31,9 @@ public class OlsrNetworkNode extends NetworkNode {
 		msgWaintingBuffer = new LinkedList<PayloadMessage>();
 		receivedTopologyDiscoveryMessages = new LinkedList<TopologyDiscoveryMessage>();
 		topologyDiscoverySequenceNumber = 0;
-
+		networkSize = -1;
+		networkStructureDiscovered = false;
+		sendControlMessages = true;
 
 		// TODO Auto-generated constructor stub
 	}
@@ -36,39 +41,42 @@ public class OlsrNetworkNode extends NetworkNode {
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
 
-		if (simulator.getNetworkLifetime() % 1000 == 0) {
-			// collect all messages and send packet
+		if (sendControlMessages) {
+			if (simulator.getNetworkLifetime() % 1000 == 0) {
+				// collect all messages and send packet
 
-			if (messagesToSend.size() > 0) {
+				if (messagesToSend.size() > 0) {
 
-				BasicPacketFormat msg = new BasicPacketFormat();
+					BasicPacketFormat msg = new BasicPacketFormat();
 
-				for (OlsrMessage olsrMsg : messagesToSend) {
-					msg.addMessage(olsrMsg);
+					for (OlsrMessage olsrMsg : messagesToSend) {
+						msg.addMessage(olsrMsg);
+					}
+
+					for (OlsrMessage olsrMsg : msg.getMessages()) {
+						messagesToSend.remove(olsrMsg);
+					}
+
+					// System.out.println(simulator.getNetworkLifetime() + ":
+					// Node " + this.id + " - send broadcast msg.");
+					this.sendMsg(msg);
 				}
 
-				for (OlsrMessage olsrMsg : msg.getMessages()) {
-					messagesToSend.remove(olsrMsg);
-				}
-
-				// System.out.println(simulator.getNetworkLifetime() + ":
-				// Node " + this.id + " - send broadcast msg.");
-				this.sendMsg(msg);
 			}
 
-		}
-		
-		if (simulator.getNetworkLifetime() % 30000 == 0) {
-			sendHelloMessage();
-			// System.out.println(simulator.getNetworkLifetime() + ": Node "
-			// + this.id + " - send Hello msg.");
-		}
+			if (simulator.getNetworkLifetime() % (30*1000) == 0) {
+				sendHelloMessage();
+				// System.out.println(simulator.getNetworkLifetime() + ": Node "
+				// + this.id + " - send Hello msg.");
+			}
 
-		if (simulator.getNetworkLifetime() % (5 * 60000) == 0) {
-			// Send Topology discovery message
-			sendTDMessage();
-			// System.out.println(simulator.getNetworkLifetime() + ": Node "
-			// + this.id + " - send TD message.");
+			if (simulator.getNetworkLifetime() % (9*60*1000) == 0) {
+				// Send Topology discovery message
+				sendTDMessage();
+				// System.out.println(simulator.getNetworkLifetime() + ": Node "
+				// + this.id + " - send TD message.");
+			}
+
 		}
 
 		if (simulator.getNetworkLifetime() % (1 * 60000) == 0) {
@@ -260,11 +268,11 @@ public class OlsrNetworkNode extends NetworkNode {
 
 		} while (detectedRoutes > 0);
 
-		/*
-		  if(routingTable.size() == 3){
-			  System.out.println(simulator.getNetworkLifetime() + ": All nodes reachable"); 
-		  }
-		 */
+		
+		if(routingTable.size() == this.networkSize){
+			this.networkStructureDiscovered = true;
+		}
+		 
 	}
 
 	private boolean routeForNodeIsCalculated(int nodeAddress) {
@@ -277,7 +285,7 @@ public class OlsrNetworkNode extends NetworkNode {
 		return false;
 	}
 
-	private RoutingTableEntry getRouteTableEntry(int destinationAddress) {
+	public RoutingTableEntry getRouteTableEntry(int destinationAddress) {
 		for (RoutingTableEntry tabelEntry : routingTable) {
 			if (tabelEntry.getDestinationAddress() == destinationAddress) {
 				return tabelEntry;
@@ -359,6 +367,31 @@ public class OlsrNetworkNode extends NetworkNode {
 			this.sendMsg(msg);
 		}
 
+	}
+
+	public void setNetworkSize(int size) {
+		this.networkSize = size;
+	}
+
+	/**
+	 * @return the networkStructureDiscovered
+	 */
+	public boolean isNetworkStructureDiscovered() {
+		return networkStructureDiscovered;
+	}
+
+	/**
+	 * @return the sendControlMessages
+	 */
+	public boolean isSendControlMessages() {
+		return sendControlMessages;
+	}
+
+	/**
+	 * @param sendControlMessages the sendControlMessages to set
+	 */
+	public void setSendControlMessages(boolean sendControlMessages) {
+		this.sendControlMessages = sendControlMessages;
 	}
 
 }

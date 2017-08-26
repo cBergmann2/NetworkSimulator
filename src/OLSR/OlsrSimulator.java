@@ -1,13 +1,16 @@
 package OLSR;
 
 
-import AODVM.AodvmNetworkGraph;
+import Flooding.FloodingNetworkGraph;
+import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
 
 public class OlsrSimulator extends Simulator{
 
 	private long msgTransmissionTime; 
+	private int routeDistance;
+	private long consumedEnergyForControlMsg;
 	
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
@@ -42,6 +45,133 @@ public class OlsrSimulator extends Simulator{
 	 */
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
+	}
+
+	public long energyCostAnalysisWithoutControlmessages(int networkWidth, int sourceNodeId, int destinationNodeId) {
+		
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+		boolean networkStructureDiscovered;
+		boolean transmissionInNetworkDetected;
+		char dataToSend[] = { 'A' };
+		networkLifetime = 0;
+		long consumedEnergy = 0L;
+		
+
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+			((OlsrNetworkNode)networkNodes[id]).setNetworkSize(networkNodes.length);
+		}
+		
+		//Propagate network structure
+		do {
+			// Performe 1 ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			networkLifetime += NODE_EXECUTION_TIME;
+			
+			networkStructureDiscovered = true;
+			for (int id = 0; id < networkNodes.length; id++) {
+				if(!((OlsrNetworkNode)networkNodes[id]).isNetworkStructureDiscovered()){
+					networkStructureDiscovered = false;
+					break;
+				}
+			}
+		}while(!networkStructureDiscovered);
+		
+		//Stop sending of control messages
+		for (int id = 0; id < networkNodes.length; id++) {
+			((OlsrNetworkNode)networkNodes[id]).setSendControlMessages(false);
+		}
+		
+		do {
+			// Performe NODE_EXECUTION_TIME ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+						
+			transmissionInNetworkDetected = false;
+			for (int id = 0; id < networkNodes.length; id++) {
+				if (id != destinationNodeId) {
+					if (networkNodes[id].getOutgoingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getIncomingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					if (networkNodes[id].getOutputBufferSize() > 0) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+				}
+			}
+
+		} while (transmissionInNetworkDetected);
+		
+		//Sum consumed energy for Hello- and TC-Messages
+		this.consumedEnergyForControlMsg = 0;
+		for (int id = 0; id < networkNodes.length; id++) {
+			this.consumedEnergyForControlMsg += networkNodes[id].getConsumedEnergyInTransmissionMode();
+		}
+		
+		//Reset battery 
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].resetBattery();
+		}
+		
+		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
+		networkNodes[sourceNodeId].startSendingProcess(msg);
+		
+		this.routeDistance = ((OlsrNetworkNode)networkNodes[sourceNodeId]).getRouteTableEntry(destinationNodeId).getDistance();
+		
+		do{
+			// Performe NODE_EXECUTION_TIME ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+
+			networkLifetime += NODE_EXECUTION_TIME;
+
+		} while (networkNodes[destinationNodeId].getNumberOfRecivedPayloadMessages() == 0);
+		
+
+		for (int id = 0; id < networkNodes.length; id++) {
+			consumedEnergy += networkNodes[id].getConsumedEnergyInTransmissionMode();
+		}
+		
+		return consumedEnergy;
+	}
+
+	/**
+	 * @return the routeDistance
+	 */
+	public int getRouteDistance() {
+		return routeDistance;
+	}
+
+	/**
+	 * @return the consumedEnergyForControlMsg
+	 */
+	public long getConsumedEnergyForControlMsg() {
+		return consumedEnergyForControlMsg;
+	}
+
+	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){
+		
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+		
+		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
+	}
+	
+	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
+			int payloadSize, int maxPairs) {
+		
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+
+		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 	
 }

@@ -45,7 +45,10 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		OlsrEvaluationUnit olsrEvaluationUnit = new OlsrEvaluationUnit();
-		olsrEvaluationUnit.evaluateSpeedAnalysis();
+		//olsrEvaluationUnit.evaluateSpeedAnalysis();
+		//olsrEvaluationUnit.evaluateCostAnalysis();
+		//olsrEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
+		olsrEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();

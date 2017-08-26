@@ -12,6 +12,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
 import AODVM.AodvmSimulator;
+import EADV.EadvSimulator;
+import Flooding.FloodingSimulator;
 import Simulator.EvaluationUnit;
 
 public class OlsrEvaluationUnit extends EvaluationUnit {
@@ -156,7 +158,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 	}
 
-	/*
+
 	public void evaluateCostAnalysis() {
 		OlsrSimulator simulator = new OlsrSimulator();
 		long networkLifetime = 0L;
@@ -166,6 +168,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		double maxDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
 		double maxDistance_onlyPayloadMsg[][] = new double[2][networkWidth.length];
 		double energyDependendOnRouteDistance[][] = new double[2][networkWidth.length];
+		double energyForControlMessages[][] = new double[2][networkWidth.length];
 
 		double minDistance[][] = new double[2][networkWidth.length];
 		double minDistance_onlyTransmissionEnergy[][] = new double[2][networkWidth.length];
@@ -187,10 +190,12 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 					+ simulator.getConsumedEnergyInTransmissionMode();
 			networkLifetime = simulator.getNetworkLifetime();
 			maxDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
-			maxDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutRDP(networkWidth[i], 0,
+			maxDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0,
 					(int) Math.pow(networkWidth[i], 2) - 1);
 			energyDependendOnRouteDistance[0][i] = simulator.getRouteDistance();
 			energyDependendOnRouteDistance[1][i] = maxDistance_onlyPayloadMsg[1][i];
+			energyForControlMessages[0][i] = numberOfNodes[i];
+			energyForControlMessages[1][i] = simulator.getConsumedEnergyForControlMsg();
 
 			System.out.println("Max Simulation for " + networkWidth[i] * networkWidth[i]
 					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
@@ -203,7 +208,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 					+ simulator.getConsumedEnergyInTransmissionMode();
 			networkLifetime = simulator.getNetworkLifetime();
 			minDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
-			minDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutRDP(networkWidth[i], 0, 1);
+			minDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0, 1);
 
 			System.out.println("Min Simulation for " + networkWidth[i] * networkWidth[i]
 					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
@@ -217,7 +222,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 					+ simulator.getConsumedEnergyInTransmissionMode();
 			networkLifetime = simulator.getNetworkLifetime();
 			medDistance_onlyPayloadMsg[0][i] = numberOfNodes[i];
-			medDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutRDP(networkWidth[i], 0,
+			medDistance_onlyPayloadMsg[1][i] = simulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0,
 					(networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
 
 			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i]
@@ -326,14 +331,183 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 		try {
 			ChartUtilities.saveChartAsPNG(
-					new File("Output/AODVM/AODVM_Umgesetzte_Energie_in_Abhängigkeit_von_Distanz.png"), chart,
+					new File("Output/OLSR/OLSR_Umgesetzte_Energie_in_Abhängigkeit_von_Distanz.png"), chart,
 					CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		// Consumed Energy for Control-Messages (Hello- and TC-Messages)
+		dataset = new DefaultXYDataset();
+		dataset.addSeries("Distanz", energyForControlMessages);
+
+		xAxis = new NumberAxis("Distanz");
+		yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
+		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+
+		chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+		chart.removeLegend();
+
+		try {
+			ChartUtilities.saveChartAsPNG(
+					new File("Output/OLSR/OLSR_Umgesetzte_Energie_für_Hello_und_TC_Nachrichten.png"), chart, CHART_WIDTH,
+					CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	*/
+
+	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
+		
+		System.out.println("\nOLSR Lifetime analysis");
+		
+		OlsrSimulator simulator = new OlsrSimulator();
+		
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+	
+
+		double sendTime_60[][] = new double[2][networkWidth.length];
+
+		double sendTime_600[][] = new double[2][networkWidth.length];
+
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			System.out.println("OLSR - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000 / 60;
+			
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			System.out.println("OLSR - Lifetimeanalysis, transmission period : 300 s, number of nodes: " + numberOfNodes[i]);
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 5*60, payloadSize) / 1000 / 60;
+			
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			System.out.println("OLSR - Lifetimeanalysis, transmission period : 600 s, number of nodes: " + numberOfNodes[i]);
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 10*60, payloadSize) / 1000 / 60;
+			
+			System.out.println(
+					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+			
+			
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 5 m", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		String filename = "Output/OLSR/OLSR_Lebenszeitanalyse_OneDestination_" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+	}
+	
+	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs){
+		System.out.println("\nFlooding Lifetime analysis random source and destination node");
+		
+		OlsrSimulator simulator = new OlsrSimulator();
+		
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_600[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*30, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*60, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_600[0][i] = numberOfNodes[i];
+			sendTime_600[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 5*60, payloadSize, maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+		
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 30 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_600);
+		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		String filename = "Output/OLSR/OLSR_Lebenszeitanalyse_randomSourceAndDest_" + payloadSize + "Bit.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	@Override
 	public void evaluateNetworkLivetimeStaticSendBehavior() {
@@ -341,9 +515,4 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 	}
 
-	@Override
-	public void evaluateCostAnalysis() {
-		// TODO Auto-generated method stub
-		
-	}
 }
