@@ -2,6 +2,8 @@ package SimulationNetwork;
 
 import java.util.LinkedList;
 
+import Flooding.FloodingNetworkGraph;
+
 public abstract class Simulator {
 
 	protected static int NODE_EXECUTION_TIME = 2;
@@ -363,34 +365,35 @@ public abstract class Simulator {
 
 		do {
 
-			//check for complete transmissions
+			// check for complete transmissions
 			LinkedList<CommunicationPair> deletablePairs = new LinkedList<CommunicationPair>();
-			for(CommunicationPair pair: communicationPairs){
-				//if(networkNodes[pair.getDestination()].getLastRecivedPayloadMessage() != null){
-					//if(networkNodes[pair.getDestination()].getLastRecivedPayloadMessage().getPayloadSourceAdress() == pair.getSource()){
-						if(pair.getStartTransmissionTime() + (transmissionPeriod * 1000) < networkLifetime){
-							pair.incrementTransmittedMessages();
-							if(pair.getNumberTransmittedMessages() <3){
-								PayloadMessage msg = new PayloadMessage(pair.getSource(), pair.getDestination(), dataToSend);
-								msg.setPayloadHash(networkLifetime);
-								networkNodes[pair.getSource()].startSendingProcess(msg);
-							}
-							else{
-								availableNodes.add(pair.getSource());
-								availableNodes.add(pair.getDestination());
-								deletablePairs.add(pair);
-							}
-						}
-					//}
-				//}
+			for (CommunicationPair pair : communicationPairs) {
+				// if(networkNodes[pair.getDestination()].getLastRecivedPayloadMessage()
+				// != null){
+				// if(networkNodes[pair.getDestination()].getLastRecivedPayloadMessage().getPayloadSourceAdress()
+				// == pair.getSource()){
+				if (pair.getStartTransmissionTime() + (transmissionPeriod * 1000) < networkLifetime) {
+					pair.incrementTransmittedMessages();
+					if (pair.getNumberTransmittedMessages() < 3) {
+						PayloadMessage msg = new PayloadMessage(pair.getSource(), pair.getDestination(), dataToSend);
+						msg.setPayloadHash(networkLifetime);
+						networkNodes[pair.getSource()].startSendingProcess(msg);
+					} else {
+						availableNodes.add(pair.getSource());
+						availableNodes.add(pair.getDestination());
+						deletablePairs.add(pair);
+					}
+				}
+				// }
+				// }
 			}
-			for(CommunicationPair pair: deletablePairs){
+			for (CommunicationPair pair : deletablePairs) {
 				communicationPairs.remove(pair);
 			}
-			
-			//Generate Transmission
+
+			// Generate Transmission
 			while (communicationPairs.size() < maxPairs && availableNodes.size() >= 2) {
-				
+
 				// Select source randomly
 				int sourceNo = (int) (Math.random() * availableNodes.size());
 				int source = availableNodes.remove(sourceNo);
@@ -399,11 +402,10 @@ public abstract class Simulator {
 				int destNo = (int) (Math.random() * availableNodes.size());
 				int dest = availableNodes.remove(destNo);
 
-				
-				if(source < networkNodes.length && dest < networkNodes.length){
-				
+				if (source < networkNodes.length && dest < networkNodes.length) {
+
 					communicationPairs.add(new CommunicationPair(source, dest, networkLifetime));
-					
+
 					// Generate and send payload message
 					PayloadMessage msg = new PayloadMessage(source, dest, dataToSend);
 					msg.setPayloadHash(networkLifetime);
@@ -417,8 +419,7 @@ public abstract class Simulator {
 				networkNodes[id].performAction(NODE_EXECUTION_TIME);
 			}
 			networkLifetime += NODE_EXECUTION_TIME;
-			
-			
+
 			if (networkLifetime % (3600000) == 0) {
 				simulatedHours++;
 				System.out.println("Simulated hours: " + simulatedHours);
@@ -430,15 +431,14 @@ public abstract class Simulator {
 			}
 
 		} while (allNodesAlive(networkNodes));
-		
+
 		int numberReceivedPayloadMsg = 0;
 		for (int id = 0; id < networkNodes.length; id++) {
 			numberReceivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
 		}
-		
+
 		System.out.println("Received Payloadmsg: " + numberReceivedPayloadMsg);
-		
-		
+
 		return networkLifetime;
 
 	}
@@ -565,6 +565,115 @@ public abstract class Simulator {
 
 		System.out.println("Network Lifetime:" + networkLifetime / 1000 / 60 / 60 / 24 + " Tage bzw "
 				+ networkLifetime / 1000 + " Sekunden.");
+
+		return networkLifetime;
+	}
+
+	public long partitioningAnalysisRandomSorceAndDest(FloodingNetworkGraph graph, int networkWidth,
+			int transmissionPeriod, int payloadSize, int maxPairs) {
+
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		this.graph = graph;
+
+		LinkedList<Integer> availableNodes = new LinkedList<Integer>();
+		LinkedList<CommunicationPair> communicationPairs = new LinkedList<CommunicationPair>();
+
+		char dataToSend[] = { 'A' };
+
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+			availableNodes.add(id);
+		}
+
+		do {
+
+			// check for complete transmissions
+			LinkedList<CommunicationPair> deletablePairs = new LinkedList<CommunicationPair>();
+			for (CommunicationPair pair : communicationPairs) {
+
+				if(!networkNodes[pair.getSource()].isNodeAlive() || !networkNodes[pair.getDestination()].isNodeAlive()){
+					if(networkNodes[pair.getSource()].isNodeAlive()){
+						availableNodes.add(pair.getSource());
+					}
+					
+					if(networkNodes[pair.getDestination()].isNodeAlive()){
+						availableNodes.add(pair.getDestination());
+					}
+					
+					deletablePairs.add(pair);
+				}
+				else{
+					if (pair.getStartTransmissionTime() + (transmissionPeriod * 1000) < networkLifetime) {
+						pair.incrementTransmittedMessages();
+						if (pair.getNumberTransmittedMessages() < 3) {
+							PayloadMessage msg = new PayloadMessage(pair.getSource(), pair.getDestination(), dataToSend);
+							msg.setPayloadHash(networkLifetime);
+							networkNodes[pair.getSource()].startSendingProcess(msg);
+						} else {
+							availableNodes.add(pair.getSource());
+							availableNodes.add(pair.getDestination());
+							deletablePairs.add(pair);
+						}
+					}
+				}
+				
+				
+			}
+			for (CommunicationPair pair : deletablePairs) {
+				communicationPairs.remove(pair);
+			}
+
+			// Generate Transmission
+			while (communicationPairs.size() < maxPairs && availableNodes.size() >= 2) {
+
+				// Select source randomly
+				int sourceNo = (int) (Math.random() * availableNodes.size());
+				int source = availableNodes.remove(sourceNo);
+
+				// Select destination randomly
+				int destNo = (int) (Math.random() * availableNodes.size());
+				int dest = availableNodes.remove(destNo);
+
+				if (source < networkNodes.length && dest < networkNodes.length) {
+
+					communicationPairs.add(new CommunicationPair(source, dest, networkLifetime));
+
+					// Generate and send payload message
+					PayloadMessage msg = new PayloadMessage(source, dest, dataToSend);
+					msg.setPayloadHash(networkLifetime);
+					networkNodes[source].startSendingProcess(msg);
+				}
+
+			}
+
+			// performe network nodes
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+			networkLifetime += NODE_EXECUTION_TIME;
+
+			if (networkLifetime % (3600000) == 0) {
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+
+			if (networkLifetime % (86400000) == 0) {
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+
+		} while (!isNetworkPartitioned(graph));
+
+		int numberReceivedPayloadMsg = 0;
+		for (int id = 0; id < networkNodes.length; id++) {
+			numberReceivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+		}
+
+		System.out.println("Received Payloadmsg: " + numberReceivedPayloadMsg);
 
 		return networkLifetime;
 	}

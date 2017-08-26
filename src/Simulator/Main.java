@@ -19,7 +19,7 @@ public class Main {
 		//floodingEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//floodingEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
 		//floodingEvaluationUnit.evaluateNetworkLivetimeStochasticSendBehavior();
-
+		floodingEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
 		
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
