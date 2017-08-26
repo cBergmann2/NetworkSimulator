@@ -5,6 +5,7 @@ import AODV_RFC.AodvEvaluationUnit;
 import DSDV.DsdvEvaluationUnit;
 import EADV.EadvEvaluationUnit;
 import Flooding.FloodingEvaluationUnit;
+import OLSR.OlsrEvaluationUnit;
 
 public class Main {
 
@@ -43,6 +44,12 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		
+		OlsrEvaluationUnit olsrEvaluationUnit = new OlsrEvaluationUnit();
+		//olsrEvaluationUnit.evaluateSpeedAnalysis();
+		//olsrEvaluationUnit.evaluateCostAnalysis();
+		//olsrEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(8);
+		olsrEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();

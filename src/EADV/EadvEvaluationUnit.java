@@ -319,33 +319,12 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
-		double sendTime_10_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_10_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_10_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		
+	
 
 		double sendTime_60[][] = new double[2][networkWidth.length];
-		double sendTime_60_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_60_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_60_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
 
 		double sendTime_600[][] = new double[2][networkWidth.length];
-		double sendTime_600_IdleMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_ReciveMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_TransmissionMode[][] = new double[2][networkWidth.length];
-		double sendTime_600_WaitingForMediumAccesPermission[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREQMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentageRREPMsg[][] = new double[2][networkWidth.length];
-		double sendTime_600_PercentagePayloadMsg[][] = new double[2][networkWidth.length];
-		
+
 
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
