@@ -111,7 +111,7 @@ public abstract class Simulator {
 			// Check if there is any transmission process in the network
 			transmissionInNetworkDetected = false;
 			for (int id = 0; id < networkNodes.length; id++) {
-				if (id != destinationNodeId) {
+
 					if (networkNodes[id].getOutgoingMessage() != null) {
 						transmissionInNetworkDetected = true;
 						break;
@@ -127,7 +127,6 @@ public abstract class Simulator {
 						transmissionInNetworkDetected = true;
 						break;
 					}
-				}
 			}
 
 		} while (transmissionInNetworkDetected

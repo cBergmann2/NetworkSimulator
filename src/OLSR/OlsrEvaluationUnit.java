@@ -12,6 +12,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
 import AODVM.AodvmSimulator;
+import DSDV.DsdvSimulator;
 import EADV.EadvSimulator;
 import Flooding.FloodingSimulator;
 import Simulator.EvaluationUnit;
@@ -361,6 +362,51 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void evaluateNetworkLivetimeWithoutPayloadMessageTransmission() {
+		System.out.println("\nOLSR Lifetime analysis");
+
+		OlsrSimulator simulator = new OlsrSimulator();
+
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double networkLifetime[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			System.out.println("OLSR - Lifetimeanalysis: " + numberOfNodes[i]);
+			networkLifetime[0][i] = numberOfNodes[i];
+			networkLifetime[1][i] = simulator.lifetimeAnalysisWithoutPayloadMessageTransmission(networkWidth[i]) / 1000.0 / 60.0;
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Lebenszeit", networkLifetime);
+		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+		chart.removeLegend();
+
+		String filename = "Output/OLSR/OLSR_Lebenszeitanalyse_OhnePayloadmessages.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {

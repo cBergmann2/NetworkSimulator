@@ -1,6 +1,7 @@
 package OLSR;
 
 
+import DSDV.DsdvNetworkGraph;
 import Flooding.FloodingNetworkGraph;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
@@ -157,6 +158,44 @@ public class OlsrSimulator extends Simulator{
 	 */
 	public long getConsumedEnergyForControlMsg() {
 		return consumedEnergyForControlMsg;
+	}
+	
+public double lifetimeAnalysisWithoutPayloadMessageTransmission(int networkWidth) {
+		
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+		
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		this.graph = graph;
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+		}
+		
+		do {
+			// performe network nodes
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+
+			networkLifetime += NODE_EXECUTION_TIME;
+
+			if (networkLifetime % (3600000) == 0) {
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+
+			if (networkLifetime % (86400000) == 0) {
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+
+		} while (allNodesAlive(networkNodes));
+
+
+		return networkLifetime;
 	}
 
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){

@@ -152,6 +152,11 @@ public class EadvSimulator extends Simulator{
 		EadvNetworkGraph graph = new EadvNetworkGraph(networkWidth);
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
 		
+
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+		}
+		
 		((EadvNetworkNode)networkNodes[networkWidth / 2]).setNodeIsDataSink(true);
 		//start initial broadcast
 		((EadvNetworkNode)networkNodes[networkWidth / 2]).sendInitialBroadcast();

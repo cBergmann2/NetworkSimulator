@@ -35,7 +35,7 @@ public class Main {
 		//aodvmEvaluationUnit.evaluateCostAnalysis();
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
-		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
@@ -43,13 +43,14 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		//dsdvEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
 		
 		OlsrEvaluationUnit olsrEvaluationUnit = new OlsrEvaluationUnit();
 		//olsrEvaluationUnit.evaluateSpeedAnalysis();
 		//olsrEvaluationUnit.evaluateCostAnalysis();
+		//olsrEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
 		//olsrEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//olsrEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//olsrEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
@@ -59,8 +60,8 @@ public class Main {
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
 		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
-		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 	}
 }
 
