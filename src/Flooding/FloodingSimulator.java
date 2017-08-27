@@ -96,18 +96,6 @@ public class FloodingSimulator extends Simulator {
 
 		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}
-
-	public long lifetimeAnalysisStochasitcSendBehavior(int networkWidth, double sendProbability){
-		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
-		
-		return this.lifetimeAnalysisStochasticBehavior(graph, networkWidth, sendProbability);
-	}
-
-	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod, int payloadSize){
-		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
-
-		return this.lifetimeAnalysisStaticBehavior(graph, networkWidth, transmissionPeriod, payloadSize);
-	}
 	
 	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
 			int payloadSize, int maxPairs) {
@@ -115,13 +103,6 @@ public class FloodingSimulator extends Simulator {
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
 
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
-	}
-
-	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
-		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
-		
-		
-		return this.partitioningAnalysis(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){

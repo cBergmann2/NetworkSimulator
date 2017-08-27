@@ -483,4 +483,11 @@ public abstract class NetworkNode {
 	public LinkedList<Message> getInputBuffer() {
 		return inputBuffer;
 	}
+
+	/**
+	 * @return the irReceiver
+	 */
+	public IR_Receiver[] getIrReceiver() {
+		return irReceiver;
+	}
 }

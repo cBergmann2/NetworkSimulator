@@ -1,6 +1,7 @@
 package DSDV;
 
 import AODVM.AodvmNetworkGraph;
+import OLSR.OlsrNetworkGraph;
 import SimulationNetwork.NetworkNode;
 import SimulationNetwork.PayloadMessage;
 import SimulationNetwork.Simulator;
@@ -351,6 +352,12 @@ public class DsdvSimulator extends Simulator {
 		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod,
 				payloadSize);
 	}
+	
+	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize, int maxPairs) {
+		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
+
+		return this.partitioningAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
+	}
 
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
@@ -362,6 +369,44 @@ public class DsdvSimulator extends Simulator {
 
 	public long getEnergyCostsForPeriodicUpdate() {
 		return energyCostsForPeriodicUpdate;
+	}
+
+	public double lifetimeAnalysisWithoutPayloadMessageTransmission(int networkWidth) {
+		
+		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
+		
+		networkLifetime = 0;
+		int simulatedHours = 0;
+		int simulatedDays = 0;
+
+		this.graph = graph;
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+		}
+		
+		do {
+			// performe network nodes
+			for (int id = 0; id < networkNodes.length; id++) {
+				networkNodes[id].performAction(NODE_EXECUTION_TIME);
+			}
+
+			networkLifetime += NODE_EXECUTION_TIME;
+
+			if (networkLifetime % (3600000) == 0) {
+				simulatedHours++;
+				System.out.println("Simulated hours: " + simulatedHours);
+			}
+
+			if (networkLifetime % (86400000) == 0) {
+				simulatedDays++;
+				System.out.println("Simulated days: " + simulatedDays);
+			}
+
+		} while (allNodesAlive(networkNodes));
+
+
+		return networkLifetime;
 	}
 
 }

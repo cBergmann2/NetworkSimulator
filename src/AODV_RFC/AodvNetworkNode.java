@@ -423,12 +423,14 @@ public class AodvNetworkNode extends NetworkNode{
 				}
 				
 				//check if next hop is alive
+				/*
 				if(routeTableEntry != null){
 					//check if next hop selection is alive
 					if(!graph.getNetworkNodes()[routeTableEntry.getNextHop()].isNodeAlive()){
 						routeTableEntry.setValid(false);
 					}
 				}
+				*/
 				
 				if(routeTableEntry != null && routeTableEntry.isValid()){
 					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");

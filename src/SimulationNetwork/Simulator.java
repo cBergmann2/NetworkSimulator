@@ -67,7 +67,7 @@ public abstract class Simulator {
 
 		calculateAverageNodeTimes(graph.getNetworkNodes());
 
-		return networkNodes[destinationNodeId].getLastRecivedPayloadMessage().getTransmissionTime();
+		return networkLifetime;
 	}
 
 	/**
@@ -116,10 +116,13 @@ public abstract class Simulator {
 						transmissionInNetworkDetected = true;
 						break;
 					}
-					if (networkNodes[id].getIncomingMessage() != null) {
-						transmissionInNetworkDetected = true;
-						break;
+					
+					for(IR_Receiver irReceiver: networkNodes[id].getIrReceiver()){
+						if(irReceiver.isRecevingAMessage()){
+							transmissionInNetworkDetected = true;
+						}
 					}
+					
 					if (networkNodes[id].getOutputBufferSize() > 0) {
 						transmissionInNetworkDetected = true;
 						break;
@@ -514,10 +517,10 @@ public abstract class Simulator {
 	public long partitioningAnalysisOnePayloadmessageDestination(NetworkGraph graph, int networkWidth,
 			int transmissionPeriod, int payloadSize) {
 		networkLifetime = 0;
-		int simulatedMinutes = 0;
 		int simulatedHours = 0;
 		int simulatedDays = 0;
-		this.numberOfInactiveNodes = 0;
+
+		this.graph = graph;
 
 		int destinationNode = networkWidth / 2;
 
@@ -544,11 +547,6 @@ public abstract class Simulator {
 
 			networkLifetime += NODE_EXECUTION_TIME;
 
-			if (networkLifetime % (60000) == 0) {
-				simulatedMinutes++;
-				// System.out.println("Simulated minutes: " + simulatedMinutes);
-			}
-
 			if (networkLifetime % (3600000) == 0) {
 				simulatedHours++;
 				System.out.println("Simulated hours: " + simulatedHours);
@@ -563,8 +561,13 @@ public abstract class Simulator {
 
 		calculateAverageNodeTimes(graph.getNetworkNodes());
 
+		int recivedPayloadMsg = 0;
+		for (int id = 0; id < networkNodes.length; id++) {
+			recivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+		}
+
 		System.out.println("Network Lifetime:" + networkLifetime / 1000 / 60 / 60 / 24 + " Tage bzw "
-				+ networkLifetime / 1000 + " Sekunden.");
+				+ networkLifetime / 1000 + " Sekunden. Recived PayloadMsg: " + recivedPayloadMsg);
 
 		return networkLifetime;
 	}

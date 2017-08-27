@@ -12,12 +12,14 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
 import AODVM.AodvmSimulator;
+import OLSR.OlsrSimulator;
 import Simulator.EvaluationUnit;
 
 public class DsdvEvaluationUnit extends EvaluationUnit {
 
-	//private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10,
+	// 11, 12, 13, 14};
+	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -56,7 +58,8 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
 					+ " SinkNode: " + (networkWidth[i] - 1));
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
+			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0,
+					(networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = simulator.getCollisions();
 			transmissionTime_msg_med[0][i] = numberOfNodes[i];
@@ -86,46 +89,14 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
 		chart.getPlot().setBackgroundPaint(Color.WHITE);
 		chart.setBackgroundPaint(Color.WHITE);
-
-		/*
-		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Uebertragungszeit.png"), chart, CHART_WIDTH,
-					CHART_HIGHT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// Collisions
-		DefaultXYDataset dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("maximale Distanz", transmissionTime_max_collisions);
-		dataset2.addSeries("mittlere Distanz", transmissionTime_med_collisions);
-		dataset2.addSeries("minimale Distanz", transmissionTime_min_collisions);
-
-		// XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
-
-		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis2 = new NumberAxis("Kollisionen");
-		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
-
-		JFreeChart chart2 = new JFreeChart(plot2);
-
-		chart2.getPlot().setBackgroundPaint(Color.WHITE);
-		chart2.setBackgroundPaint(Color.WHITE);
-
-		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Uebertragungszeit_Kollisionen.png"), chart2,
-					CHART_WIDTH, CHART_HIGHT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 
 		// Msg Transmission time
 		dataset = new DefaultXYDataset();
@@ -136,6 +107,9 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis = new NumberAxis("Übertragungszeit [s]");
 		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart = new JFreeChart(plot);
 
@@ -151,7 +125,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		}
 
 	}
-	
+
 	public void evaluateSpeedAnalysisWhenNetworkStarts() {
 		System.out.println("Start DSDV speed anylsis when network starts.");
 		DsdvSimulator simulator = new DsdvSimulator();
@@ -175,7 +149,8 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
 					+ " SinkNode: " + ((networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2));
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
+			transmissionTime_med[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0,
+					(networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
@@ -197,6 +172,9 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -204,8 +182,8 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		chart.setBackgroundPaint(Color.WHITE);
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_UebertragungszeitWennNetzwerkstartet.png"), chart, CHART_WIDTH,
-					CHART_HIGHT);
+			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_UebertragungszeitWennNetzwerkstartet.png"), chart,
+					CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -240,13 +218,14 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			energyCostsNetworkStructurePropagation[0][i] = numberOfNodes[i];
 			energyCostsNetworkStructurePropagation[1][i] = simulator.getEnergyCostsForPropagationNetworkStructure();
 			energyCostsPeriodicUpdateMesages[0][i] = numberOfNodes[i];
-			energyCostsPeriodicUpdateMesages[1][i] = simulator.getEnergyCostsForPeriodicUpdate(); 
+			energyCostsPeriodicUpdateMesages[1][i] = simulator.getEnergyCostsForPeriodicUpdate();
 			energyCostsEventBasedUpdateMesages[0][i] = numberOfNodes[i];
-			energyCostsEventBasedUpdateMesages[1][i] = simulator.energyCostAnalysisAddNewNode(networkWidth[i]); 
+			energyCostsEventBasedUpdateMesages[1][i] = simulator.energyCostAnalysisAddNewNode(networkWidth[i]);
 
 			System.out.println("Start med Simulation for " + numberOfNodes[i] + " nodes.");
 			medDistance[0][i] = numberOfNodes[i];
-			medDistance[1][i] = simulator.energyCostAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
+			medDistance[1][i] = simulator.energyCostAnalysis(networkWidth[i], 0,
+					(networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
 			networkLifetime = simulator.getNetworkLifetime();
 			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i]
 					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
@@ -308,104 +287,155 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		chart.removeLegend();
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkStrukturPropagiereung.png"),
-					chart, CHART_WIDTH, CHART_HIGHT);
+			ChartUtilities.saveChartAsPNG(
+					new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkStrukturPropagiereung.png"), chart,
+					CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Consumed energy periodic update message
-				dataset = new DefaultXYDataset();
-				dataset.addSeries("Netzwerkgröße", energyCostsPeriodicUpdateMesages);
+		dataset = new DefaultXYDataset();
+		dataset.addSeries("Netzwerkgröße", energyCostsPeriodicUpdateMesages);
 
-				line = new XYLineAndShapeRenderer();
+		line = new XYLineAndShapeRenderer();
 
-				xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-				yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
-				plot = new XYPlot(dataset, xAxis, yAxis, line);
-				plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
+		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 
-				chart = new JFreeChart(plot);
+		chart = new JFreeChart(plot);
 
-				chart.getPlot().setBackgroundPaint(Color.WHITE);
-				chart.setBackgroundPaint(Color.WHITE);
-				chart.removeLegend();
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+		chart.removeLegend();
 
-				try {
-					ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkPeriodischesUpdate.png"),
-							chart, CHART_WIDTH, CHART_HIGHT);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				// Consumed energy event based update message
-				dataset = new DefaultXYDataset();
-				dataset.addSeries("Netzwerkgröße", energyCostsEventBasedUpdateMesages);
+		try {
+			ChartUtilities.saveChartAsPNG(
+					new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkPeriodischesUpdate.png"), chart, CHART_WIDTH,
+					CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-				line = new XYLineAndShapeRenderer();
+		// Consumed energy event based update message
+		dataset = new DefaultXYDataset();
+		dataset.addSeries("Netzwerkgröße", energyCostsEventBasedUpdateMesages);
 
-				xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-				yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
-				plot = new XYPlot(dataset, xAxis, yAxis, line);
-				plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		line = new XYLineAndShapeRenderer();
 
-				chart = new JFreeChart(plot);
+		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
+		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 
-				chart.getPlot().setBackgroundPaint(Color.WHITE);
-				chart.setBackgroundPaint(Color.WHITE);
-				chart.removeLegend();
+		chart = new JFreeChart(plot);
 
-				try {
-					ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkEventbasiertesUpdate.png"),
-							chart, CHART_WIDTH, CHART_HIGHT);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+		chart.removeLegend();
+
+		try {
+			ChartUtilities.saveChartAsPNG(
+					new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkEventbasiertesUpdate.png"), chart,
+					CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void evaluateNetworkLivetimeWithoutPayloadMessageTransmission() {
+		System.out.println("\nAODV Lifetime analysis");
+
+		DsdvSimulator simulator = new DsdvSimulator();
+
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double networkLifetime[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			System.out.println("DSDV - Lifetimeanalysis: " + numberOfNodes[i]);
+			networkLifetime[0][i] = numberOfNodes[i];
+			networkLifetime[1][i] = simulator.lifetimeAnalysisWithoutPayloadMessageTransmission(networkWidth[i]) / 1000.0 / 60.0;
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Lebenszeit", networkLifetime);
+		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+		chart.removeLegend();
+
+		String filename = "Output/DSDV/DSDV_Lebenszeitanalyse_OhnePayloadmessages.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
 		System.out.println("\nAODV Lifetime analysis");
-		
+
 		DsdvSimulator simulator = new DsdvSimulator();
-		
+
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
 		double sendTime_60[][] = new double[2][networkWidth.length];
 		double sendTime_600[][] = new double[2][networkWidth.length];
-	
-		
-		
+
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
-			System.out.println("DSDV - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
+			System.out.println(
+					"DSDV - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000.0 / 60.0;
+			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1 * 60,
+					payloadSize) / 1000.0 / 60.0;
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
-			System.out.println("DSDV - Lifetimeanalysis, transmission period : 300 s, number of nodes: " + numberOfNodes[i]);
+			System.out.println(
+					"DSDV - Lifetimeanalysis, transmission period : 300 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 5*60, payloadSize) / 1000.0 / 60.0;
+			sendTime_60[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 5 * 60,
+					payloadSize) / 1000.0 / 60.0;
 
 			System.out.println(
 					"5m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
-			System.out.println("DSDV - Lifetimeanalysis, transmission period : 600 s, number of nodes: " + numberOfNodes[i]);
+			System.out.println(
+					"DSDV - Lifetimeanalysis, transmission period : 600 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 10*60, payloadSize) / 1000.0 / 60.0;
+			sendTime_600[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 10 * 60,
+					payloadSize) / 1000.0 / 60.0;
 
 			System.out.println(
 					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
-			
-			
+
 		}
 
 		// Network Lifetime
@@ -413,7 +443,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_10);
 		dataset.addSeries("Knoten Sendet alle 5 m", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
-		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
@@ -437,12 +467,12 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			e.printStackTrace();
 		}
 	}
-	
-	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs){
+
+	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs) {
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
-		
+
 		DsdvSimulator simulator = new DsdvSimulator();
-		
+
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
@@ -452,28 +482,30 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		for (int i = 0; i < networkWidth.length; i++) {
 			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
 
-			
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*10, payloadSize, maxPairs) / 1000 / 60;
+			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 10, payloadSize,
+					maxPairs) / 1000 / 60;
 
 			System.out.println(
 					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*60, payloadSize, maxPairs) / 1000 / 60;
+			sendTime_60[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60, payloadSize,
+					maxPairs) / 1000 / 60;
 
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 5*60, payloadSize, maxPairs) / 1000 / 60;
+			sendTime_600[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 5 * 60, payloadSize,
+					maxPairs) / 1000 / 60;
 
 			System.out.println(
 					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
-		
+
 		}
 
 		// Network Lifetime
@@ -481,7 +513,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
 		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_600);
-		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
@@ -491,7 +523,6 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
-		
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -506,7 +537,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
 		System.out.println("Start partitioning analysis");
 
@@ -551,7 +582,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_60[0][i] = numberOfNodes[i];
-			sendTime_60[1][i] = simulator.partitioningAnalysis(networkWidth[i], 5*60, payloadSize) / 1000.0 / 60.0;
+			sendTime_60[1][i] = simulator.partitioningAnalysis(networkWidth[i], 5 * 60, payloadSize) / 1000.0 / 60.0;
 			sendTime_60_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_60_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_60_ReciveMode[0][i] = numberOfNodes[i];
@@ -566,7 +597,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
 
 			sendTime_600[0][i] = numberOfNodes[i];
-			sendTime_600[1][i] = simulator.partitioningAnalysis(networkWidth[i], 10*60, payloadSize) / 1000.0 / 60.0;
+			sendTime_600[1][i] = simulator.partitioningAnalysis(networkWidth[i], 10 * 60, payloadSize) / 1000.0 / 60.0;
 			sendTime_600_IdleMode[0][i] = numberOfNodes[i];
 			sendTime_600_IdleMode[1][i] = simulator.getAverageTimeInIdleMode();
 			sendTime_600_ReciveMode[0][i] = numberOfNodes[i];
@@ -593,6 +624,9 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -616,14 +650,16 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
 		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart2 = new JFreeChart(plot2);
 
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_Sendemodus_" + payloadSize
-				+ "Byte.png";
+		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_Sendemodus_" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
@@ -640,14 +676,16 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Idle-Modus [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart2 = new JFreeChart(plot2);
 
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_IdleModus_" + payloadSize
-				+ "Byte.png";
+		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_IdleModus_" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
@@ -664,6 +702,9 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten wartet auf Medium [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart2 = new JFreeChart(plot2);
 
@@ -688,14 +729,16 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Empfangsmodus [%]");
 		plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
+		plot2.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot2.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart2 = new JFreeChart(plot2);
 
 		chart2.getPlot().setBackgroundPaint(Color.WHITE);
 		chart2.setBackgroundPaint(Color.WHITE);
 
-		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_ReciveModus_" + payloadSize
-				+ "Byte.png";
+		filename = "Output/DSDV/DSDV_partitionierungsanalyse_prozentualeZeit_ReciveModus_" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart2, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
@@ -704,7 +747,77 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		}
 
 	}
-	
+
+	public void evaluateNetworkPartioningAnaylsisRandomSorceAndDest(int payloadSize, int maxPairs) {
+		System.out.println("\nFlooding Lifetime analysis random source and destination node");
+
+		DsdvSimulator simulator = new DsdvSimulator();
+
+		double numberOfNodes[] = new double[networkWidth.length];
+
+		double sendTime_10[][] = new double[2][networkWidth.length];
+		double sendTime_60[][] = new double[2][networkWidth.length];
+		double sendTime_300[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+
+			sendTime_10[0][i] = numberOfNodes[i];
+			sendTime_10[1][i] = simulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 30, payloadSize,
+					maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_60[0][i] = numberOfNodes[i];
+			sendTime_60[1][i] = simulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60, payloadSize,
+					maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+			sendTime_300[0][i] = numberOfNodes[i];
+			sendTime_300[1][i] = simulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 5 * 60, payloadSize,
+					maxPairs) / 1000 / 60;
+
+			System.out.println(
+					"10m Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
+							+ simulator.getNetworkLifetime() / 1000 / 60 + " min");
+
+		}
+
+		// Network Lifetime
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_300);
+		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		String filename = "Output/DSDV/DSDV_Partitionierungsanalyse_randomSourceAndDest_" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void evaluateNetworkLivetimeStaticSendBehavior() {
 		// TODO Auto-generated method stub

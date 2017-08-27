@@ -26,7 +26,8 @@ public class Main {
 		//aodvEvaluationUnit.evaluateCostAnalysis();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
-		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
+		//aodvEvaluationUnit.evaluateNetworkPartitioningAnaylsisRandomSorceAndDest(80,10);
 
 		
 		AodvmEvaluationUnit aodvmEvaluationUnit = new AodvmEvaluationUnit();
@@ -40,9 +41,11 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		//dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
-		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(8);
+		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		//dsdvEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
 		
 		OlsrEvaluationUnit olsrEvaluationUnit = new OlsrEvaluationUnit();
 		//olsrEvaluationUnit.evaluateSpeedAnalysis();
@@ -50,7 +53,7 @@ public class Main {
 		//olsrEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//olsrEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//olsrEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
-		olsrEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
+		//olsrEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(8, 10);
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
