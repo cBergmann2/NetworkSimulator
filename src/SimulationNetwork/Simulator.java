@@ -569,7 +569,7 @@ public abstract class Simulator {
 		return networkLifetime;
 	}
 
-	public long partitioningAnalysisRandomSorceAndDest(FloodingNetworkGraph graph, int networkWidth,
+	public long partitioningAnalysisRandomSorceAndDest(NetworkGraph graph, int networkWidth,
 			int transmissionPeriod, int payloadSize, int maxPairs) {
 
 		networkLifetime = 0;

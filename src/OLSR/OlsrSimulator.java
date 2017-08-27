@@ -174,4 +174,17 @@ public class OlsrSimulator extends Simulator{
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 	
+	public long partitioningAnalysisOnePayloadmessageDestination(int networkWidth, int transmissionPeriod, int payloadSize) {
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+		
+		
+		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
+	}
+	
+	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize, int maxPairs) {
+		OlsrNetworkGraph graph = new OlsrNetworkGraph(networkWidth);
+
+		return this.partitioningAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
+	}
+	
 }
