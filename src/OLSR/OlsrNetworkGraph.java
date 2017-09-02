@@ -1,8 +1,8 @@
 package OLSR;
 
 
-import SimulationNetwork.NetworkGraph;
-import SimulationNetwork.NetworkNode;
+import Simulator.NetworkGraph;
+import Simulator.NetworkNode;
 
 public class OlsrNetworkGraph extends NetworkGraph{
 	

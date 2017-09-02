@@ -1,9 +1,10 @@
 package AODVM;
 
+import AODV_RFC.AodvNetworkGraph;
 import Flooding.FloodingNetworkGraph;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
-import SimulationNetwork.Simulator;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
+import Simulator.Simulator;
 
 public class AodvmSimulator extends Simulator{
 	
@@ -282,6 +283,14 @@ public class AodvmSimulator extends Simulator{
 		
 		
 		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
+	}
+	
+	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize,
+			int maxPairs) {
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
+
+		return this.partitioningAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize,
+				maxPairs);
 	}
 
 	public long getMsgTransmissionTime() {

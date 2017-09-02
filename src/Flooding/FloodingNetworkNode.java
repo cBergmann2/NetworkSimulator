@@ -1,9 +1,10 @@
 package Flooding;
 
 import java.util.LinkedList;
-import SimulationNetwork.Message;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+
+import Simulator.Message;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
 
 public class FloodingNetworkNode extends NetworkNode{
 
@@ -104,7 +105,7 @@ public class FloodingNetworkNode extends NetworkNode{
 		this.outputBuffer.add(msgCopy);
 		
 		this.numberTransmittedMsg++;
-		this.numberTransmittedPayloadMsg++;
+		//this.numberTransmittedPayloadMsg++;
 			
 	}
 

@@ -2,9 +2,9 @@ package DSDV;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+import Simulator.Message;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
 
 public class DsdvNetworkNode extends NetworkNode{
 	
@@ -277,7 +277,7 @@ public class DsdvNetworkNode extends NetworkNode{
 					}
 					
 					this.outputBuffer.add(msg);
-					this.numberTransmittedPayloadMsg++;
+					//this.numberTransmittedPayloadMsg++;
 					
 					return;
 				}

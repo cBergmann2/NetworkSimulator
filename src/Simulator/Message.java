@@ -1,4 +1,4 @@
-package SimulationNetwork;
+package Simulator;
 
 public class Message implements Cloneable{
 	

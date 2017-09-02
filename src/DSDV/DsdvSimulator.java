@@ -2,9 +2,9 @@ package DSDV;
 
 import AODVM.AodvmNetworkGraph;
 import OLSR.OlsrNetworkGraph;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
-import SimulationNetwork.Simulator;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
+import Simulator.Simulator;
 
 public class DsdvSimulator extends Simulator {
 

@@ -1,6 +1,6 @@
 package EADV;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class AckMessage extends Message{
 
@@ -10,6 +10,8 @@ public class AckMessage extends Message{
 	public AckMessage(int hopCount, int cost){
 		this.hopCount = hopCount;
 		this.cost = cost;
+		
+		this.dataVolume = Message.MESSAGE_SIZE + 2*8;
 	}
 	
 	public int getHopCount() {

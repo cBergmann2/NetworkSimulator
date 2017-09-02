@@ -2,10 +2,10 @@ package AODVM;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.CollisionMessage;
-import SimulationNetwork.Message;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+import Simulator.CollisionMessage;
+import Simulator.Message;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
 
 public class AodvmNetworkNode extends NetworkNode{
 	
@@ -431,7 +431,7 @@ public class AodvmNetworkNode extends NetworkNode{
 					//aktualisiere Sendezeit
 					waitingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 					outputBuffer.add(waitingMsg);
-					this.numberTransmittedPayloadMsg++;
+					//this.numberTransmittedPayloadMsg++;
 					msgForWhichRouteWasFound.add(waitingMsg);
 				}
 			}
@@ -500,19 +500,11 @@ public class AodvmNetworkNode extends NetworkNode{
 					}
 				}
 				
-				//check if next hop is alive
-				if(routeTableEntry != null){
-					//check if next hop selection is alive
-					if(!graph.getNetworkNodes()[routeTableEntry.getNextHop()].isNodeAlive()){
-						routeTableEntry.setValid(false);
-					}
-				}
-				
 				if(routeTableEntry != null && routeTableEntry.isValid()){
 					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
 					msg.setDestinationID(getNextHopToDestination(((PayloadMessage)msg).getPayloadDestinationAdress()));
 					outputBuffer.add(msg);
-					this.numberTransmittedPayloadMsg++;
+					//this.numberTransmittedPayloadMsg++;
 					//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": send PayloadMsg. DestinationNode: " + msg.getDestinationID());
 				}else{
 					//check if Route Discovery process is already started

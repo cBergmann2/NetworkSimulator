@@ -16,7 +16,7 @@ import Simulator.EvaluationUnit;
 public class EadvEvaluationUnit extends EvaluationUnit {
 
 	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-	//private static final int networkWidth[] = {14};
+	//private static final int networkWidth[] = {1};
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -25,15 +25,15 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 	public void evaluateSpeedAnalysis() {
 		System.out.println("Start EADV spped anylsis.");
 		EadvSimulator simulator = new EadvSimulator();
+		
+		double transmissionTime_min[][] = new double[2][networkWidth.length];
+		double transmissionTime_min_collisions[][] = new double[2][networkWidth.length];
+		double transmissionTime_msg_min[][] = new double[2][networkWidth.length];
 
 		double numberOfNodes[] = new double[networkWidth.length];
 		double transmissionTime_max[][] = new double[2][networkWidth.length];
 		double transmissionTime_max_collisions[][] = new double[2][networkWidth.length];
 		double transmissionTime_msg_max[][] = new double[2][networkWidth.length];
-
-		double transmissionTime_min[][] = new double[2][networkWidth.length];
-		double transmissionTime_min_collisions[][] = new double[2][networkWidth.length];
-		double transmissionTime_msg_min[][] = new double[2][networkWidth.length];
 
 		double transmissionTime_med[][] = new double[2][networkWidth.length];
 		double transmissionTime_med_collisions[][] = new double[2][networkWidth.length];
@@ -55,7 +55,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
 					+ " SinkNode: " + (networkWidth[i] - 1));
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0, networkWidth[i] - 1) / 1000.0;
+			transmissionTime_med[1][i] = simulator.speedAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
 			transmissionTime_med_collisions[0][i] = numberOfNodes[i];
 			transmissionTime_med_collisions[1][i] = simulator.getCollisions();
 			transmissionTime_msg_med[0][i] = numberOfNodes[i];
@@ -73,6 +73,8 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			transmissionTime_msg_max[1][i] = simulator.getMsgTransmissionTime() / 1000.0;
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 		}
+		
+		
 
 		// Transmission Time
 		DefaultXYDataset dataset = new DefaultXYDataset();
@@ -85,46 +87,25 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
+		
 
 		chart.getPlot().setBackgroundPaint(Color.WHITE);
 		chart.setBackgroundPaint(Color.WHITE);
 
-		/*
+		
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Uebertragungszeit.png"), chart, CHART_WIDTH,
+			ChartUtilities.saveChartAsPNG(new File("Output/EADV/EADV_Uebertragungszeit.png"), chart, CHART_WIDTH,
 					CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// Collisions
-		DefaultXYDataset dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("maximale Distanz", transmissionTime_max_collisions);
-		dataset2.addSeries("mittlere Distanz", transmissionTime_med_collisions);
-		dataset2.addSeries("minimale Distanz", transmissionTime_min_collisions);
-
-		// XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
-
-		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis2 = new NumberAxis("Kollisionen");
-		XYPlot plot2 = new XYPlot(dataset2, xAxis2, yAxis2, line);
-
-		JFreeChart chart2 = new JFreeChart(plot2);
-
-		chart2.getPlot().setBackgroundPaint(Color.WHITE);
-		chart2.setBackgroundPaint(Color.WHITE);
-
-		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Uebertragungszeit_Kollisionen.png"), chart2,
-					CHART_WIDTH, CHART_HIGHT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		
 
 		// Msg Transmission time
 		dataset = new DefaultXYDataset();
@@ -135,6 +116,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis = new NumberAxis("Übertragungszeit [s]");
 		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart = new JFreeChart(plot);
 
@@ -169,20 +153,20 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			System.out.println(
 					"Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0 + " SinkNode: 1");
 			transmissionTime_min[0][i] = numberOfNodes[i];
-			transmissionTime_min[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0, 1) / 1000;
+			transmissionTime_min[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0, 1) / 1000.0;
 			System.out.println("Min Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
 					+ " SinkNode: " + (networkWidth[i] - 1));
 			transmissionTime_med[0][i] = numberOfNodes[i];
-			transmissionTime_med[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0, networkWidth[i] - 1) / 1000;
+			transmissionTime_med[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2) / 1000.0;
 			System.out.println("Med Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes. SourceNode: " + 0
 					+ " SinkNode: " + (int) (Math.pow(networkWidth[i], 2) - 1));
 			transmissionTime_max[0][i] = numberOfNodes[i];
 			transmissionTime_max[1][i] = simulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0,
-					(int) Math.pow(networkWidth[i], 2) - 1) / 1000;
+					(int) Math.pow(networkWidth[i], 2) - 1) / 1000.0;
 			System.out.println("Max Simulation for " + Math.pow(networkWidth[i], 2) + " nodes completed.");
 		}
 
@@ -197,6 +181,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Übertragungszeit [s]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -242,7 +229,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 			System.out.println("Start med Simulation for " + numberOfNodes[i] + " nodes.");
 			medDistance[0][i] = numberOfNodes[i];
-			medDistance[1][i] = simulator.energyCostAnalysis(networkWidth[i], 0, networkWidth[i] - 1);
+			medDistance[1][i] = simulator.energyCostAnalysis(networkWidth[i], 0, (networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
 			networkLifetime = simulator.getNetworkLifetime();
 			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i]
 					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
@@ -269,6 +256,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -276,7 +266,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart.setBackgroundPaint(Color.WHITE);
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Umgesetzte_Energie_Nachrichtenübertragung.png"),
+			ChartUtilities.saveChartAsPNG(new File("Output/EADV/EADV_Umgesetzte_Energie_Nachrichtenübertragung.png"),
 					chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -292,6 +282,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
 		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		chart = new JFreeChart(plot);
 
@@ -300,7 +293,7 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		chart.removeLegend();
 
 		try {
-			ChartUtilities.saveChartAsPNG(new File("Output/DSDV/DSDV_Umgesetzte_Energie_NetzwerkStrukturPropagiereung.png"),
+			ChartUtilities.saveChartAsPNG(new File("Output/EADV/EADV_Umgesetzte_Energie_NetzwerkStrukturPropagiereung.png"),
 					chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -319,7 +312,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
-	
+		double sendTime_10_receivedPayloadMsg[][] = new double[2][networkWidth.length];
+		double sendTime_10_transmittedPayloadMsg[][] = new double[2][networkWidth.length];
+		
 
 		double sendTime_60[][] = new double[2][networkWidth.length];
 
@@ -332,6 +327,10 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			System.out.println("DSDV - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_10[0][i] = numberOfNodes[i];
 			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000 / 60;
+			sendTime_10_receivedPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_10_receivedPayloadMsg[1][i] = simulator.getNumberReceivedPayloadMsg();
+			sendTime_10_transmittedPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_10_transmittedPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
 			
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
@@ -358,16 +357,19 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_10);
-		dataset.addSeries("Knoten Sendet alle 5 m", sendTime_60);
-		dataset.addSeries("Knoten Sendet alle 10 m", sendTime_600);
+		dataset.addSeries("Knoten sendet alle 60 s", sendTime_10);
+		dataset.addSeries("Knoten sendet alle 5 m", sendTime_60);
+		dataset.addSeries("Knoten sendet alle 10 m", sendTime_600);
 		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -381,7 +383,34 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+		
+		// Transmitted vs. received payloadmsg
+		dataset = new DefaultXYDataset();
+		dataset.addSeries("Gesendete Nachrichten", sendTime_10_transmittedPayloadMsg);
+		dataset.addSeries("Empfangene Nachrichten", sendTime_10_receivedPayloadMsg);
+
+
+		line = new XYLineAndShapeRenderer();
+
+		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		yAxis = new NumberAxis("Anzahl Nachrichten");
+		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+
+		chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/EADV/EADV_Lebenszeitanalyse_OneDestination_GesendeteVsEmpfangeNachrichten" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
@@ -462,14 +491,14 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_10);
-		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_60);
-		dataset.addSeries("Knoten Sendet alle 10 min", sendTime_600);
+		dataset.addSeries("Knoten sendet alle 60 s", sendTime_10);
+		dataset.addSeries("Knoten sendet alle 5 min", sendTime_60);
+		dataset.addSeries("Knoten sendet alle 10 min", sendTime_600);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
@@ -490,9 +519,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Average time in transmission mode
 		DefaultXYDataset dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_TransmissionMode);
-		dataset2.addSeries("Knoten Sendet alle 5 min", sendTime_60_TransmissionMode);
-		dataset2.addSeries("Knoten Sendet alle 10 min", sendTime_600_TransmissionMode);
+		dataset2.addSeries("Knoten sendet alle 60 s", sendTime_10_TransmissionMode);
+		dataset2.addSeries("Knoten sendet alle 5 min", sendTime_60_TransmissionMode);
+		dataset2.addSeries("Knoten sendet alle 10 min", sendTime_600_TransmissionMode);
 
 		NumberAxis xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		NumberAxis yAxis2 = new NumberAxis("Knoten im Sendemodus [%]");
@@ -517,9 +546,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Average time in idle mode
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_IdleMode);
-		dataset2.addSeries("Knoten Sendet alle 5 min", sendTime_60_IdleMode);
-		dataset2.addSeries("Knoten Sendet alle 10 min", sendTime_600_IdleMode);
+		dataset2.addSeries("Knoten sendet alle 60 s", sendTime_10_IdleMode);
+		dataset2.addSeries("Knoten sendet alle 5 min", sendTime_60_IdleMode);
+		dataset2.addSeries("Knoten sendet alle 10 min", sendTime_600_IdleMode);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Idle-Modus [%]");
@@ -544,9 +573,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Average time Waiting For MediumAccesPermission
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_WaitingForMediumAccesPermission);
-		dataset2.addSeries("Knoten Sendet alle 5 min", sendTime_60_WaitingForMediumAccesPermission);
-		dataset2.addSeries("Knoten Sendet alle 10 min", sendTime_600_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten sendet alle 60 s", sendTime_10_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten sendet alle 5 min", sendTime_60_WaitingForMediumAccesPermission);
+		dataset2.addSeries("Knoten sendet alle 10 min", sendTime_600_WaitingForMediumAccesPermission);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten wartet auf Medium [%]");
@@ -571,9 +600,9 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 		// Average time in recive mode
 		dataset2 = new DefaultXYDataset();
-		dataset2.addSeries("Knoten Sendet alle 60 s", sendTime_10_ReciveMode);
-		dataset2.addSeries("Knoten Sendet alle 5 min", sendTime_60_ReciveMode);
-		dataset2.addSeries("Knoten Sendet alle 10 min", sendTime_600_ReciveMode);
+		dataset2.addSeries("Knoten sendet alle 60 s", sendTime_10_ReciveMode);
+		dataset2.addSeries("Knoten sendet alle 5 min", sendTime_60_ReciveMode);
+		dataset2.addSeries("Knoten sendet alle 10 min", sendTime_600_ReciveMode);
 
 		xAxis2 = new NumberAxis("Anzahl Knoten im Netzwerk");
 		yAxis2 = new NumberAxis("Knoten im Empfangsmodus [%]");

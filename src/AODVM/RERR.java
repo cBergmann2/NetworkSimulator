@@ -2,7 +2,7 @@ package AODVM;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class RERR extends Message{
 

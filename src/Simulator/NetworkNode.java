@@ -1,4 +1,4 @@
-package SimulationNetwork;
+package Simulator;
 
 import java.util.LinkedList;
 
@@ -75,6 +75,7 @@ public abstract class NetworkNode {
 		consumedEnergyInTransmissionMode = 0L;
 		elapsedTimeSinceLastGenerationOfTransmission = 0L;
 		numberRecivedPayloadMsg = 0;
+		numberTransmittedPayloadMsg = 0;
 		
 		//csmaWaitingTime = 10 + this.id * 50 ;
 		csmaWaitingTime = 10;

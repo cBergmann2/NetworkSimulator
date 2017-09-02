@@ -1,6 +1,6 @@
 package Flooding;
 
-import SimulationNetwork.NetworkGraph;
+import Simulator.NetworkGraph;
 
 
 public class FloodingNetworkGraph extends NetworkGraph {

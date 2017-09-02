@@ -24,6 +24,7 @@ public class Main {
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
+		aodvEvaluationUnit.evaluateCostAnalysisRouteDiscoveryProcess();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
@@ -36,6 +37,8 @@ public class Main {
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnaylsisRandomSorceAndDest(80,10);
+
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
 		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
@@ -60,8 +63,8 @@ public class Main {
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
 		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
-		eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 	}
 }
 

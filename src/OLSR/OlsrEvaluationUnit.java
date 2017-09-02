@@ -418,8 +418,9 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		double numberOfNodes[] = new double[networkWidth.length];
 
 		double sendTime_10[][] = new double[2][networkWidth.length];
-	
-
+		double sendTime_10_receivedPayloadMsg[][] = new double[2][networkWidth.length];
+		double sendTime_10_transmittedPayloadMsg[][] = new double[2][networkWidth.length];
+		
 		double sendTime_60[][] = new double[2][networkWidth.length];
 
 		double sendTime_600[][] = new double[2][networkWidth.length];
@@ -431,6 +432,10 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 			System.out.println("OLSR - Lifetimeanalysis, transmission period : 60 s, number of nodes: " + numberOfNodes[i]);
 			sendTime_10[0][i] = numberOfNodes[i];
 			sendTime_10[1][i] = simulator.lifetimeAnalysisStaticSendBehaviorOneDestination(networkWidth[i], 1*60, payloadSize) / 1000 / 60;
+			sendTime_10_receivedPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_10_receivedPayloadMsg[1][i] = simulator.getNumberReceivedPayloadMsg();
+			sendTime_10_transmittedPayloadMsg[0][i] = numberOfNodes[i];
+			sendTime_10_transmittedPayloadMsg[1][i] = simulator.getNumberTransmittedPayloadMsg();
 			
 			System.out.println(
 					"60s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
@@ -477,6 +482,33 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		chart.setBackgroundPaint(Color.WHITE);
 
 		String filename = "Output/OLSR/OLSR_Lebenszeitanalyse_OneDestination_" + payloadSize + "Byte.png";
+		try {
+			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Transmitted vs. received payloadmsg
+		dataset = new DefaultXYDataset();
+		dataset.addSeries("Gesendete Nachrichten", sendTime_10_transmittedPayloadMsg);
+		dataset.addSeries("Empfangene Nachrichten", sendTime_10_receivedPayloadMsg);
+
+
+		line = new XYLineAndShapeRenderer();
+
+		xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		yAxis = new NumberAxis("Anzahl Nachrichten");
+		plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+
+		chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		filename = "Output/OLSR/OLSR_Lebenszeitanalyse_OneDestination_GesendeteVsEmpfangeNachrichten" + payloadSize + "Byte.png";
 		try {
 			ChartUtilities.saveChartAsPNG(new File(filename), chart, CHART_WIDTH, CHART_HIGHT);
 		} catch (IOException e) {
@@ -594,7 +626,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_60);
+		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_300);
 		dataset.addSeries("Knoten Sendet alle 10 min", sendTime_600);
 

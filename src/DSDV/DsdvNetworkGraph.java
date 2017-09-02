@@ -1,7 +1,7 @@
 package DSDV;
 
-import SimulationNetwork.NetworkGraph;
-import SimulationNetwork.NetworkNode;
+import Simulator.NetworkGraph;
+import Simulator.NetworkNode;
 
 public class DsdvNetworkGraph extends NetworkGraph{
 	

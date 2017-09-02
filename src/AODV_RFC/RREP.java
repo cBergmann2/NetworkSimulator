@@ -1,6 +1,6 @@
 package AODV_RFC;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class RREP extends Message{
 	private int Type;

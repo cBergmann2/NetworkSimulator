@@ -12,6 +12,7 @@ public class RouteTableEntry {
 	private long expirationTime;
 	private boolean valid;
 	private LinkedList<Integer> precursorList;
+	private long timeOfLastMessage;
 	
 	public RouteTableEntry(){
 		precursorList = new LinkedList<Integer>();
@@ -92,5 +93,21 @@ public class RouteTableEntry {
 		}
 		this.valid = false;
 		return false;
+	}
+
+
+	/**
+	 * @return the timeOfLastMessage
+	 */
+	public long getTimeOfLastMessage() {
+		return timeOfLastMessage;
+	}
+
+
+	/**
+	 * @param timeOfLastMessage the timeOfLastMessage to set
+	 */
+	public void setTimeOfLastMessage(long timeOfLastMessage) {
+		this.timeOfLastMessage = timeOfLastMessage;
 	}
 }

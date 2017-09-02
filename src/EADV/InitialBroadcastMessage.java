@@ -1,19 +1,20 @@
 package EADV;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class InitialBroadcastMessage extends Message {
 	
 	int address;
 	int hopCount;
 	int costs;
+	long timestampWhenReceivedIBM;
 	
 	public InitialBroadcastMessage(int address, int hopCount, int costs){
 		this.address = address;
 		this.hopCount = hopCount;
 		this.costs = costs;
 		
-		this.dataVolume = Message.MESSAGE_SIZE + 32*3;
+		this.dataVolume = Message.MESSAGE_SIZE + 3*8;
 	}
 	
 	public int getAddress() {
@@ -50,5 +51,19 @@ public class InitialBroadcastMessage extends Message {
 	
 	public String toString(){
 		return ("address: " + address + ", hop count: " + hopCount + ", costs: " + costs);
+	}
+
+	/**
+	 * @return the timestampWhenReceivedIBM
+	 */
+	public long getTimestampWhenReceivedIBM() {
+		return timestampWhenReceivedIBM;
+	}
+
+	/**
+	 * @param timestampWhenReceivedIBM the timestampWhenReceivedIBM to set
+	 */
+	public void setTimestampWhenReceivedIBM(long timestampWhenReceivedIBM) {
+		this.timestampWhenReceivedIBM = timestampWhenReceivedIBM;
 	}
 }

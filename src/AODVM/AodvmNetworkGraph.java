@@ -1,8 +1,8 @@
 package AODVM;
 
 
-import SimulationNetwork.NetworkGraph;
-import SimulationNetwork.NetworkNode;
+import Simulator.NetworkGraph;
+import Simulator.NetworkNode;
 
 public class AodvmNetworkGraph extends NetworkGraph{
 	

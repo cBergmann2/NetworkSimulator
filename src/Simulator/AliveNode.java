@@ -1,4 +1,4 @@
-package SimulationNetwork;
+package Simulator;
 
 public class AliveNode {
 	protected int nodeID;

@@ -24,6 +24,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10,
 	// 11, 12, 13, 14};
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	//private static final int networkWidth[] = {9};
 
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
@@ -342,6 +343,74 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		try {
 			ChartUtilities.saveChartAsPNG(new File("Output/AODV_RFC/AODV_Umgesetzte_Energie_ohne_RouteDiscovery.png"),
 					chart2, CHART_WIDTH, CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void evaluateCostAnalysisRouteDiscoveryProcess(){
+		AodvSimulator aodvSimulator = new AodvSimulator();
+		long networkLifetime = 0L;
+
+		double numberOfNodes[] = new double[networkWidth.length];
+		double maxDistance[][] = new double[2][networkWidth.length];
+
+		double minDistance[][] = new double[2][networkWidth.length];
+
+		double medDistance[][] = new double[2][networkWidth.length];
+
+		for (int i = 0; i < networkWidth.length; i++) {
+
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+			maxDistance[0][i] = numberOfNodes[i];
+			maxDistance[1][i] = aodvSimulator.energyCostAnalysisRouteDiscoveryProcess(networkWidth[i],
+					0, (int) Math.pow(networkWidth[i], 2) - 1);
+
+			System.out.println("Max Simulation for " + networkWidth[i] * networkWidth[i]
+					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
+					+ " umgesetzte Energie: " + maxDistance[1][i]);
+
+			minDistance[0][i] = numberOfNodes[i];
+			minDistance[1][i] = aodvSimulator.energyCostAnalysisRouteDiscoveryProcess(networkWidth[i], 0, 1);
+			
+			System.out.println("Min Simulation for " + networkWidth[i] * networkWidth[i]
+					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
+					+ " umgesetzte Energie: " + minDistance[1][i]);
+
+			medDistance[0][i] = numberOfNodes[i];
+			medDistance[1][i] = aodvSimulator.energyCostAnalysisRouteDiscoveryProcess(networkWidth[i], 0,
+					(networkWidth[i] / 2) * networkWidth[i] + networkWidth[i] / 2);
+			
+			System.out.println("Med Simulation for " + networkWidth[i] * networkWidth[i]
+					+ " nodes completed. Ausführungszeit des Netzwerks: " + networkLifetime + " ms"
+					+ " umgesetzte Energie: " + medDistance[1][i]);
+
+		}
+
+		// Consumed energy
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("maximale Distanz", maxDistance);
+		dataset.addSeries("mittlere Distanz", medDistance);
+		dataset.addSeries("minimale Distanz", minDistance);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/AODV_RFC/AODV_Umgesetzte_Energie_RouteDiscoveryProzess.png"), chart, CHART_WIDTH,
+					CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

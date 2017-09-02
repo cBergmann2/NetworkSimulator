@@ -1,4 +1,4 @@
-package SimulationNetwork;
+package Simulator;
 
 import java.util.LinkedList;
 
@@ -22,6 +22,10 @@ public abstract class Simulator {
 	protected double averageTimeInReciveMode;
 	protected double averageTimeInTransmissionMode;
 	protected double averageTimeWaitingForMediumAccesPermission;
+	
+	protected long numberReceivedPayloadMsg;
+	protected long numberTransmittedPayloadMsg;
+	
 
 	protected NetworkGraph graph;
 
@@ -336,9 +340,16 @@ public abstract class Simulator {
 		calculateAverageNodeTimes(graph.getNetworkNodes());
 
 		int recivedPayloadMsg = 0;
+		numberTransmittedPayloadMsg = 0L;
+		
 		for (int id = 0; id < networkNodes.length; id++) {
 			recivedPayloadMsg += networkNodes[id].getNumberOfRecivedPayloadMessages();
+			numberTransmittedPayloadMsg += networkNodes[id].getNumberTransmittedPayloadMsg();
 		}
+		
+		this.numberReceivedPayloadMsg = recivedPayloadMsg;
+		
+		
 
 		System.out.println("Network Lifetime:" + networkLifetime / 1000 / 60 / 60 / 24 + " Tage bzw "
 				+ networkLifetime / 1000 + " Sekunden. Recived PayloadMsg: " + recivedPayloadMsg);
@@ -880,6 +891,15 @@ public abstract class Simulator {
 			countPayloadMsg += node.getNumberTransmittedPayloadMsg();
 		}
 
+		this.numberTransmittedPayloadMsg = countPayloadMsg;
+		
 		return countPayloadMsg;
+	}
+
+	/**
+	 * @return the numberReceivedPayloadMsg
+	 */
+	public long getNumberReceivedPayloadMsg() {
+		return numberReceivedPayloadMsg;
 	}
 }

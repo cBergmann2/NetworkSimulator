@@ -2,7 +2,7 @@ package DSDV;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class UpdateMessage extends Message{
 	

@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import javax.swing.event.TableColumnModelEvent;
 
-import SimulationNetwork.Message;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+import Simulator.Message;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
 
 public class OlsrNetworkNode extends NetworkNode {
 
@@ -326,6 +326,7 @@ public class OlsrNetworkNode extends NetworkNode {
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		this.sendMsg(tmpMsg);
+		this.numberTransmittedPayloadMsg++;
 	}
 
 	public void sendMsg(Message msg) {
@@ -342,7 +343,7 @@ public class OlsrNetworkNode extends NetworkNode {
 				// System.out.println("Send msg");
 
 				this.outputBuffer.add(msg);
-				this.numberTransmittedPayloadMsg++;
+				//this.numberTransmittedPayloadMsg++;
 			} else {
 				// No Route for destination available
 				msgWaintingBuffer.add((PayloadMessage) msg);

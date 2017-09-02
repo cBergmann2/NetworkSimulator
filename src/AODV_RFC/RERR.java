@@ -2,7 +2,7 @@ package AODV_RFC;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class RERR extends Message{
 
@@ -13,8 +13,10 @@ public class RERR extends Message{
 	private LinkedList<Integer> UnreachableDestinationIpAdresses;
 	private LinkedList<Integer> UnreachableDestinationSequenceNumbers;
 	
-	public void RREP(){
-		this.setDataVolume(32);
+	public RERR(){
+		this.setDataVolume(Message.MESSAGE_SIZE);
+		UnreachableDestinationIpAdresses = new LinkedList<Integer>();
+		UnreachableDestinationSequenceNumbers = new LinkedList<Integer>();
 	}
 	
 	/**
@@ -76,7 +78,7 @@ public class RERR extends Message{
 	 */
 	public void addUnreachableDestinationIpAdresses(int unreachableDestinationIpAdresses) {
 		UnreachableDestinationIpAdresses.add(unreachableDestinationIpAdresses);
-		this.setDataVolume(this.getDataVolume() + 32);
+		this.setDataVolume(this.getDataVolume() + 8);
 	}
 	/**
 	 * @return the unreachableDestinationSequenceNumbers
@@ -89,7 +91,7 @@ public class RERR extends Message{
 	 */
 	public void addUnreachableDestinationSequenceNumbers(int unreachableDestinationSequenceNumbers) {
 		UnreachableDestinationSequenceNumbers.add(unreachableDestinationSequenceNumbers);
-		this.setDataVolume(this.getDataVolume() + 32);
+		this.setDataVolume(this.getDataVolume() + 8);
 	}
 
 }

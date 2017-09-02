@@ -2,18 +2,20 @@ package EADV;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
+import Simulator.Message;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
 
 public class EadvNetworkNode extends NetworkNode{
 	
+	private static final long INITIAL_BROACAST_MESSAGE_INTERVALL = 9*60*1000;
 	LinkedList<RoutingTableEntry> routingTable;
 	int nodeHopCount;
 	int xValue;
 	boolean nodeIsDataSink;
 	private LinkedList<PayloadMessage> msgWaintingBuffer;
 	long lastInitialBroadcast = 0;
+	private LinkedList<InitialBroadcastMessage> receivedIBMs;
 
 	public EadvNetworkNode(int id) {
 		super(id);
@@ -22,18 +24,39 @@ public class EadvNetworkNode extends NetworkNode{
 		xValue = 0;
 		nodeIsDataSink = false;
 		msgWaintingBuffer = new LinkedList<PayloadMessage>();
+		receivedIBMs = new LinkedList<InitialBroadcastMessage>();
 	}
 
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
 		
 		if(nodeIsDataSink){
-			if(lastInitialBroadcast < simulator.getNetworkLifetime() - 9*60*1000){
+			//Send IBM in interval
+			if(lastInitialBroadcast < simulator.getNetworkLifetime() - INITIAL_BROACAST_MESSAGE_INTERVALL){
 				sendInitialBroadcast();
 			}
 		}
+		else{
+			
+			//Delete received IBMs from last IBM-interval
+			if(simulator.getNetworkLifetime() % 60000 == 0){
+			
+				LinkedList<InitialBroadcastMessage> toDeleteIBMs = new LinkedList<InitialBroadcastMessage>();
+							
+				for(InitialBroadcastMessage ibm: receivedIBMs){
+					if(ibm.getTimestampWhenReceivedIBM() < simulator.getNetworkLifetime() - INITIAL_BROACAST_MESSAGE_INTERVALL - 60000){
+						toDeleteIBMs.add(ibm);
+					}
+				}
+				
+				for(InitialBroadcastMessage ibm:toDeleteIBMs){
+					receivedIBMs.remove(ibm);
+				}
+			}
+			
+		}
 		
-		//TODO: Check if current routing table is up to date
+		
 		
 	}
 
@@ -49,6 +72,18 @@ public class EadvNetworkNode extends NetworkNode{
 				}
 				else{
 					
+					//Check if already received IBM from this destination
+					for(InitialBroadcastMessage tempIbm:receivedIBMs){
+						if((ibm.getSenderID() == tempIbm.getSenderID())
+								&& (ibm.getHopCount() == tempIbm.getHopCount())
+								&& (ibm.getCosts() == tempIbm.getCosts())){
+							
+							//Already received this IBM
+							return;
+						}
+					}
+					
+					
 					//updateRoutingTable
 					this.updateRoutingTable(ibm);
 					
@@ -61,6 +96,10 @@ public class EadvNetworkNode extends NetworkNode{
 						//System.out.println("Node "+ this.id + " forward IBM");
 						this.sendMsg(forwardIBM);
 					}
+					
+					//save received IBM
+					ibm.setTimestampWhenReceivedIBM(simulator.getNetworkLifetime());
+					this.receivedIBMs.add(ibm);
 					
 					//update node hop count
 					nodeHopCount = Integer.MAX_VALUE;
@@ -89,14 +128,18 @@ public class EadvNetworkNode extends NetworkNode{
 					//System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + " receive payloadmsg");
 					PayloadMessage msg = (PayloadMessage)receivedMsg;
 					if(msg.getPayloadDestinationAdress() != this.id){
-						//send ACK back to transmitting node
-						this.sendAck(receivedMsg);
+						
+						PayloadMessage msgCopy = msg.clone();
+											
 						
 						//forward msg to payload destination
 						int nextHop = this.getNextHop();		//get next hop from routing table					
 						msg.setDestinationID(nextHop);			//set next hop
 						//System.out.println(simulator.getNetworkLifetime() + ": Node " + this.id + " forward payloadmsg to node " + nextHop);
 						this.sendMsg(msg);						//forward message
+						
+						//send ACK back to transmitting node
+						this.sendAck(msgCopy);
 						
 					}
 					else{
@@ -204,6 +247,7 @@ public class EadvNetworkNode extends NetworkNode{
 		//System.out.println("Node " + this.id + " send payload msg");
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		this.sendMsg(tmpMsg);
+		this.numberTransmittedPayloadMsg++;
 	}
 	
 	public void sendMsg(Message msg){
@@ -311,6 +355,13 @@ public class EadvNetworkNode extends NetworkNode{
 
 	public void setNodeIsDataSink(boolean nodeIsDataSink) {
 		this.nodeIsDataSink = nodeIsDataSink;
+	}
+
+	/**
+	 * @return the routingTable
+	 */
+	public int getRoutingTableSize() {
+		return routingTable.size();
 	}
 	
 	

@@ -2,8 +2,8 @@ package OLSR;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.Message;
-import SimulationNetwork.PayloadMessage;
+import Simulator.Message;
+import Simulator.PayloadMessage;
 
 public class BasicPacketFormat extends Message{
 	

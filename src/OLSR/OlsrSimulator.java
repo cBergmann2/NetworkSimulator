@@ -3,9 +3,9 @@ package OLSR;
 
 import DSDV.DsdvNetworkGraph;
 import Flooding.FloodingNetworkGraph;
-import SimulationNetwork.NetworkNode;
-import SimulationNetwork.PayloadMessage;
-import SimulationNetwork.Simulator;
+import Simulator.NetworkNode;
+import Simulator.PayloadMessage;
+import Simulator.Simulator;
 
 public class OlsrSimulator extends Simulator{
 

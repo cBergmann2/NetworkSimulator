@@ -1,6 +1,6 @@
 package AODVM;
 
-import SimulationNetwork.Message;
+import Simulator.Message;
 
 public class RREP_ACK extends Message{
 

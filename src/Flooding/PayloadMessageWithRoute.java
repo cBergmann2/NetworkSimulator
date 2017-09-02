@@ -2,7 +2,7 @@ package Flooding;
 
 import java.util.LinkedList;
 
-import SimulationNetwork.PayloadMessage;
+import Simulator.PayloadMessage;
 
 public class PayloadMessageWithRoute extends PayloadMessage{
 	

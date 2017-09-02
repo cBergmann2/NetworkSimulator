@@ -1,4 +1,4 @@
-package SimulationNetwork;
+package Simulator;
 
 public class PayloadMessage extends Message{
 	protected int payloadDestinationAdress;
