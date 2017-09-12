@@ -11,7 +11,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-import AODV_RFC.AodvSimulator;
+import AODV.AodvSimulator;
 import Flooding.FloodingSimulator;
 import Simulator.EvaluationUnit;
 

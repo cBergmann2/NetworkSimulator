@@ -1,7 +1,6 @@
 package Simulator;
+import AODV.AodvEvaluationUnit;
 import AODVM.AodvmEvaluationUnit;
-//import AODV.AodvEvaluationUnit;
-import AODV_RFC.AodvEvaluationUnit;
 import DSDV.DsdvEvaluationUnit;
 import EADV.EadvEvaluationUnit;
 import Flooding.FloodingEvaluationUnit;
@@ -24,7 +23,7 @@ public class Main {
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
-		aodvEvaluationUnit.evaluateCostAnalysisRouteDiscoveryProcess();
+		//aodvEvaluationUnit.evaluateCostAnalysisRouteDiscoveryProcess();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
@@ -61,7 +60,7 @@ public class Main {
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
-		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
+		eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);

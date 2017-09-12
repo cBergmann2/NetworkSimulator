@@ -12,7 +12,7 @@ public class AodvmNetworkNode extends NetworkNode{
 	private static final long HELLO_INTERVAL = 5*60000;	//HELLO_INTERVAL in ms
 	public static final long MAX_ROUTE_LIFETIME = 9*60*1000;
 	private static final long NEXT_ROUTE_UPDATE_INTERVAL = 30000;	//NEXT_ROUTE_UPDATE_INTERVAL in ms
-	private static final long DATA_COLLECTION_TIME = 5*1000;		//5 sec
+	private static final long DATA_COLLECTION_TIME = 10*1000;		//10 sec
 	private static final long DATA_COLLECTION_EXPIRATION_TIME = 5*60*1000; //5 min
 	
 	private LinkedList<RouteTableEntry> routingTable;
@@ -79,7 +79,7 @@ public class AodvmNetworkNode extends NetworkNode{
 			
 			
 			for(DataCollectionTimer timer : dataCollectionTimer){
-				if(timer.isRrepSend() && timer.getExprationTime() + DATA_COLLECTION_EXPIRATION_TIME >= simulator.getNetworkLifetime()){
+				if(timer.isRrepSend() && timer.getExprationTime() + DATA_COLLECTION_EXPIRATION_TIME <= simulator.getNetworkLifetime()){
 					toDeleteTimer.add(timer);
 				}
 
@@ -390,55 +390,58 @@ public class AodvmNetworkNode extends NetworkNode{
 	}
 	
 	private void reciveRREP(RREP msg){
-		//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
-		this.numberRecivedRREPdMsg++;
-		//Update routing table for previous hop
-		updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID(), MAX_ROUTE_LIFETIME);
 		
-		int nextHopCount = msg.getHop_Count() +1;
-		
-		//Update routing table for desintation node
-		if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID(), msg.getLifetime())){
-			//Forward RREP if routing table was updated
+		if(msg.getDestinationID() == this.id){
+			//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": Recive RREP from Node " + msg.getSenderID() + ". DestinationNode: " + msg.getDestination_IP_Adress() + "; HopCount: " + msg.getHop_Count());
+			this.numberRecivedRREPdMsg++;
+			//Update routing table for previous hop
+			updateRouteTable(msg.getSenderID(), -1, 1, msg.getSenderID(), MAX_ROUTE_LIFETIME);
 			
-			//Forward RREP-Message if TTL > 0
-			if(msg.getOrignator_IP_Adress() != this.id){
-				if(msg.getDestinationID() == this.id){
-					if(msg.getTimeToLive() > 1){
-						//foward RREP to originator node
-						RREP copyRREP = msg.clone();
-						copyRREP.setSenderID(this.id);
-						copyRREP.setDestinationID(getNextHopToDestination(msg.getOrignator_IP_Adress()));
-						copyRREP.setHop_Count(nextHopCount);
-						copyRREP.setTimeToLive(msg.getTimeToLive() -1);
-						sendMsg(copyRREP);
-						//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward RREP");
-						this.addNodeAsPrecursor(copyRREP.getDestinationID(), copyRREP.getDestination_IP_Adress());
+			int nextHopCount = msg.getHop_Count() +1;
+			
+			//Update routing table for desintation node
+			if(updateRouteTable(msg.getDestination_IP_Adress(), msg.getDestination_Sequence_Number(), nextHopCount, msg.getSenderID(), msg.getLifetime())){
+				//Forward RREP if routing table was updated
+				
+				//Forward RREP-Message if TTL > 0
+				if(msg.getOrignator_IP_Adress() != this.id){
+					if(msg.getDestinationID() == this.id){
+						if(msg.getTimeToLive() > 1){
+							//foward RREP to originator node
+							RREP copyRREP = msg.clone();
+							copyRREP.setSenderID(this.id);
+							copyRREP.setDestinationID(getNextHopToDestination(msg.getOrignator_IP_Adress()));
+							copyRREP.setHop_Count(nextHopCount);
+							copyRREP.setTimeToLive(msg.getTimeToLive() -1);
+							sendMsg(copyRREP);
+							//System.out.println(""+simulator.getNetworkLifetime() +": Node "+ this.id + ": forward RREP");
+							this.addNodeAsPrecursor(copyRREP.getDestinationID(), copyRREP.getDestination_IP_Adress());
+						}
 					}
 				}
 			}
-		}
-		
-		//Search for messages that wait for a route for the destination
-		LinkedList<Message> msgForWhichRouteWasFound = new LinkedList<Message>();
-		for(Message waitingMsg: waitingForRouteBuffer){
-			if(waitingMsg instanceof PayloadMessage){
-				if(((PayloadMessage)waitingMsg).getPayloadDestinationAdress() == msg.getDestination_IP_Adress()){
-					//simulator.resetTransmissionUnitFromAllNodes();
-					
-					waitingMsg.setDestinationID(getNextHopToDestination(msg.getDestination_IP_Adress()));
-					//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
-					//aktualisiere Sendezeit
-					waitingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
-					outputBuffer.add(waitingMsg);
-					//this.numberTransmittedPayloadMsg++;
-					msgForWhichRouteWasFound.add(waitingMsg);
+			
+			//Search for messages that wait for a route for the destination
+			LinkedList<Message> msgForWhichRouteWasFound = new LinkedList<Message>();
+			for(Message waitingMsg: waitingForRouteBuffer){
+				if(waitingMsg instanceof PayloadMessage){
+					if(((PayloadMessage)waitingMsg).getPayloadDestinationAdress() == msg.getDestination_IP_Adress()){
+						//simulator.resetTransmissionUnitFromAllNodes();
+						
+						waitingMsg.setDestinationID(getNextHopToDestination(msg.getDestination_IP_Adress()));
+						//System.out.println(""+simulator.getNetworkLifetime() +": Node " +  this.id + ": Send payload message");
+						//aktualisiere Sendezeit
+						waitingMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
+						outputBuffer.add(waitingMsg);
+						//this.numberTransmittedPayloadMsg++;
+						msgForWhichRouteWasFound.add(waitingMsg);
+					}
 				}
 			}
-		}
-		//Delete Msg from waiting list
-		for(Message deleteMsg: msgForWhichRouteWasFound){
-			waitingForRouteBuffer.remove(deleteMsg);
+			//Delete Msg from waiting list
+			for(Message deleteMsg: msgForWhichRouteWasFound){
+				waitingForRouteBuffer.remove(deleteMsg);
+			}
 		}
 	}
 	

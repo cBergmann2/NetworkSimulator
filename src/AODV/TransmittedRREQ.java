@@ -1,4 +1,4 @@
-package AODV_RFC;
+package AODV;
 
 public class TransmittedRREQ {
 	int originatorIpAdress;

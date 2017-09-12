@@ -1,6 +1,6 @@
 package AODVM;
 
-import AODV_RFC.AodvNetworkGraph;
+import AODV.AodvNetworkGraph;
 import Flooding.FloodingNetworkGraph;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;

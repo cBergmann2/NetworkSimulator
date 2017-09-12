@@ -1,4 +1,4 @@
-package AODV_RFC;
+package AODV;
 
 import java.util.LinkedList;
 
