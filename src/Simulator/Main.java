@@ -24,7 +24,7 @@ public class Main {
 		AodvEvaluationUnit aodvEvaluationUnit = new AodvEvaluationUnit();
 		//aodvEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvEvaluationUnit.evaluateCostAnalysis();
-		aodvEvaluationUnit.evaluateCostAnalysisRouteDiscoveryProcess();
+		//aodvEvaluationUnit.evaluateCostAnalysisRouteDiscoveryProcess();
 		//aodvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//aodvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
@@ -65,6 +65,11 @@ public class Main {
 		//eadvEvaluationUnit.evaluateCostAnalysis();
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		
+		//ComparativeEvaluation.speedAnalysis();
+		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
+		//ComparativeEvaluation.costAnalysis();
+		ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 	}
 }
 
