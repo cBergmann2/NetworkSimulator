@@ -64,6 +64,11 @@ public class Main {
 		//eadvEvaluationUnit.evaluateCostAnalysis();
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		
+		//ComparativeEvaluation.speedAnalysis();
+		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
+		//ComparativeEvaluation.costAnalysis();
+		ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 	}
 }
 
