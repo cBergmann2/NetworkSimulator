@@ -60,7 +60,7 @@ public class Main {
 		
 		EadvEvaluationUnit eadvEvaluationUnit = new EadvEvaluationUnit();
 		//eadvEvaluationUnit.evaluateSpeedAnalysis();
-		eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
+		//eadvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
 		//eadvEvaluationUnit.evaluateCostAnalysis();
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
@@ -68,7 +68,10 @@ public class Main {
 		//ComparativeEvaluation.speedAnalysis();
 		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
 		//ComparativeEvaluation.costAnalysis();
-		ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
+		//ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
+		//ComparativeEvaluation.lifetimeAnalysisRandomSorceAndDest(80, 10);
+		//ComparativeEvaluation.PartitioningAnalysisOneDestination(80);
+		ComparativeEvaluation.PartitioningAnalysisRandomSourceAndDest(80, 10);
 	}
 }
 
