@@ -2,6 +2,11 @@ package AODV;
 
 import Simulator.Message;
 
+/**
+ * Datastructure for RREP message
+ * @author Christoph
+ *
+ */
 public class RREP extends Message{
 	private int Type;
 	private int R;

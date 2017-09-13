@@ -4,6 +4,11 @@ import java.util.LinkedList;
 
 import Simulator.Message;
 
+/**
+ * RERR message
+ * @author Christoph
+ *
+ */
 public class RERR extends Message{
 
 	private int Type;

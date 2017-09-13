@@ -1,5 +1,10 @@
 package AODV;
 
+/**
+ * Datastructure to safe transmitted RREQ messages
+ * @author Christoph
+ *
+ */
 public class TransmittedRREQ {
 	int originatorIpAdress;
 	int rreqId;

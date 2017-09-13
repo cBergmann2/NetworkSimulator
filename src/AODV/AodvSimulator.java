@@ -1,13 +1,16 @@
 package AODV;
 
-import AODVM.AodvmNetworkGraph;
-import AODVM.AodvmNetworkNode;
-import OLSR.OlsrNetworkGraph;
+
 import Simulator.IR_Receiver;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 import Simulator.Simulator;
 
+/**
+ * Simulator for AODV routing scheme
+ * @author Christoph
+ *
+ */
 public class AodvSimulator extends Simulator {
 
 	private double percentageTransmittedRREQMsg;
@@ -16,6 +19,13 @@ public class AodvSimulator extends Simulator {
 
 	private long msgTransmissionTime;
 
+	/**
+	 * Performs the speed analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
@@ -31,6 +41,13 @@ public class AodvSimulator extends Simulator {
 		return time;
 	}
 
+	/**
+	 * Performs the energy cost analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long energyCostAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
@@ -161,6 +178,14 @@ public class AodvSimulator extends Simulator {
 		return (consumedEnergyInTransmissionMode);
 	}
 	
+	
+	/**
+	 * Energy cost analysis only for the route discovery process
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public double energyCostAnalysisRouteDiscoveryProcess(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
@@ -245,6 +270,13 @@ public class AodvSimulator extends Simulator {
 			
 	}
 
+	/**
+	 * Lifetime analysis
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod, int payloadSize) {
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
 
@@ -311,6 +343,13 @@ public class AodvSimulator extends Simulator {
 		return networkLifetime;
 	}
 
+	/**
+	 * Lifetime analysis with changing destination
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSIze
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehaviorChangingDestination(int networkWidth, int transmissionPeriod,
 			int payloadSIze) {
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
@@ -334,6 +373,13 @@ public class AodvSimulator extends Simulator {
 		return lifetime;
 	}
 
+	/**
+	 * Lifetime analysis, every Node sends its messages to one destination
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,
 			int payloadSize) {
 
@@ -343,6 +389,14 @@ public class AodvSimulator extends Simulator {
 				payloadSize));
 	}
 
+	/**
+	 * Lifetime analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize,
 			int maxPairs) {
 
@@ -351,6 +405,14 @@ public class AodvSimulator extends Simulator {
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 
+	/**
+	 * Partitioning analysis,  every Node sends its messages to one destination
+	 * 
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
 
@@ -358,6 +420,14 @@ public class AodvSimulator extends Simulator {
 				payloadSize);
 	}
 
+	/**
+	 * Partitioning analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize,
 			int maxPairs) {
 		AodvNetworkGraph graph = new AodvNetworkGraph(networkWidth);
@@ -366,10 +436,15 @@ public class AodvSimulator extends Simulator {
 				maxPairs);
 	}
 
+	/**
+	 * 
+	 * @return message transmission time
+	 */
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
 	}
 
+	
 	private void calculatSpreadOfTransmittedMessages(NetworkNode networkNodes[]) {
 		int numberTransmittedMsg = 0;
 		int numberTransmittedRREQMsg = 0;

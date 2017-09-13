@@ -7,6 +7,12 @@ import Simulator.Message;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 
+/**
+ * Specializes the NetworkNode class for AODV routing scheme
+ * 
+ * @author Christoph Bergmann
+ */
+
 public class AodvNetworkNode extends NetworkNode {
 
 	private static final long HELLO_INTERVAL = 1*30*1000; // HELLO_INTERVAL in
@@ -36,6 +42,10 @@ public class AodvNetworkNode extends NetworkNode {
 	private long nextRouteUpdateTime;
 	private boolean sendBroadcastMessageInCurrentHelloInterval;
 
+	/**
+	 * Creates network node with given id
+	 * @param id	The ID from the new network node
+	 */
 	public AodvNetworkNode(int id) {
 		super(id);
 		this.routingTable = new LinkedList<RouteTableEntry>();
@@ -60,6 +70,9 @@ public class AodvNetworkNode extends NetworkNode {
 		timeOfLastPayloadMessage = -1;
 	}
 
+	/**
+	 * Performs time dependent tasks. E.g. generating HELLO-Messages
+	 */
 	@Override
 	protected void performeTimeDependentTasks(long executionTime) {
 
@@ -89,6 +102,9 @@ public class AodvNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Generates a HELLO-Message if node has at least one precursor
+	 */
 	private void generateHelloMessage() {
 		boolean nodeHasPrecursor = false;
 
@@ -115,6 +131,12 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Check if neighbors on active used routes are alive
+	 * If neighbor is down, send RERR message
+	 *  
+	 * @param executionTime
+	 */
 	private void validateRouteLifetime(long executionTime) {
 		if (this.nextRouteUpdateTime <= simulator.getNetworkLifetime()) {
 			for (RouteTableEntry routeTableEntry : routingTable) {
@@ -136,17 +158,16 @@ public class AodvNetworkNode extends NetworkNode {
 							rerr.setDestinationID(-1);
 							sendMsg(rerr);
 						}
-
 					}
 				}
-
 			}
-
 			this.nextRouteUpdateTime = simulator.getNetworkLifetime() + NEXT_ROUTE_UPDATE_INTERVAL;
 		}
 	}
 
-	@Override
+	/**
+	 * Determine the message format and call the processing process
+	 */
 	public void processRecivedMessage() {
 
 		while (inputBuffer.size() > 0) {
@@ -176,6 +197,10 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Process an RREQ msg
+	 * @param msg
+	 */
 	private void reciveRREQ(RREQ msg) {
 		// System.out.println(""+simulator.getNetworkLifetime() +": Node "+
 		// this.id + ": Recive RREQ from Node " + msg.getSenderID() + ".
@@ -270,6 +295,11 @@ public class AodvNetworkNode extends NetworkNode {
 
 	}
 
+	/** 
+	 * Add a node as a precursor
+	 * @param nodeID
+	 * @param destination
+	 */
 	private void addNodeAsPrecursor(int nodeID, int destination) {
 		LinkedList<Integer> precursorList = null;
 		for (RouteTableEntry tableEntry : routingTable) {
@@ -285,6 +315,10 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Set route lifetime for the given destination to maximum value
+	 * @param destination
+	 */
 	private void updateRouteLifetime(int destination) {
 		for (RouteTableEntry route : routingTable) {
 			if (route.getDestinationAdress() == destination) {
@@ -295,6 +329,15 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Update the route table with the given parameter
+	 * @param destination
+	 * @param sequenceNumber
+	 * @param hopCount
+	 * @param nextHop
+	 * @param maxRouteLifetime
+	 * @return
+	 */
 	private boolean updateRouteTable(int destination, int sequenceNumber, int hopCount, int nextHop,
 			long maxRouteLifetime) {
 		boolean routeAlreadyExists = false;
@@ -358,6 +401,11 @@ public class AodvNetworkNode extends NetworkNode {
 		return routingTableUpdated;
 	}
 
+	/**
+	 * Search next hop to given destination in routing table
+	 * @param destination
+	 * @return
+	 */
 	private int getNextHopToDestination(int destination) {
 		for (RouteTableEntry route : routingTable) {
 			if (route.getDestinationAdress() == destination && route.isValid()) {
@@ -367,6 +415,10 @@ public class AodvNetworkNode extends NetworkNode {
 		return -1;
 	}
 
+	/**
+	 * Process an RREP msg
+	 * @param msg
+	 */
 	private void reciveRREP(RREP msg) {
 		// System.out.println(""+simulator.getNetworkLifetime() +": Node "+
 		// this.id + ": Recive RREP from Node " + msg.getSenderID() + ".
@@ -426,10 +478,18 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Process an RREP_ACK msg
+	 * @param msg
+	 */
 	private void reciveRREP_ACK(RREP_ACK msg) {
 
 	}
 
+	/**
+	 * Process an RERR msg
+	 * @param msg
+	 */
 	private void reciveRERR(RERR msg) {
 
 		// check if RERR was already received
@@ -460,6 +520,10 @@ public class AodvNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Process an PayloadMessage msg
+	 * @param msg
+	 */
 	private void recivePayloadMessage(PayloadMessage msg) {
 		// System.out.println(""+simulator.getNetworkLifetime() +": Node "+
 		// this.id + ": recive payloadMessage from node " +
@@ -490,7 +554,9 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
-	@Override
+	/**
+	 * send the given Message
+	 */
 	public void sendMsg(Message msg) {
 
 		if (msg instanceof RREP) {
@@ -573,6 +639,10 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Start a route discovery process for the given destination
+	 * @param destinationID
+	 */
 	private void startRouteDiscoveryProcess(int destinationID) {
 		// System.out.println(""+simulator.getNetworkLifetime() +": Node " +
 		// this.id + ": Start route discovery process");
@@ -614,7 +684,9 @@ public class AodvNetworkNode extends NetworkNode {
 
 	}
 
-	@Override
+	/**
+	 * Send a message from this node
+	 */
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 
 		// System.out.println(""+simulator.getNetworkLifetime() +": Node " +
@@ -629,6 +701,7 @@ public class AodvNetworkNode extends NetworkNode {
 
 	}
 
+	
 	public void reciveMsg(Message msg) {
 		// currentlyTransmittingAMessage = true;
 		if (incommingMsg == null) {
@@ -658,14 +731,26 @@ public class AodvNetworkNode extends NetworkNode {
 		}
 	}
 
+	/**
+	 * 
+	 * @return number of received RREP messages
+	 */
 	public int getNumberRecivedRREPdMsg() {
 		return numberRecivedRREPdMsg;
 	}
 
+	/**
+	 * 
+	 * @return number of transmitted RREQ messages
+	 */
 	public int getNumberTransmittedRREQMsg() {
 		return numberTransmittedRREQMsg;
 	}
 
+	/**
+	 * 
+	 * @return number of transmitted RREP messages
+	 */
 	public int getNumberTransmittedRREPMsg() {
 		return numberTransmittedRREPMsg;
 	}

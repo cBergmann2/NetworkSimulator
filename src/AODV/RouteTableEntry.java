@@ -2,6 +2,11 @@ package AODV;
 
 import java.util.LinkedList;
 
+/**
+ * Datastructure for routing table entry
+ * @author Christoph
+ *
+ */
 public class RouteTableEntry {
 
 	private int destinationAdress;

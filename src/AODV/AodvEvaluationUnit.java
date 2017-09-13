@@ -11,25 +11,27 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-import AODVM.AodvmSimulator;
-import Flooding.FloodingSimulator;
-import OLSR.OlsrSimulator;
+
 import Simulator.EvaluationUnit;
 
+/**
+ * Class includes functions for evaluating the AODV routing method
+ * @author Christoph Bergmann
+ *
+ */
 public class AodvEvaluationUnit extends EvaluationUnit {
 
-	private static final int MAX_NETWORK_WIDTH = 32;
 
-	// private static final int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10,
-	// 11, 12, 13, 14};
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-	//private static final int networkWidth[] = {9};
 
+	// Dimensions of graphics
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
 
-	@Override
+	/**
+	 * Performs the speed analysis for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	public void evaluateSpeedAnalysis() {
 		System.out.println("Start AODVM spped anylsis.");
 		AodvSimulator simulator = new AodvSimulator();
@@ -161,7 +163,11 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 
 	}
 
-	@Override
+	/**
+	 * Performs the cost analysis for the given networkWidths and visualize the #
+	 * simulation results in graphs
+	 * 
+	 */
 	public void evaluateCostAnalysis() {
 		AodvSimulator aodvSimulator = new AodvSimulator();
 		long networkLifetime = 0L;
@@ -349,6 +355,9 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 	
+	/**
+	 * Performs the cost analysis for the route discovery process for the given networkWidths and visualize the simulation results in graphs
+	 */
 	public void evaluateCostAnalysisRouteDiscoveryProcess(){
 		AodvSimulator aodvSimulator = new AodvSimulator();
 		long networkLifetime = 0L;
@@ -417,6 +426,12 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths and payload size. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
 		System.out.println("\nAODV Lifetime analysis");
 
@@ -493,6 +508,13 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs) {
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 
@@ -563,6 +585,12 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network partitioning for the given networkWidths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkPartitioningAnalysisOneDestination(int payloadSize) {
 		System.out.println("Start partitioning analysis");
 
@@ -632,6 +660,12 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 
 	}
 	
+	/**
+	 * Performs the analysis of network partitioning for the given networkWidths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkPartitioningAnaylsisRandomSorceAndDest(int payloadSize, int maxPairs){
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 		

@@ -2,6 +2,11 @@ package AODV;
 
 import Simulator.Message;
 
+/**
+ * Datastructure for RREQ message
+ * @author Christoph
+ *
+ */
 public class RREQ extends Message{
 
 	private int Type;
