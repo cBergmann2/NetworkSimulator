@@ -70,7 +70,7 @@ public class Main {
 		//ComparativeEvaluation.costAnalysis();
 		//ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 		//ComparativeEvaluation.lifetimeAnalysisRandomSorceAndDest(80, 10);
-		//ComparativeEvaluation.PartitioningAnalysisOneDestination(80);
+		ComparativeEvaluation.PartitioningAnalysisOneDestination(80);
 		ComparativeEvaluation.PartitioningAnalysisRandomSourceAndDest(80, 10);
 	}
 }

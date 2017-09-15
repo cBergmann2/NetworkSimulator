@@ -408,27 +408,27 @@ public class ComparativeEvaluation {
 			
 			System.out.println("Flooding - " + numberOfNodes[i] + " Nodes");
 			floodingLifetime[0][i] = numberOfNodes[i];
-			floodingLifetime[1][i] = floodingSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			floodingLifetime[1][i] = floodingSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
 			dsdvLifetime[0][i] = numberOfNodes[i];
-			dsdvLifetime[1][i] = dsdvSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			dsdvLifetime[1][i] = dsdvSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
 			olsrLifetime[0][i] = numberOfNodes[i];
-			olsrLifetime[1][i] = olsrSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			olsrLifetime[1][i] = olsrSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("AODV - " + numberOfNodes[i] + " Nodes");
 			aodvLifetime[0][i] = numberOfNodes[i];
-			aodvLifetime[1][i] = aodvSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			aodvLifetime[1][i] = aodvSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("AODVM - " + numberOfNodes[i] + " Nodes");
 			aodvmLifetime[0][i] = numberOfNodes[i];
-			aodvmLifetime[1][i] = aodvmSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			aodvmLifetime[1][i] = aodvmSimulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 		}
 		
@@ -490,32 +490,32 @@ public class ComparativeEvaluation {
 			
 			System.out.println("Flooding - " + numberOfNodes[i] + " Nodes");
 			floodingLifetime[0][i] = numberOfNodes[i];
-			floodingLifetime[1][i] = floodingSimulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 1 * 60,
+			floodingLifetime[1][i] = floodingSimulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 			
 			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
 			dsdvLifetime[0][i] = numberOfNodes[i];
-			dsdvLifetime[1][i] = dsdvSimulator.partitioningAnalysis(networkWidth[i], 1 * 60,
+			dsdvLifetime[1][i] = dsdvSimulator.partitioningAnalysis(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 			
 			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
 			olsrLifetime[0][i] = numberOfNodes[i];
-			olsrLifetime[1][i] = olsrSimulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 1 * 60,
+			olsrLifetime[1][i] = olsrSimulator.partitioningAnalysisOnePayloadmessageDestination(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 			
 			System.out.println("AODV - " + numberOfNodes[i] + " Nodes");
 			aodvLifetime[0][i] = numberOfNodes[i];
-			aodvLifetime[1][i] = aodvSimulator.partitioningAnalysis(networkWidth[i], 1 * 60,
+			aodvLifetime[1][i] = aodvSimulator.partitioningAnalysis(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 			
 			System.out.println("AODVM - " + numberOfNodes[i] + " Nodes");
 			aodvmLifetime[0][i] = numberOfNodes[i];
-			aodvmLifetime[1][i] = aodvmSimulator.partitioningAnalysis(networkWidth[i], 1 * 60,
+			aodvmLifetime[1][i] = aodvmSimulator.partitioningAnalysis(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 			
 			System.out.println("EADV - " + numberOfNodes[i] + " Nodes");
 			eadvLifetime[0][i] = numberOfNodes[i];
-			eadvLifetime[1][i] = eadvSimulator.partitioningAnalysis(networkWidth[i], 1 * 60,
+			eadvLifetime[1][i] = eadvSimulator.partitioningAnalysis(networkWidth[i], 10 * 60,
 					payloadSize) / 1000 / 60;
 		}
 		
@@ -580,27 +580,27 @@ public static void PartitioningAnalysisRandomSourceAndDest(int payloadSize, int 
 			
 			System.out.println("Flooding - " + numberOfNodes[i] + " Nodes");
 			floodingLifetime[0][i] = numberOfNodes[i];
-			floodingLifetime[1][i] = floodingSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			floodingLifetime[1][i] = floodingSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
 			dsdvLifetime[0][i] = numberOfNodes[i];
-			dsdvLifetime[1][i] = dsdvSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			dsdvLifetime[1][i] = dsdvSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
 			olsrLifetime[0][i] = numberOfNodes[i];
-			olsrLifetime[1][i] = olsrSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			olsrLifetime[1][i] = olsrSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("AODV - " + numberOfNodes[i] + " Nodes");
 			aodvLifetime[0][i] = numberOfNodes[i];
-			aodvLifetime[1][i] = aodvSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			aodvLifetime[1][i] = aodvSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 			System.out.println("AODVM - " + numberOfNodes[i] + " Nodes");
 			aodvmLifetime[0][i] = numberOfNodes[i];
-			aodvmLifetime[1][i] = aodvmSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1 * 60,
+			aodvmLifetime[1][i] = aodvmSimulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 10,
 					payloadSize, maxPairs) / 1000 / 60;
 			
 		}
