@@ -55,7 +55,7 @@ public class ComparativeEvaluation {
 			
 			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
 			dsdvTransmissionTime[0][i] = numberOfNodes[i];
-			dsdvTransmissionTime[1][i] = dsdvSimulator.speedAnalysis(networkWidth[i], 0,
+			dsdvTransmissionTime[1][i] = dsdvSimulator.speedAnalysisWhenNetworkStarts(networkWidth[i], 0,
 					(int) Math.pow(networkWidth[i], 2) - 1) / 1000.0;
 			
 			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
@@ -83,7 +83,7 @@ public class ComparativeEvaluation {
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		dataset.addSeries("Flooding", floodingTransmissionTime);
 		dataset.addSeries("DSDV", dsdvTransmissionTime);
-		dataset.addSeries("OLSR", olsrTransmissionTime);
+		//dataset.addSeries("OLSR", olsrTransmissionTime);
 		dataset.addSeries("AODV", aodvTransmissionTime);
 		dataset.addSeries("AODVM", aodvmTransmissionTime);
 		dataset.addSeries("EADV", eadvTransmissionTime);
@@ -98,7 +98,7 @@ public class ComparativeEvaluation {
 		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(3, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(4, Color.BLACK);
-		plot.getRenderer().setSeriesPaint(5, Color.BLACK);
+		//plot.getRenderer().setSeriesPaint(5, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 
@@ -288,6 +288,86 @@ public class ComparativeEvaluation {
 
 		try {
 			ChartUtilities.saveChartAsPNG(new File("Output/Vergleich/KostenNachrichtenuebertragung.png"), chart, CHART_WIDTH,
+					CHART_HIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void costAnalysisRoutingData(){
+
+		double numberOfNodes[] = new double[networkWidth.length];
+		
+		DsdvSimulator dsdvSimulator = new DsdvSimulator();
+		OlsrSimulator olsrSimulator = new OlsrSimulator();
+		AodvSimulator aodvSimulator = new AodvSimulator();
+		AodvmSimulator aodvmSimulator = new AodvmSimulator();
+		EadvSimulator eadvSimulator = new EadvSimulator();
+		
+
+		double dsdvConsumedEnergy[][] = new double[2][networkWidth.length];
+		double olsrConsumedEnergy[][] = new double[2][networkWidth.length];
+		double aodvConsumedEnergy[][] = new double[2][networkWidth.length];
+		double aodvmConsumedEnergy[][] = new double[2][networkWidth.length];
+		double eadvConsumedEnergy[][] = new double[2][networkWidth.length];
+		
+		System.out.println("Start cost anylsis");
+		
+		for (int i = 0; i < networkWidth.length; i++) {
+			numberOfNodes[i] = Math.pow(networkWidth[i], 2);
+			
+			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
+			dsdvConsumedEnergy[0][i] = numberOfNodes[i];
+			dsdvSimulator.energyCostAnalysis (networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
+			dsdvConsumedEnergy[1][i] = dsdvSimulator.getEnergyCostsForPropagationNetworkStructure();
+			
+			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
+			olsrConsumedEnergy[0][i] = numberOfNodes[i];
+			olsrSimulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
+			olsrConsumedEnergy[1][i] = olsrSimulator.getConsumedEnergyForControlMsg();
+			
+			System.out.println("AODV - " + numberOfNodes[i] + " Nodes");
+			aodvConsumedEnergy[0][i] = numberOfNodes[i];
+			aodvConsumedEnergy[1][i] = aodvSimulator.energyCostAnalysisRouteDiscoveryProcess(networkWidth[i], 0,(int) Math.pow(networkWidth[i], 2) - 1);
+			
+			
+			System.out.println("AODVM - " + numberOfNodes[i] + " Nodes");
+			aodvmConsumedEnergy[0][i] = numberOfNodes[i];
+			aodvmConsumedEnergy[1][i] = aodvmSimulator.energyCostAnalysisRouteDiscoveryProcess(networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
+			
+			System.out.println("EADV - " + numberOfNodes[i] + " Nodes");
+			eadvConsumedEnergy[0][i] = numberOfNodes[i];
+			eadvSimulator.energyCostAnalysis(networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
+			eadvConsumedEnergy[1][i] = eadvSimulator.getEnergyCostsForPropagationNetworkStructure();
+		}
+		
+		//Create plot
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries("DSDV", dsdvConsumedEnergy);
+		dataset.addSeries("OLSR", olsrConsumedEnergy);
+		dataset.addSeries("AODV", aodvConsumedEnergy);
+		dataset.addSeries("AODVM", aodvmConsumedEnergy);
+		dataset.addSeries("EADV", eadvConsumedEnergy);
+
+		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
+
+		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
+		NumberAxis yAxis = new NumberAxis("Umgesetzte Energie [nAs]");
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
+		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(3, Color.BLACK);
+		plot.getRenderer().setSeriesPaint(4, Color.BLACK);
+
+		JFreeChart chart = new JFreeChart(plot);
+
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(Color.WHITE);
+
+		try {
+			ChartUtilities.saveChartAsPNG(new File("Output/Vergleich/KostenRoutinginformationen.png"), chart, CHART_WIDTH,
 					CHART_HIGHT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

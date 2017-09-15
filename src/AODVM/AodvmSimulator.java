@@ -1,7 +1,9 @@
 package AODVM;
 
 import AODV.AodvNetworkGraph;
+import AODV.AodvNetworkNode;
 import Flooding.FloodingNetworkGraph;
+import Simulator.IR_Receiver;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 import Simulator.Simulator;
@@ -171,6 +173,97 @@ public class AodvmSimulator extends Simulator{
 
 		return (consumedEnergyInTransmissionMode);
 		
+	}
+	
+	/**
+	 * Energy cost analysis only for the route discovery process
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
+	public double energyCostAnalysisRouteDiscoveryProcess(int networkWidth, int sourceNodeId, int destinationNodeId) {
+
+		AodvmNetworkGraph graph = new AodvmNetworkGraph(networkWidth);
+
+		this.graph = graph;
+
+		boolean transmissionInNetworkDetected;
+
+		consumedEnergyInIdleMode = 0L;
+		consumedEnergyInReciveMode = 0L;
+		consumedEnergyInTransmissionMode = 0L;
+
+		networkLifetime = 0;
+
+		NetworkNode networkNodes[] = graph.getNetworkNodes();
+		for (int id = 0; id < networkNodes.length; id++) {
+			networkNodes[id].setSimulator(this);
+		}
+
+		char dataToSend[] = { 'A' };
+
+		PayloadMessage msg = new PayloadMessage(sourceNodeId, (destinationNodeId), dataToSend);
+		networkNodes[sourceNodeId].startSendingProcess(msg);
+
+		do {
+			// Performe NODE_EXECUTION_TIME ms every iteration
+			for (int id = 0; id < networkNodes.length; id++) {
+				if((id == sourceNodeId) 
+						&&(((AodvmNetworkNode)networkNodes[sourceNodeId]).getNumberRecivedRREPdMsg() > 0)){
+					
+				}else{
+					networkNodes[id].performAction(NODE_EXECUTION_TIME);					
+				}
+			}
+
+			networkLifetime += NODE_EXECUTION_TIME;
+
+			
+			transmissionInNetworkDetected = false;
+			for (int id = 0; id < networkNodes.length; id++) {
+				
+				if(((AodvmNetworkNode)networkNodes[sourceNodeId]).getNumberRecivedRREPdMsg() == 0){
+					transmissionInNetworkDetected = true;
+				}
+
+				if(id != sourceNodeId){
+				
+					if (networkNodes[id].getOutgoingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					
+					for(IR_Receiver irReceiver: networkNodes[id].getIrReceiver()){
+						if(irReceiver.isRecevingAMessage()){
+							transmissionInNetworkDetected = true;
+						}
+					}
+					
+					if (networkNodes[id].getIncomingMessage() != null) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+					
+					if (networkNodes[id].getOutputBufferSize() > 0) {
+						transmissionInNetworkDetected = true;
+						break;
+					}
+				}
+
+			}
+
+		} while (transmissionInNetworkDetected);
+		
+		for (int id = 0; id < networkNodes.length; id++) {
+			consumedEnergyInIdleMode += networkNodes[id].getConsumedEnergyInIdleMode();
+			consumedEnergyInReciveMode += networkNodes[id].getConsumedEnergyInReciveMode();
+			consumedEnergyInTransmissionMode += networkNodes[id].getConsumedEnergyInTransmissionMode();
+			//System.out.println(id + ": consumed Energy in transmission mode: " + networkNodes[id].getConsumedEnergyInTransmissionMode());
+		}
+
+		return (consumedEnergyInTransmissionMode);
+			
 	}
 	
 	public long lifetimeAnalysisStaticSendBehavior(int networkWidth, int transmissionPeriod,int payloadSize){
