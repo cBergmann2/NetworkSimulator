@@ -68,10 +68,11 @@ public class Main {
 		//ComparativeEvaluation.speedAnalysis();
 		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
 		//ComparativeEvaluation.costAnalysis();
+		ComparativeEvaluation.costAnalysisRoutingData();
 		//ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 		//ComparativeEvaluation.lifetimeAnalysisRandomSorceAndDest(80, 10);
 		//ComparativeEvaluation.PartitioningAnalysisOneDestination(80);
-		ComparativeEvaluation.PartitioningAnalysisRandomSourceAndDest(80, 10);
+		//ComparativeEvaluation.PartitioningAnalysisRandomSourceAndDest(80, 10);
 	}
 }
 
