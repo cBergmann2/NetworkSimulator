@@ -319,12 +319,13 @@ public class ComparativeEvaluation {
 			
 			System.out.println("DSDV - " + numberOfNodes[i] + " Nodes");
 			dsdvConsumedEnergy[0][i] = numberOfNodes[i];
-			dsdvSimulator.energyCostAnalysis (networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
-			dsdvConsumedEnergy[1][i] = dsdvSimulator.getEnergyCostsForPropagationNetworkStructure();
+			dsdvSimulator.energyCostAnalysis(networkWidth[i], 0, 1);
+			dsdvConsumedEnergy[1][i] = dsdvSimulator.getEnergyCostsForPeriodicUpdate();
 			
 			System.out.println("OLSR - " + numberOfNodes[i] + " Nodes");
 			olsrConsumedEnergy[0][i] = numberOfNodes[i];
-			olsrSimulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0, (int) Math.pow(networkWidth[i], 2) - 1);
+			olsrSimulator.energyCostAnalysisWithoutControlmessages(networkWidth[i], 0,
+					(int) Math.pow(networkWidth[i], 2) - 1);
 			olsrConsumedEnergy[1][i] = olsrSimulator.getConsumedEnergyForControlMsg();
 			
 			System.out.println("AODV - " + numberOfNodes[i] + " Nodes");
@@ -346,8 +347,8 @@ public class ComparativeEvaluation {
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		dataset.addSeries("DSDV", dsdvConsumedEnergy);
 		dataset.addSeries("OLSR", olsrConsumedEnergy);
-		dataset.addSeries("AODV", aodvConsumedEnergy);
-		dataset.addSeries("AODVM", aodvmConsumedEnergy);
+		//dataset.addSeries("AODV", aodvConsumedEnergy);
+		//dataset.addSeries("AODVM", aodvmConsumedEnergy);
 		dataset.addSeries("EADV", eadvConsumedEnergy);
 
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
@@ -358,8 +359,8 @@ public class ComparativeEvaluation {
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(2, Color.BLACK);
-		plot.getRenderer().setSeriesPaint(3, Color.BLACK);
-		plot.getRenderer().setSeriesPaint(4, Color.BLACK);
+		//plot.getRenderer().setSeriesPaint(3, Color.BLACK);
+		//plot.getRenderer().setSeriesPaint(4, Color.BLACK);
 
 		JFreeChart chart = new JFreeChart(plot);
 

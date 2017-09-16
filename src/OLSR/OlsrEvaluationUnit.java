@@ -534,7 +534,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 			
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*30, payloadSize, maxPairs) / 1000 / 60;
+			sendTime_10[1][i] = simulator.lifetimeAnalysisRandomSorceAndDest(networkWidth[i], 1*10, payloadSize, maxPairs) / 1000 / 60;
 
 			System.out.println(
 					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
@@ -558,7 +558,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 30 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
 		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_600);
 		//dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
@@ -566,7 +566,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
@@ -633,7 +633,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
@@ -669,7 +669,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 			
 			sendTime_10[0][i] = numberOfNodes[i];
-			sendTime_10[1][i] = simulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1*30, payloadSize, maxPairs) / 1000 / 60;
+			sendTime_10[1][i] = simulator.partitioningAnalysisRandomSorceAndDest(networkWidth[i], 1*10, payloadSize, maxPairs) / 1000 / 60;
 
 			System.out.println(
 					"10s Simulation for " + numberOfNodes[i] + " nodes completed. Ausführungszeit des Netzwerks: "
@@ -701,7 +701,7 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);

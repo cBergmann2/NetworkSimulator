@@ -45,7 +45,7 @@ public class Main {
 		//dsdvEvaluationUnit.evaluateCostAnalysis();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
 		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		//dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		//dsdvEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
 		
@@ -68,7 +68,7 @@ public class Main {
 		//ComparativeEvaluation.speedAnalysis();
 		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
 		//ComparativeEvaluation.costAnalysis();
-		ComparativeEvaluation.costAnalysisRoutingData();
+		//ComparativeEvaluation.costAnalysisRoutingData();
 		//ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 		//ComparativeEvaluation.lifetimeAnalysisRandomSorceAndDest(80, 10);
 		//ComparativeEvaluation.PartitioningAnalysisOneDestination(80);

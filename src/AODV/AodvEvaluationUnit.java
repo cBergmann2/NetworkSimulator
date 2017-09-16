@@ -557,7 +557,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 
 		// Network Lifetime
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("Knoten Sendet alle 30 s", sendTime_10);
+		dataset.addSeries("Knoten Sendet alle 10 s", sendTime_10);
 		dataset.addSeries("Knoten Sendet alle 60 s", sendTime_60);
 		dataset.addSeries("Knoten Sendet alle 5 min", sendTime_600);
 		// dataset.addSeries("Knoten Sendet alle 20 m", sendTime_1200);
@@ -565,7 +565,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);

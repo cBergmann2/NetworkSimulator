@@ -518,7 +518,7 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		XYLineAndShapeRenderer line = new XYLineAndShapeRenderer();
 
 		NumberAxis xAxis = new NumberAxis("Anzahl Knoten im Netzwerk");
-		NumberAxis yAxis = new NumberAxis("Netzwerk Lebenszeit [Minuten]");
+		NumberAxis yAxis = new NumberAxis("Netzwerklebenszeit [Minuten]");
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, line);
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK);
 		plot.getRenderer().setSeriesPaint(1, Color.BLACK);
