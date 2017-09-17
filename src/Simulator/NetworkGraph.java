@@ -1,5 +1,11 @@
 package Simulator;
 
+/**
+ * Network Graph strucure
+ * 
+ * @author Christoph Bergmann
+ *
+ */
 public abstract class NetworkGraph {
 
 	protected NetworkNode nodes[];
@@ -14,6 +20,9 @@ public abstract class NetworkGraph {
 
 	}
 
+	/**
+	 * Connects the nodes based on the adjusted network structure
+	 */
 	public void initializeNetworkStructure() {
 
 		if (fourNeighborhood) {
@@ -272,30 +281,58 @@ public abstract class NetworkGraph {
 		}
 	}
 
+	/**
+	 * Returns the correct network lifetime if it is updated by the simulator
+	 * @return lifetime of the network
+	 */
 	public long getLifetime() {
 		return lifetime;
 	}
 
+	/**
+	 * Set the lifetime of the network
+	 * This method should be updated every simulation step
+	 * @param lifetime
+	 */
 	public void setLifetime(long lifetime) {
 		this.lifetime = lifetime;
 	}
 
+	/**
+	 * Get all nodes from this network
+	 * @return NetworkNode[] array of all nodes
+	 */
 	public NetworkNode[] getNetworkNodes() {
 		return nodes;
 	}
 
+	/**
+	 * 
+	 * @return number of collisions
+	 */
 	public int getCollisions() {
 		return collisions;
 	}
 
+	/**
+	 * Add a detected collision
+	 */
 	public void addCollision() {
 		this.collisions++;
 	}
 
+	/**
+	 * 
+	 * @return true if the network uses a four neighborhood structure
+	 */
 	public boolean isFourNeighborhood() {
 		return fourNeighborhood;
 	}
 
+	/**
+	 * Set the netowk structure
+	 * @param fourNeighborhood
+	 */
 	public void setFourNeighborhood(boolean fourNeighborhood) {
 		this.fourNeighborhood = fourNeighborhood;
 	}

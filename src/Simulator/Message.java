@@ -1,5 +1,11 @@
 package Simulator;
 
+/**
+ * Basic message format
+ * Every message format in this project inherits this class
+ * @author Christoph Bergmann
+ *
+ */
 public class Message implements Cloneable{
 	
 	public static final long TRANSMISSION_TIME_PER_BIT 		= 4475520L; 			//Transmission time per bit in ns

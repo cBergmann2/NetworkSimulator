@@ -1,5 +1,12 @@
 package Simulator;
 
+/**
+ * Communication Pair. 
+ * This class is used to safe a pair of network nodes that communicate with each other
+ * The class Simulator uses this class
+ * @author Christoph Bergmann
+ *
+ */
 public class CommunicationPair {
 
 	

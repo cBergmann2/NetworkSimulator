@@ -1,9 +1,15 @@
 package Simulator;
 
+/**
+ * Dastructur to calculate if the network is partitioned.
+ * This class is used by the simulator class for paritioning analysis
+ * @author Christoph Bergmann
+ *
+ */
 public class AliveNode {
-	protected int nodeID;
-	protected boolean reachable;
-	protected boolean processed;
+	protected int nodeID;			//Node ID
+	protected boolean reachable;	//Ture if the node is reachable
+	protected boolean processed;	//True if the node is already processed 
 	
 	public AliveNode(int nodeID){
 		this.nodeID = nodeID;

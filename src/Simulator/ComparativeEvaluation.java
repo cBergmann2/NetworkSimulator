@@ -18,6 +18,11 @@ import EADV.EadvSimulator;
 import Flooding.FloodingSimulator;
 import OLSR.OlsrSimulator;
 
+/**
+ * Compares the considered routing methods
+ * @author Christoph Bergmann
+ *
+ */
 public class ComparativeEvaluation {
 	
 	private static final int CHART_WIDTH = 280;
@@ -25,6 +30,10 @@ public class ComparativeEvaluation {
 
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	
+	/**
+	 * Performs the speed analysis for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	public static void speedAnalysis(){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -206,6 +215,11 @@ public class ComparativeEvaluation {
 		}
 	}
 	
+	/**
+	 * Performs the cost analysis for the given networkWidths and visualize the 
+	 * simulation results in graphs
+	 * 
+	 */
 	public static void costAnalysis(){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -295,6 +309,7 @@ public class ComparativeEvaluation {
 		}
 	}
 	
+	
 	public static void costAnalysisRoutingData(){
 
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -376,6 +391,12 @@ public class ComparativeEvaluation {
 		}
 	}
 	
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths and payload size. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public static void lifetimeAnalysisOneDestination(int payloadSize){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -465,6 +486,13 @@ public class ComparativeEvaluation {
 		}
 	}
 	
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public static void lifetimeAnalysisRandomSorceAndDest(int payloadSize, int maxPairs){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -546,6 +574,13 @@ public class ComparativeEvaluation {
 		}
 	}
 	
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public static void PartitioningAnalysisOneDestination(int payloadSize){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
@@ -635,8 +670,14 @@ public class ComparativeEvaluation {
 		}
 	}
 	
-	
-public static void PartitioningAnalysisRandomSourceAndDest(int payloadSize, int maxPairs){
+	/**
+	 * Performs the analysis of network partitioning for the given network widths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Max number of communication pairs
+	 */
+	public static void PartitioningAnalysisRandomSourceAndDest(int payloadSize, int maxPairs){
 		
 		double numberOfNodes[] = new double[networkWidth.length];
 		

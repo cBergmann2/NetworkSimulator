@@ -1,5 +1,10 @@
 package Simulator;
 
+/**
+ * Payload message data structure
+ * @author Christoph Bergmann
+ *
+ */
 public class PayloadMessage extends Message{
 	protected int payloadDestinationAdress;
 	protected int payloadSourceAdress;

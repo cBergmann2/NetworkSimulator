@@ -8,6 +8,11 @@ import Simulator.Message;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 
+/**
+ * Specializes the NetworkNode class for OLSR routing scheme
+ * 
+ * @author Christoph Bergmann
+ */
 public class OlsrNetworkNode extends NetworkNode {
 
 	LinkedList<Neighbor> aliveNeighbors;
@@ -38,7 +43,9 @@ public class OlsrNetworkNode extends NetworkNode {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
+	/**
+	 * Performs time dependent tasks
+	 */
 	protected void performeTimeDependentTasks(long executionTime) {
 
 		if (sendControlMessages) {
@@ -85,6 +92,9 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Send topology discover message
+	 */
 	private void sendTDMessage() {
 		TopologyDiscoveryMessage tdMessage = new TopologyDiscoveryMessage();
 		tdMessage.setOriginatorAddress(this.id);
@@ -98,6 +108,9 @@ public class OlsrNetworkNode extends NetworkNode {
 		messagesToSend.add(tdMessage);
 	}
 
+	/**
+	 * Send HELLO message
+	 */
 	private void sendHelloMessage() {
 		OlsrHelloMessage helloMessage = new OlsrHelloMessage();
 
@@ -111,7 +124,9 @@ public class OlsrNetworkNode extends NetworkNode {
 		messagesToSend.add(helloMessage);
 	}
 
-	@Override
+	/**
+	 * Process received message
+	 */
 	public void processRecivedMessage() {
 
 		Message receivedMsg = inputBuffer.removeFirst();
@@ -136,6 +151,10 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Process received payload message
+	 * @param msg	received message
+	 */
 	private void processReceivedPayloadMessage(PayloadMessage msg) {
 		if (msg.getDestinationID() == this.id) {
 
@@ -161,6 +180,10 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Process received topology discovery message
+	 * @param msg received message
+	 */
 	private void processRececivedTopologyDiscoveryMessage(TopologyDiscoveryMessage msg) {
 
 		/*
@@ -217,6 +240,10 @@ public class OlsrNetworkNode extends NetworkNode {
 		messagesToSend.add(msg);
 	}
 
+	/**
+	 * Recalculate routing table
+	 * This function should be called if the neighbor list is updated or a topology discovery message is received
+	 */
 	private void recalculateRoutingTable() {
 
 		int detectedRoutes = 0;
@@ -275,6 +302,11 @@ public class OlsrNetworkNode extends NetworkNode {
 		 
 	}
 
+	/**
+	 * Check if a route for the given node is calculated
+	 * @param nodeAddress	destination for that a route is searched
+	 * @return	true if a route is available
+	 */
 	private boolean routeForNodeIsCalculated(int nodeAddress) {
 		for (RoutingTableEntry tabelEntry : routingTable) {
 			if (tabelEntry.getDestinationAddress() == nodeAddress) {
@@ -285,6 +317,11 @@ public class OlsrNetworkNode extends NetworkNode {
 		return false;
 	}
 
+	/**
+	 * Get route table entry for the given destination
+	 * @param destinationAddress
+	 * @return
+	 */
 	public RoutingTableEntry getRouteTableEntry(int destinationAddress) {
 		for (RoutingTableEntry tabelEntry : routingTable) {
 			if (tabelEntry.getDestinationAddress() == destinationAddress) {
@@ -295,10 +332,18 @@ public class OlsrNetworkNode extends NetworkNode {
 		return null;
 	}
 
+	/**
+	 * Process received HELLO message
+	 * @param msg
+	 */
 	private void processReceivedHelloMessage(OlsrHelloMessage msg) {
 		updateNeighborList(msg);
 	}
 
+	/**
+	 * Update NeighborList with the given HELLO message
+	 * @param msg
+	 */
 	private void updateNeighborList(OlsrHelloMessage msg) {
 		for (Neighbor neighbor : aliveNeighbors) {
 			if (neighbor.getId() == msg.getOriginatorAddress()) {
@@ -322,13 +367,18 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
-	@Override
+	/**
+	 * Start sending the given payload message
+	 */
 	public void startSendingProcess(PayloadMessage tmpMsg) {
 		tmpMsg.setStartTransmissionTime(simulator.getNetworkLifetime());
 		this.sendMsg(tmpMsg);
 		this.numberTransmittedPayloadMsg++;
 	}
 
+	/**
+	 * Send the given message
+	 */
 	public void sendMsg(Message msg) {
 		if (msg instanceof BasicPacketFormat) {
 
@@ -352,6 +402,11 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Find messages that could be that now.
+	 * This function should be called after the routing table is recalculated
+	 * @param destinationAddress
+	 */
 	private void findMessageToSend(int destinationAddress) {
 
 		LinkedList<PayloadMessage> msgToSend = new LinkedList<PayloadMessage>();
@@ -370,6 +425,10 @@ public class OlsrNetworkNode extends NetworkNode {
 
 	}
 
+	/**
+	 * Set the network size
+	 * @param size
+	 */
 	public void setNetworkSize(int size) {
 		this.networkSize = size;
 	}

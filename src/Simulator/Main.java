@@ -6,6 +6,11 @@ import EADV.EadvEvaluationUnit;
 import Flooding.FloodingEvaluationUnit;
 import OLSR.OlsrEvaluationUnit;
 
+/**
+ * Starts the simulation units
+ * @author Christoph Bergmann
+ *
+ */
 public class Main {
 
 	
@@ -34,20 +39,20 @@ public class Main {
 		//aodvmEvaluationUnit.evaluateSpeedAnalysis();
 		//aodvmEvaluationUnit.evaluateCostAnalysis();
 		//aodvmEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//aodvmEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
 		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnalysisOneDestination(80);
 		//aodvmEvaluationUnit.evaluateNetworkPartitioningAnaylsisRandomSorceAndDest(80,10);
 
 		
 		DsdvEvaluationUnit dsdvEvaluationUnit = new DsdvEvaluationUnit();
-		dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
-		dsdvEvaluationUnit.evaluateSpeedAnalysis();
-		dsdvEvaluationUnit.evaluateCostAnalysis();
-		dsdvEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
-		dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
-		dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
-		dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
-		dsdvEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
+		//dsdvEvaluationUnit.evaluateSpeedAnalysisWhenNetworkStarts();
+		//dsdvEvaluationUnit.evaluateSpeedAnalysis();
+		//dsdvEvaluationUnit.evaluateCostAnalysis();
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeWithoutPayloadMessageTransmission();
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
+		//dsdvEvaluationUnit.evaluateNetworkLivetimeRandomSorceAndDest(80, 10);
+		//dsdvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
+		//dsdvEvaluationUnit.evaluateNetworkPartioningAnaylsisRandomSorceAndDest(80, 10);
 		
 		OlsrEvaluationUnit olsrEvaluationUnit = new OlsrEvaluationUnit();
 		//olsrEvaluationUnit.evaluateSpeedAnalysis();
@@ -65,10 +70,10 @@ public class Main {
 		//eadvEvaluationUnit.evaluateNetworkLivetimeStaticSendBehaviorOneDestination(80);
 		//eadvEvaluationUnit.evaluateNetworkPartitioningAnalysis(80);
 		
-		//ComparativeEvaluation.speedAnalysis();
-		//ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
-		//ComparativeEvaluation.costAnalysis();
-		//ComparativeEvaluation.costAnalysisRoutingData();
+		ComparativeEvaluation.speedAnalysis();
+		ComparativeEvaluation.speedAnalysisWhenNetworkIsInitialized();
+		ComparativeEvaluation.costAnalysis();
+		ComparativeEvaluation.costAnalysisRoutingData();
 		//ComparativeEvaluation.lifetimeAnalysisOneDestination(80);
 		//ComparativeEvaluation.lifetimeAnalysisRandomSorceAndDest(80, 10);
 		//ComparativeEvaluation.PartitioningAnalysisOneDestination(80);

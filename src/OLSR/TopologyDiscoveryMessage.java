@@ -2,6 +2,11 @@ package OLSR;
 
 import java.util.LinkedList;
 
+/**
+ * Datastructur for topology discovery message
+ * @author Christoph Bergmann
+ *
+ */
 public class TopologyDiscoveryMessage extends OlsrMessage{
 	
 	int ansn;

@@ -3,6 +3,11 @@ package OLSR;
 import java.awt.TrayIcon.MessageType;
 import java.util.LinkedList;
 
+/**
+ * Data structure for olsr hello messages
+ * @author Christoph Bergmann
+ *
+ */
 public class OlsrHelloMessage extends OlsrMessage{
 
 	int willingness;

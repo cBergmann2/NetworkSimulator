@@ -2,6 +2,11 @@ package OLSR;
 
 import java.util.LinkedList;
 
+/**
+ * Dastructur to safe the network topology
+ * @author Christoph Bergmann
+ *
+ */
 public class TopologyTableEntry {
 
 	int destinationAddress;

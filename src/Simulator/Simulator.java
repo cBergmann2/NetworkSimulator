@@ -3,7 +3,12 @@ package Simulator;
 import java.util.LinkedList;
 
 import Flooding.FloodingNetworkGraph;
-
+/**
+ * Basic simulator class
+ * This class works with the basic graph class.
+ * @author Christoph Bergmann
+ *
+ */
 public abstract class Simulator {
 
 	protected static int NODE_EXECUTION_TIME = 2;
@@ -46,8 +51,6 @@ public abstract class Simulator {
 			networkNodes[id].setSimulator(this);
 		}
 
-		// char dataToSend[] = { 'H', 'E', 'L', 'O', ' ', 'W', 'O', 'R', 'L',
-		// 'D' };
 		char dataToSend[] = { 'A' };
 
 		PayloadMessage msg = new PayloadMessage(0, (destinationNodeId), dataToSend);
@@ -153,16 +156,6 @@ public abstract class Simulator {
 
 		calculateAverageNodeTimes(graph.getNetworkNodes());
 
-		// System.out.println("Consumed energy idle mode: " +
-		// consumedEnergyInIdleMode + ", time in idle mode: " +
-		// (this.averageTimeInIdleMode +
-		// this.averageTimeWaitingForMediumAccesPermission));
-		// System.out.println("Consumed energy recive mode: " +
-		// consumedEnergyInReciveMode + ", time in recive mode: " +
-		// this.averageTimeInTransmissionMode);
-		// System.out.println("Consumed energy transmit mode: " +
-		// consumedEnergyInTransmissionMode + ", time in transmit mode: " +
-		// this.averageTimeInReciveMode);
 
 		return (consumedEnergyInTransmissionMode);
 	}
@@ -357,6 +350,16 @@ public abstract class Simulator {
 		return networkLifetime;
 	}
 
+	/**
+	 * Run network with given parameter to determine duration until first node
+	 * is out of power. All Nodes will send their data to one destination
+	 * @param graph
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long lifetimeAnalysisRandomSorceAndDest(NetworkGraph graph, int networkWidth, int transmissionPeriod,
 			int payloadSize, int maxPairs) {
 		networkLifetime = 0;
@@ -582,6 +585,17 @@ public abstract class Simulator {
 		return networkLifetime;
 	}
 
+	/**
+	 * Run network with given parameter to determine duration until the network
+	 * is partitioned
+	 * 
+	 * @param graph
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long partitioningAnalysisRandomSorceAndDest(NetworkGraph graph, int networkWidth,
 			int transmissionPeriod, int payloadSize, int maxPairs) {
 
@@ -691,6 +705,11 @@ public abstract class Simulator {
 		return networkLifetime;
 	}
 
+	/**
+	 * check if the network is partitioned
+	 * @param graph
+	 * @return true if the network is paritioned, otherwise false
+	 */
 	private boolean isNetworkPartitioned(NetworkGraph graph) {
 		LinkedList<Integer> inactiveNodes = getInactiveNodes(graph.getNetworkNodes());
 		int numberOfInactiveNodes = inactiveNodes.size();
@@ -725,6 +744,12 @@ public abstract class Simulator {
 		return false;
 	}
 
+	/**
+	 * Check if the given node can reach all alive nodes
+	 * @param selectedNode
+	 * @param graph
+	 * @return true, if the given node can reach all alive nodes
+	 */
 	private boolean checkIfNodeCanReachAllAliveNodes(int selectedNode, NetworkGraph graph) {
 
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
@@ -780,6 +805,11 @@ public abstract class Simulator {
 		return true;
 	}
 
+	/**
+	 * Get a list of all inactive nodes
+	 * @param networkNodes
+	 * @return List of all inactive nodes
+	 */
 	protected LinkedList<Integer> getInactiveNodes(NetworkNode networkNodes[]) {
 		LinkedList<Integer> inactiveNodes = new LinkedList<Integer>();
 		for (NetworkNode node : networkNodes) {
@@ -790,6 +820,11 @@ public abstract class Simulator {
 		return inactiveNodes;
 	}
 
+	/**
+	 * Get number of inactive nodes
+	 * @param networkNodes
+	 * @return number of inactive nodes
+	 */
 	protected int getNumberOfInactiveNodes(NetworkNode networkNodes[]) {
 		int inactiveNodes = 0;
 
@@ -801,6 +836,11 @@ public abstract class Simulator {
 		return inactiveNodes;
 	}
 
+	/**
+	 * Check if all nodes are alive
+	 * @param networkNodes
+	 * @return true if all nodes are alive
+	 */
 	protected boolean allNodesAlive(NetworkNode networkNodes[]) {
 		for (NetworkNode node : networkNodes) {
 			if (!node.isNodeAlive()) {
@@ -818,6 +858,7 @@ public abstract class Simulator {
 		return true;
 	}
 
+	
 	protected void calculateAverageNodeTimes(NetworkNode networkNodes[]) {
 
 		this.averageTimeInIdleMode = 0.0;
@@ -838,22 +879,42 @@ public abstract class Simulator {
 		this.averageTimeWaitingForMediumAccesPermission /= networkNodes.length;
 	}
 
+	/**
+	 * 
+	 * @return network lifetime
+	 */
 	public long getNetworkLifetime() {
 		return networkLifetime;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy from all nodes in transmission mode
+	 */
 	public long getConsumedEnergyInTransmissionMode() {
 		return consumedEnergyInTransmissionMode;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy from all nodes in receive mode
+	 */
 	public long getConsumedEnergyInReciveMode() {
 		return consumedEnergyInReciveMode;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy from all nodes in idle mode
+	 */
 	public long getConsumedEnergyInIdleMode() {
 		return consumedEnergyInIdleMode;
 	}
 
+	/**
+	 * 
+	 * @return number of collisions in the network
+	 */
 	public int getCollisions() {
 		return collisions;
 	}
@@ -862,28 +923,51 @@ public abstract class Simulator {
 		this.collisions = collisions;
 	}
 
+	/**
+	 * 
+	 * @return average time from a node, in idle mode
+	 */
 	public double getAverageTimeInIdleMode() {
 		return averageTimeInIdleMode;
 	}
 
+	/**
+	 * 
+	 * @return average time from a node, in receive mode
+	 */
 	public double getAverageTimeInReciveMode() {
 		return averageTimeInReciveMode;
 	}
 
+	/**
+	 * 
+	 * @return average time from a node, in transmission mode
+	 */
 	public double getAverageTimeInTransmissionMode() {
 		return averageTimeInTransmissionMode;
 	}
 
+	/**
+	 * 
+	 * @return average time from a node, while it waits for medium access
+	 */
 	public double getAverageTimeWaitingForMediumAccesPermission() {
 		return averageTimeWaitingForMediumAccesPermission;
 	}
 
+	/**
+	 * Reset the transmission unit of all nodes in the network
+	 */
 	public void resetTransmissionUnitFromAllNodes() {
 		for (NetworkNode node : this.graph.getNetworkNodes()) {
 			node.resetTransmissionUnit();
 		}
 	}
 
+	/**
+	 * 
+	 * @return number of transmitted payload messages in the network
+	 */
 	public int getNumberTransmittedPayloadMsg() {
 		int countPayloadMsg = 0;
 
@@ -897,7 +981,7 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * @return the numberReceivedPayloadMsg
+	 * @return number of received payload messages
 	 */
 	public long getNumberReceivedPayloadMsg() {
 		return numberReceivedPayloadMsg;

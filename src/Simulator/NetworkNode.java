@@ -2,12 +2,16 @@ package Simulator;
 
 import java.util.LinkedList;
 
-
+/**
+ * Basic network node
+ * @author Christoph Bergmann
+ *
+ */
 public abstract class NetworkNode {
 
-	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 16067;	//nA
-	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400; //nA
-	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400; //nA
+	protected final static int TRANSMISSION_MODE_POWER_CONSUMPTION = 16067;	//nAs
+	protected final static int RECIVE_MODE_POWER_CONSUMPTION = 5400; //nAs
+	protected final static int IDLE_MODE_POWER_CONSUMPTION = 5400; //nAs
 
 	public static final long NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE = RECIVE_MODE_POWER_CONSUMPTION * 1000L * 60L
 			* 60L * 24L;
@@ -16,7 +20,7 @@ public abstract class NetworkNode {
 			* 60L;
 
 	
-	protected int id;
+	protected int id;	//ID of the node
 	protected LinkedList<NetworkNode> connectedNodes;
 	protected LinkedList<IR_Receiver> destinationIrReceiver;
 	protected long elapsedTimeSinceLastReception; // Time in ms
@@ -26,8 +30,8 @@ public abstract class NetworkNode {
 	protected LinkedList<Message> inputBuffer;
 	protected LinkedList<Message> outputBuffer;
 	
-	//Envergy Variables
-	protected long availableEnery; // Available energy in nAs
+	//Energy Variables in nAs
+	protected long availableEnery; 
 	protected long startEnergy;
 	protected long consumedEnergyInTransmissionMode;
 	protected long consumedEnergyInReciveMode;
@@ -54,6 +58,10 @@ public abstract class NetworkNode {
 	
 	protected IR_Receiver irReceiver[];
 
+	/**
+	 * Initialize the network node
+	 * @param id ID of the node
+	 */
 	public NetworkNode(int id) {
 		this.id = id;
 		connectedNodes = new LinkedList<NetworkNode>();
@@ -254,8 +262,16 @@ public abstract class NetworkNode {
 		return true;
 	}
 
+	/**
+	 * Performe time dependend actions in this method
+	 * @param executionTime
+	 */
 	protected abstract void performeTimeDependentTasks(long executionTime);
 
+	/**
+	 * Process a received message
+	 * This method is called when a message is received
+	 */
 	public abstract void processRecivedMessage();
 
 	/**
@@ -270,67 +286,106 @@ public abstract class NetworkNode {
 		return false;
 	}
 
-	/*
-	public void reciveMsg(Message msg) {
-		if (incommingMsg == null) {
-			incommingMsg = msg;
-		} else {
-			// collison
-			// System.out.println("Collision detected at Node " + this.id);
-			graph.addCollision();
-		}
-	}
-	*/
 
 	public void sendMsg(Message msg){
 		this.outputBuffer.add(msg);
 		
 	}
 
+	/**
+	 * Add a neighbor to the connected nodes list
+	 * @param neighbor
+	 */
 	public void addNeighbor(NetworkNode neighbor) {
 		connectedNodes.add(neighbor);
 	}
 	
+	/**
+	 * Link a IR receiver from another node to this node
+	 * @param irReceiver
+	 */
 	public void addDestinationIrReceiver(IR_Receiver irReceiver){
 		this.destinationIrReceiver.add(irReceiver);
 	}
 
+	/**
+	 * Get the ID of this node
+	 * @return ID of the node
+	 */
 	public int getId() {
 		return id;
 	}
 
+	
+	/**
+	 * Set the ID of this node
+	 * @param id ID of this node
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	/**
+	 * 
+	 * @return true if this node is alive
+	 */
 	public boolean isNodeAlive() {
 		return nodeAlive;
 	}
 
+	/**
+	 * 
+	 * @return number of received payload messages
+	 */
 	public int getNumberOfRecivedPayloadMessages(){
 		return this.numberRecivedPayloadMsg;
 	}
 
+	/**
+	 * Set the simulator instance
+	 * @param simulator
+	 */
 	public void setSimulator(Simulator simulator) {
 		this.simulator = simulator;
 	}
 
+	/**
+	 * 
+	 * @return Time in which the node was in the IDLE state
+	 */
 	public long getIdleTime() {
 		return idleTime;
 	}
 
+	/**
+	 * 
+	 * @return Time in which the node has received messages
+	 */
 	public long getReciveTime() {
 		return reciveTime;
 	}
 
+	/**
+	 * 
+	 * @return Time in which the node has transmit messages
+	 */
 	public long getTransmissionTime() {
 		return transmissionTime;
 	}
 
+	/**
+	 * 
+	 * @return Time in which the node has wait for medium access
+	 */
 	public long getWaitingTimeForMediumAccesPermission() {
 		return waitingTimeForMediumAccesPermission;
 	}
 
+	/**
+	 * Generates a random transmission load based on the given send probability
+	 * @param sendProbability	
+	 * @param networkSize
+	 */
 	public void generateRandomTransmissionLoad(double sendProbability, int networkSize) {
 		if (outputBuffer.size() == 0) {
 			double random = Math.random();
@@ -386,32 +441,61 @@ public abstract class NetworkNode {
 		this.elapsedTimeSinceLastGenerationOfTransmission += nodeExecutionTime;
 	}
 	
+	/**
+	 * Set the payload message destination node
+	 * @param nodeID Id of destination node
+	 */
 	public void setDestinationNode(int nodeID){
 		this.destinationNode = nodeID;
 	}
 
+	
 	public abstract void startSendingProcess(PayloadMessage tmpMsg);
 
+	/**
+	 * 
+	 * @return last received payload message
+	 */
 	public PayloadMessage getLastRecivedPayloadMessage() {
 		return lastRecivedPayloadMessage;
 	}
 
+	/**
+	 * Set the graph instance in which this node is used
+	 * @param graph
+	 */
 	public void setGraph(NetworkGraph graph) {
 		this.graph = graph;
 	}
 
+	/**
+	 * Set the available energy from this node
+	 * @param availableEnergy
+	 */
 	public void setAvailableEnergy(long availableEnergy){
 		this.availableEnery = availableEnergy;
 	}
 	
+	/**
+	 * 
+	 * @return available energy
+	 */
 	public long getAvailableEnery() {
 		return availableEnery;
 	}
 
+	/**
+	 * 
+	 * @return output buffer size
+	 */
 	public int getOutputBufferSize() {
 		return outputBuffer.size();
 	}
 
+	/**
+	 * 
+	 * @return outgoing message
+	 */
 	public Message getOutgoingMessage() {
 		if (outgoingMsg != null) {
 			return outgoingMsg.clone();
@@ -422,7 +506,7 @@ public abstract class NetworkNode {
 	/**
 	 * 
 	 * 
-	 * @return
+	 * @return incoming message
 	 */
 	public Message getIncomingMessage() {
 		if (incommingMsg != null) {
@@ -431,18 +515,34 @@ public abstract class NetworkNode {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy in transmission mode
+	 */
 	public long getConsumedEnergyInTransmissionMode() {
 		return consumedEnergyInTransmissionMode;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy in receive mode
+	 */
 	public long getConsumedEnergyInReciveMode() {
 		return consumedEnergyInReciveMode;
 	}
 
+	/**
+	 * 
+	 * @return consumed energy in idle mode
+	 */
 	public long getConsumedEnergyInIdleMode() {
 		return consumedEnergyInIdleMode;
 	}
 	
+	/**
+	 * 
+	 * @return List of connected nodes
+	 */
 	public LinkedList<NetworkNode> getConnectedNodes(){
 		return this.connectedNodes;
 	}
@@ -457,6 +557,9 @@ public abstract class NetworkNode {
 		this.incommingMsg = null;
 	}
 
+	/**
+	 * Reset the battery
+	 */
 	public void resetBattery() {
 		this.availableEnery = NODE_BATTERY_ENERGY_FOR_ONE_DAY_IN_IDLE_MODE;
 		consumedEnergyInIdleMode = 0L;
@@ -465,28 +568,49 @@ public abstract class NetworkNode {
 	}
 	
 
+	/**
+	 * 
+	 * @return number of transmitted payload messages
+	 */
 	public int getNumberTransmittedPayloadMsg() {
 		return numberTransmittedPayloadMsg;
 	}
 
+	/**
+	 * 
+	 * @return true if this node is battery powered
+	 */
 	public boolean isBatteryPowered() {
 		return batteryPowered;
 	}
 
+	/**
+	 * Set the energy source of this node
+	 * @param batteryPowered true if this node is battery powered, otherwise false if this node has infinite energy
+	 */
 	public void setBatteryPowered(boolean batteryPowered) {
 		this.batteryPowered = batteryPowered;
 	}
 	
+	/**
+	 * Get a specific IR receiver with the given ID
+	 * @param id	ID of the requested IR receiver
+	 * @return	requested IR receiver
+	 */
 	public IR_Receiver getIrReceiver(int id){
 		return this.irReceiver[id];
 	}
 
+	/**
+	 * 
+	 * @return List of incommin messages
+	 */
 	public LinkedList<Message> getInputBuffer() {
 		return inputBuffer;
 	}
 
 	/**
-	 * @return the irReceiver
+	 * @return array of all irReceiver
 	 */
 	public IR_Receiver[] getIrReceiver() {
 		return irReceiver;

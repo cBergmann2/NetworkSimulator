@@ -1,5 +1,10 @@
 package OLSR;
 
+/**
+ * Datastructure for olsr messages
+ * @author Christoph Bergmann
+ *
+ */
 public abstract class OlsrMessage {
 	
 	public static final int MESSAGE_SIZE = 2 * 8;

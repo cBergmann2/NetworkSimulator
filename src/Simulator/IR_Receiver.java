@@ -1,5 +1,10 @@
 package Simulator;
 
+/**
+ * Class represents one IR receiver that is used from a network node
+ * @author Christoph Bergmann
+ *
+ */
 public class IR_Receiver {
 	
 	public static final int RECEIVER_NORTH = 0;
@@ -13,9 +18,9 @@ public class IR_Receiver {
 	
 	
 	
-	private int id;
-	private Message incommingMessage;
-	private boolean messageReceived;
+	private int id;						//ID of the receiver
+	private Message incommingMessage;	//incoming message
+	private boolean messageReceived;	//is true if a message was received
 	
 	public IR_Receiver(int id){
 		this.id = id;
@@ -23,6 +28,10 @@ public class IR_Receiver {
 		this.incommingMessage = null;
 	}
 	
+	/**
+	 * 
+	 * @return true if the IR receiver is receiving a message
+	 */
 	public boolean isRecevingAMessage(){
 		if(incommingMessage != null){
 			return true;
@@ -32,6 +41,11 @@ public class IR_Receiver {
 		}
 	}
 	
+	/**
+	 * Performe the receiving process
+	 * If the transmission time is elapsed, set the variable messageReceived to true
+	 * @param executionTime
+	 */
 	public void performeReceivingProcess(long executionTime){
 		if(incommingMessage != null){
 			if(incommingMessage.getRemainingTransmissionTime() <= 0){
@@ -43,6 +57,10 @@ public class IR_Receiver {
 		}
 	}
 	
+	/**
+	 * Return the received message and reset the IR receiver
+	 * @return
+	 */
 	public Message getReceivedMessage(){
 		Message tmpMsg = this.incommingMessage;
 		this.messageReceived = false;
@@ -51,10 +69,19 @@ public class IR_Receiver {
 		
 	}
 	
+	/**
+	 * 
+	 * @return true if a message was received
+	 */
 	public boolean isMessageReceived(){
 		return this.messageReceived;
 	}
 	
+	/**
+	 * Receive a message from a IR sender
+	 * This method should be called from a IR sender to start a transmission
+	 * @param msg message that should be transmitted
+	 */
 	public void receiveMessage(Message msg){
 		
 		if(this.incommingMessage == null){

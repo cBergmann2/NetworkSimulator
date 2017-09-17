@@ -17,6 +17,11 @@ import EADV.EadvSimulator;
 import Flooding.FloodingSimulator;
 import Simulator.EvaluationUnit;
 
+/**
+ * Class includes functions for evaluating the OLSR routing method
+ * @author Christoph Bergmann
+ *
+ */
 public class OlsrEvaluationUnit extends EvaluationUnit {
 
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -24,6 +29,10 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
 
+	/**
+	 * Performs the speed analysis for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	@Override
 	public void evaluateSpeedAnalysis() {
 		System.out.println("Start AODVM spped anylsis.");
@@ -156,7 +165,11 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 	}
 
-
+	/**
+	 * Performs the cost analysis for the given networkWidths and visualize the #
+	 * simulation results in graphs
+	 * 
+	 */
 	public void evaluateCostAnalysis() {
 		OlsrSimulator simulator = new OlsrSimulator();
 		long networkLifetime = 0L;
@@ -361,6 +374,12 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		}
 	}
 	
+	/**
+	 * Performs the analysis of network lifetime without payload message transmission. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeWithoutPayloadMessageTransmission() {
 		System.out.println("\nOLSR Lifetime analysis");
 
@@ -406,6 +425,12 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths and payload size. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
 		
 		System.out.println("\nOLSR Lifetime analysis");
@@ -515,6 +540,13 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		 
 	}
 	
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs){
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 		
@@ -583,6 +615,13 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public void evaluateNetworkPartitioningAnalysisOneDestination(int payloadSize) {
 		System.out.println("Start partitioning analysis");
 
@@ -650,6 +689,13 @@ public class OlsrEvaluationUnit extends EvaluationUnit {
 		}
 	}
 	
+	/**
+	 * Performs the analysis of network partitioning for the given network widths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Max number of communication pairs
+	 */
 	public void evaluateNetworkPartioningAnaylsisRandomSorceAndDest(int payloadSize, int maxPairs){
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 		

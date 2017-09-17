@@ -1,5 +1,10 @@
 package OLSR;
 
+/**
+ * Datastructure for a routing table entry
+ * @author Christoph Bergmann
+ *
+ */
 public class RoutingTableEntry {
 	
 	int destinationAddress;
