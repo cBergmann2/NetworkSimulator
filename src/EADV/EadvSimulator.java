@@ -5,11 +5,23 @@ import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 import Simulator.Simulator;
 
+/**
+ * Simulator for EADV routing scheme
+ * @author Christoph
+ *
+ */
 public class EadvSimulator extends Simulator {
 
 	private long msgTransmissionTime;
 	private long energyCostsForPropagationNetworkStructure;
 
+	/**
+	 * Performs the speed analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		EadvNetworkGraph graph = new EadvNetworkGraph(networkWidth);
@@ -76,6 +88,13 @@ public class EadvSimulator extends Simulator {
 		return time;
 	}
 
+	/**
+	 * Performs the speed analysis when the network starts.
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysisWhenNetworkStarts(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		EadvNetworkGraph graph = new EadvNetworkGraph(networkWidth);
@@ -101,6 +120,13 @@ public class EadvSimulator extends Simulator {
 		return msgTransmissionTime;
 	}
 
+	/**
+	 * Performs the energy cost analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long energyCostAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		EadvNetworkGraph graph = new EadvNetworkGraph(networkWidth);
@@ -168,6 +194,13 @@ public class EadvSimulator extends Simulator {
 		return energyCosts;
 	}
 
+	/**
+	 * Lifetime analysis, every Node sends its messages to one destination
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,
 			int payloadSize) {
 
@@ -186,6 +219,14 @@ public class EadvSimulator extends Simulator {
 				payloadSize));
 	}
 
+	/**
+	 * Partitioning analysis,  every Node sends its messages to one destination
+	 * 
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
 		EadvNetworkGraph graph = new EadvNetworkGraph(networkWidth);
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
@@ -202,10 +243,20 @@ public class EadvSimulator extends Simulator {
 				payloadSize);
 	}
 
+	/**
+	 * Get the message transmission time
+	 * Note: you have to call the speed analysis first
+	 * @return message transmission time
+	 */
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
 	}
 
+	/**
+	 * Get the energy costs for propagate the network structure in the network
+	 * Note: you have to call the cost analysis first
+	 * @return
+	 */
 	public long getEnergyCostsForPropagationNetworkStructure() {
 		return energyCostsForPropagationNetworkStructure;
 	}

@@ -4,6 +4,11 @@ import java.util.LinkedList;
 
 import Simulator.PayloadMessage;
 
+/**
+ * Datastructure for payload mesage that contains the used route 
+ * @author Christoph Bergmann
+ *
+ */
 public class PayloadMessageWithRoute extends PayloadMessage{
 	
 	private LinkedList<Integer> route;

@@ -4,6 +4,11 @@ import java.util.LinkedList;
 
 import Simulator.Message;
 
+/**
+ * Datastructure for an UpdateMessage
+ * @author Christoph Bergmann
+ *
+ */
 public class UpdateMessage extends Message{
 	
 	LinkedList<UpdateMessageEntry> updates;

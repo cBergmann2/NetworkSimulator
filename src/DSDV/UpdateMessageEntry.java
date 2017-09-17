@@ -1,5 +1,10 @@
 package DSDV;
 
+/**
+ * Datastructure for an entry of a update message
+ * @author Christoph Bergmann
+ *
+ */
 public class UpdateMessageEntry{
 	public static final int SIZE = 8 + 8 + 8;
 	

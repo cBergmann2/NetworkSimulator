@@ -2,6 +2,11 @@ package EADV;
 
 import Simulator.Message;
 
+/**
+ * Data structure for initial broadcast message
+ * @author Christoph Bergmann
+ *
+ */
 public class InitialBroadcastMessage extends Message {
 	
 	int address;
@@ -9,6 +14,12 @@ public class InitialBroadcastMessage extends Message {
 	int costs;
 	long timestampWhenReceivedIBM;
 	
+	/**
+	 * Initialize the initial broadcast message
+	 * @param address
+	 * @param hopCount
+	 * @param costs
+	 */
 	public InitialBroadcastMessage(int address, int hopCount, int costs){
 		this.address = address;
 		this.hopCount = hopCount;
@@ -16,6 +27,7 @@ public class InitialBroadcastMessage extends Message {
 		
 		this.dataVolume = Message.MESSAGE_SIZE + 3*8;
 	}
+	
 	
 	public int getAddress() {
 		return address;

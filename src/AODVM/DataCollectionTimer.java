@@ -14,7 +14,7 @@ public class DataCollectionTimer {
 		receivedRREQs = new LinkedList<RREQ>();
 	}
 	
-	public long getExprationTime() {
+	public long getExparationTime() {
 		return exprationTime;
 	}
 	

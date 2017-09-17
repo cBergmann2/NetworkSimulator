@@ -2,11 +2,16 @@ package OLSR;
 
 import java.util.LinkedList;
 
+/**
+ * Datastructure to save information about a neighbor
+ * @author Christoph Bergmann
+ *
+ */
 public class Neighbor {
 
-	int id;
-	long lastHelloMessage;
-	long expectedTimeNextHelloMessage;
+	int id;								// Id of the neighbor
+	long lastHelloMessage;				// Timestamp from last hello message
+	long expectedTimeNextHelloMessage;	// Expected time when received  a hello message from this neighbor 
 	
 	LinkedList<Integer> reachableTwoHopNeighbors;
 	

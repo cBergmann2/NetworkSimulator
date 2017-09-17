@@ -19,9 +19,6 @@ import Simulator.EvaluationUnit;
 
 public class OlsrEvaluationUnit extends EvaluationUnit {
 
-	// private static final int networkWidth[] = {3, 5, 10, 15, 22, 27, 32};
-	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10,
-	// 11, 12, 13, 14};
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 	private static final int CHART_HIGHT = 300;

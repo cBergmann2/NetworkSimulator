@@ -6,6 +6,11 @@ import Simulator.Message;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 
+/**
+ * Specializes the NetworkNode class for EADV routing scheme
+ * 
+ * @author Christoph Bergmann
+ */
 public class EadvNetworkNode extends NetworkNode{
 	
 	private static final long INITIAL_BROACAST_MESSAGE_INTERVALL = 9*60*1000;
@@ -17,6 +22,10 @@ public class EadvNetworkNode extends NetworkNode{
 	long lastInitialBroadcast = 0;
 	private LinkedList<InitialBroadcastMessage> receivedIBMs;
 
+	/**
+	 * Creates network node with given id
+	 * @param id	The ID from the new network node
+	 */
 	public EadvNetworkNode(int id) {
 		super(id);
 		routingTable = new LinkedList<RoutingTableEntry>();
@@ -27,7 +36,9 @@ public class EadvNetworkNode extends NetworkNode{
 		receivedIBMs = new LinkedList<InitialBroadcastMessage>();
 	}
 
-	@Override
+	/**
+	 * Performs time dependent tasks. E.g. generate periodically initial broadcast messages if node is the data sink
+	 */
 	protected void performeTimeDependentTasks(long executionTime) {
 		
 		if(nodeIsDataSink){
@@ -60,7 +71,9 @@ public class EadvNetworkNode extends NetworkNode{
 		
 	}
 
-	@Override
+	/**
+	 * Process a received message
+	 */
 	public void processRecivedMessage() {
 		Message receivedMsg = inputBuffer.removeFirst();
 		if(receivedMsg.getDestinationID() == -1 || receivedMsg.getDestinationID() == this.id){
@@ -158,6 +171,10 @@ public class EadvNetworkNode extends NetworkNode{
 		}
 	}
 	
+	/**
+	 * Get the routing table entry with minimal cost to the data sink
+	 * @return	routing table entry with minimal cost to data sink
+	 */
 	private RoutingTableEntry getTableEntryWithMinimalCosts(){
 		RoutingTableEntry minimalCostEntry = routingTable.getFirst();
 		for(RoutingTableEntry tableEntry: routingTable){
@@ -168,6 +185,10 @@ public class EadvNetworkNode extends NetworkNode{
 		return minimalCostEntry;
 	}
 	
+	/**
+	 * Send ACK-Message to node, for which a message was forwarded
+	 * @param msg
+	 */
 	private void sendAck(Message msg){
 		RoutingTableEntry minimalCostEntry = this.getTableEntryWithMinimalCosts();
 		AckMessage ackMsg = new AckMessage(minimalCostEntry.getHopCount(), minimalCostEntry.getCosts());
@@ -175,6 +196,10 @@ public class EadvNetworkNode extends NetworkNode{
 		this.sendMsg(ackMsg);
 	}
 	
+	/**
+	 * Get next hop to destination
+	 * @return
+	 */
 	private int getNextHop(){
 		int nextHop = Integer.MAX_VALUE;
 		int currentCosts = Integer.MAX_VALUE;
@@ -188,6 +213,10 @@ public class EadvNetworkNode extends NetworkNode{
 		return nextHop;
 	}
 	
+	/**
+	 * Update the routing table based on the given initial broadcast message
+	 * @param ibm
+	 */
 	private void updateRoutingTable(InitialBroadcastMessage ibm){
 		//update routing table
 		boolean entryFound = false;
@@ -224,6 +253,10 @@ public class EadvNetworkNode extends NetworkNode{
 		}
 	}
 	
+	/**
+	 * Update the routing table based on the given ACK message
+	 * @param msg
+	 */
 	private void updateRoutingTable(AckMessage msg){
 		//update routing table
 		for(RoutingTableEntry tableEntry: routingTable){
@@ -250,6 +283,9 @@ public class EadvNetworkNode extends NetworkNode{
 		this.numberTransmittedPayloadMsg++;
 	}
 	
+	/**
+	 * Send the given message
+	 */
 	public void sendMsg(Message msg){
 			
 			msg.setSenderID(this.id);
@@ -318,6 +354,10 @@ public class EadvNetworkNode extends NetworkNode{
 			this.outputBuffer.add(msg);
 	}
 	
+	/**
+	 * Calculate the cost value
+	 * @return cost value
+	 */
 	private int getCostValue(){
 		double batterieLoad = this.availableEnery*1.0 / this.startEnergy*1.0;
 		if(batterieLoad >= 80.0){
@@ -333,15 +373,26 @@ public class EadvNetworkNode extends NetworkNode{
 		}
 	}
 
+	/**
+	 * Get the X value
+	 * @return
+	 */
 	public int getXValue() {
 		return xValue;
 	}
 
+	/**
+	 * Set the X value
+	 * @param xValue
+	 */
 	public void setXValue(int xValue) {
 		this.xValue = xValue;
 	}
 
-	
+	/**
+	 * Send a initial broadcast message
+	 * This method should only be called, if the node is the data sink in the network!
+	 */
 	public void sendInitialBroadcast() {
 		InitialBroadcastMessage newIbm = new InitialBroadcastMessage(this.id, 0, 0);
 		newIbm.setDestinationID(-1);
@@ -349,10 +400,20 @@ public class EadvNetworkNode extends NetworkNode{
 		this.lastInitialBroadcast = simulator.getNetworkLifetime(); 
 	}
 
+	/**
+	 * 
+	 * @return true if the node is the data sink
+	 */
 	public boolean isNodeIsDataSink() {
 		return nodeIsDataSink;
 	}
 
+	/**
+	 * Set the member variable nodeIsDataSink
+	 * Consider that there should be only one data sink in the whole network.
+	 * Otherwise the routing scheme won't work correctly
+	 * @param nodeIsDataSink
+	 */
 	public void setNodeIsDataSink(boolean nodeIsDataSink) {
 		this.nodeIsDataSink = nodeIsDataSink;
 	}

@@ -6,9 +6,20 @@ import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 import Simulator.Simulator;
 
+/**
+ * Simulator for flooding routing scheme
+ * @author Christoph Bergmann
+ *
+ */
 public class FloodingSimulator extends Simulator {
 
-
+	/**
+	 * Performs the speed analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
@@ -20,6 +31,13 @@ public class FloodingSimulator extends Simulator {
 		return time;
 	}
 
+	/**
+	 * Performs the energy cost analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long energyCostAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
@@ -97,6 +115,13 @@ public class FloodingSimulator extends Simulator {
 		return (consumedEnergyInIdleMode + consumedEnergyInReciveMode + consumedEnergyInTransmissionMode);
 	}
 	
+	/**
+	 * Lifetime analysis, every Node sends its messages to one destination
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
 			int payloadSize, int maxPairs) {
 		
@@ -105,6 +130,14 @@ public class FloodingSimulator extends Simulator {
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 
+	/**
+	 * Lifetime analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,int payloadSize){
 		
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
@@ -112,6 +145,14 @@ public class FloodingSimulator extends Simulator {
 		return (this.lifetimeAnalysisStaticBehaviorOneDestination(graph, networkWidth, transmissionPeriod, payloadSize));
 	}
 
+	/**
+	 * Partitioning analysis,  every Node sends its messages to one destination
+	 * 
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long partitioningAnalysisOnePayloadmessageDestination(int networkWidth, int transmissionPeriod, int payloadSize) {
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
 		
@@ -119,6 +160,14 @@ public class FloodingSimulator extends Simulator {
 		return this.partitioningAnalysisOnePayloadmessageDestination(graph, networkWidth, transmissionPeriod, payloadSize);
 	}
 
+	/**
+	 * Partitioning analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize, int maxPairs) {
 		FloodingNetworkGraph graph = new FloodingNetworkGraph(networkWidth);
 

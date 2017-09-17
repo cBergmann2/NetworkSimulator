@@ -13,15 +13,23 @@ import org.jfree.data.xy.DefaultXYDataset;
 
 import Simulator.EvaluationUnit;
 
+/**
+ * Class includes functions for evaluating the EADV routing method
+ * @author Christoph Bergmann
+ *
+ */
 public class EadvEvaluationUnit extends EvaluationUnit {
 
 	private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-	//private static final int networkWidth[] = {1};
 
+	// Dimensions of graphics
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
 
-	@Override
+	/**
+	 * Performs the speed analysis for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	public void evaluateSpeedAnalysis() {
 		System.out.println("Start EADV spped anylsis.");
 		EadvSimulator simulator = new EadvSimulator();
@@ -135,6 +143,10 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 	}
 	
+	/**
+	 * Performs the speed analysis when the network starts for the given networkWidths. 
+	 * Visualizes the simulation results in graphs
+	 */
 	public void evaluateSpeedAnalysisWhenNetworkStarts() {
 		
 		System.out.println("Start DSDV speed anylsis when network starts.");
@@ -201,7 +213,10 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		 
 	}
 
-	@Override
+	/**
+	 * Performs the cost analysis for the given networkWidths and visualize the simulation results in graphs
+	 * 
+	 */
 	public void evaluateCostAnalysis() {
 		
 		EadvSimulator simulator = new EadvSimulator();
@@ -302,7 +317,12 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 		 
 	}
 	
-	
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths and payload size. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
 		
 		System.out.println("\nAODV Lifetime analysis");
@@ -413,6 +433,12 @@ public class EadvEvaluationUnit extends EvaluationUnit {
 
 	}
 	
+	/**
+	 * Performs the analysis of network partitioning for the given networkWidths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
 		
 		System.out.println("Start partitioning analysis");

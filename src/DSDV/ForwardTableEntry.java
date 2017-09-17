@@ -1,5 +1,10 @@
 package DSDV;
 
+/**
+ * Datastructure that contains a forward table entry
+ * @author Christoph Bergmann
+ *
+ */
 public class ForwardTableEntry {
 	
 	private int destination;

@@ -5,6 +5,11 @@ import java.util.LinkedList;
 import Simulator.Message;
 import Simulator.PayloadMessage;
 
+/**
+ * Datastructure from basic packet format
+ * @author Christoph Bergmann
+ *
+ */
 public class BasicPacketFormat extends Message{
 	
 	int packetLength;

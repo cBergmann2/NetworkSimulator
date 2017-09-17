@@ -6,6 +6,11 @@ import Simulator.Message;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 
+/**
+ * Specializes the NetworkNode class for flooding routing scheme
+ * 
+ * @author Christoph Bergmann
+ */
 public class FloodingNetworkNode extends NetworkNode{
 
 	LinkedList<PayloadMessage> messagesToBeSent;
@@ -23,7 +28,9 @@ public class FloodingNetworkNode extends NetworkNode{
 		//currentlyTransmittingAMessage = false;
 	}
 
-	@Override
+	/**
+	 * Performs time dependent tasks. Delete old received message
+	 */
 	protected void performeTimeDependentTasks(long executionTime) {
 		long currentTime = simulator.getNetworkLifetime();
 		
@@ -42,7 +49,9 @@ public class FloodingNetworkNode extends NetworkNode{
 		
 	}
 
-	@Override
+	/**
+	 * Process received message
+	 */
 	public void processRecivedMessage() {
 		Message recivedMsg = inputBuffer.removeFirst();
 		if(recivedMsg instanceof PayloadMessageWithRoute){
@@ -81,6 +90,11 @@ public class FloodingNetworkNode extends NetworkNode{
 		}
 	}
 	
+	/**
+	 * Check if given message was already received
+	 * @param msg message to check
+	 * @return true if message was already received
+	 */
 	private boolean doMessageAlreadyExists(PayloadMessageWithRoute msg){
 		for(PayloadMessage tmpMsg: recivedMessages){
 			if((tmpMsg.getPayloadSourceAdress() == msg.getPayloadSourceAdress()) &&
@@ -92,11 +106,17 @@ public class FloodingNetworkNode extends NetworkNode{
 		return false;
 	}
 
-	@Override
+	/**
+	 * Get number of received payload messages
+	 */
 	public int getNumberOfRecivedPayloadMessages() {
 		return this.numberRecivedPayloadMsg;
 	}
 	
+	/**
+	 * Send message
+	 * @param msg
+	 */
 	public void sendMessage(PayloadMessageWithRoute msg){
 		PayloadMessageWithRoute msgCopy = msg.clone();
 		msgCopy.setSenderID(this.id);
@@ -109,7 +129,9 @@ public class FloodingNetworkNode extends NetworkNode{
 			
 	}
 
-	@Override
+	/**
+	 * Send message
+	 */
 	public void startSendingProcess(PayloadMessage msg) {
 		//System.out.println("DataVolume of msg to send: "+ msg.getDataVolume());
 		
@@ -124,20 +146,11 @@ public class FloodingNetworkNode extends NetworkNode{
 		this.sendMessage(newMsg);
 	}
 	
-	/*
-	@Override
-	public void reciveMsg(Message msg){
-		if(incommingMsg == null){
-			incommingMsg = msg;
-		}
-		else{
-			//collison
-			//System.out.println("Collision detected at Node " + this.id);
-			((FloodingNetworkGraph)graph).addCollision();
-		}
-	}
-	*/
 
+	/**
+	 * Get number of transmitted messages
+	 * @return
+	 */
 	public int getNumberTransmittedMsg() {
 		return numberTransmittedMsg;
 	}

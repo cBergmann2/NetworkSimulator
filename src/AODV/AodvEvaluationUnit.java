@@ -665,6 +665,7 @@ public class AodvEvaluationUnit extends EvaluationUnit {
 	 * Visualize the simulation results in graphs.
 	 * 
 	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Max number of communication pairs
 	 */
 	public void evaluateNetworkPartitioningAnaylsisRandomSorceAndDest(int payloadSize, int maxPairs){
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");

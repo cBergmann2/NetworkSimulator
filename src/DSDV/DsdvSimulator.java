@@ -1,7 +1,5 @@
 package DSDV;
 
-import AODVM.AodvmNetworkGraph;
-import OLSR.OlsrNetworkGraph;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 import Simulator.Simulator;
@@ -12,6 +10,13 @@ public class DsdvSimulator extends Simulator {
 	private long energyCostsForPropagationNetworkStructure;
 	private long energyCostsForPeriodicUpdate;
 
+	/**
+	 * Performs the speed analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
@@ -74,6 +79,13 @@ public class DsdvSimulator extends Simulator {
 		return time;
 	}
 
+	/**
+	 * Performs the speed analysis when the network starts for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long speedAnalysisWhenNetworkStarts(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
@@ -89,6 +101,13 @@ public class DsdvSimulator extends Simulator {
 		return time;
 	}
 	
+	/**
+	 * Performs the energy cost analysis for adding a node to the network
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long energyCostAnalysisAddNewNode(int networkWidth){
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
 		NetworkNode networkNodes[] = graph.getNetworkNodes();
@@ -181,6 +200,13 @@ public class DsdvSimulator extends Simulator {
 		
 	}
 
+	/**
+	 * Performs the energy cost analysis for the given parameter
+	 * @param networkWidth
+	 * @param sourceNodeId
+	 * @param destinationNodeId
+	 * @return
+	 */
 	public long energyCostAnalysis(int networkWidth, int sourceNodeId, int destinationNodeId) {
 
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
@@ -329,6 +355,13 @@ public class DsdvSimulator extends Simulator {
 		return energyCosts;
 	}
 
+	/**
+	 * Lifetime analysis, every Node sends its messages to one destination
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long lifetimeAnalysisStaticSendBehaviorOneDestination(int networkWidth, int transmissionPeriod,
 			int payloadSize) {
 
@@ -338,6 +371,14 @@ public class DsdvSimulator extends Simulator {
 				payloadSize));
 	}
 	
+	/**
+	 * Lifetime analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long lifetimeAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod,
 			int payloadSize, int maxPairs) {
 		
@@ -346,6 +387,14 @@ public class DsdvSimulator extends Simulator {
 		return this.lifetimeAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 
+	/**
+	 * Partitioning analysis,  every Node sends its messages to one destination
+	 * 
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @return
+	 */
 	public long partitioningAnalysis(int networkWidth, int transmissionPeriod, int payloadSize) {
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
 
@@ -353,24 +402,51 @@ public class DsdvSimulator extends Simulator {
 				payloadSize);
 	}
 	
+	/**
+	 * Partitioning analysis, message source and destination is changing after every message transfer
+	 * @param networkWidth
+	 * @param transmissionPeriod
+	 * @param payloadSize
+	 * @param maxPairs
+	 * @return
+	 */
 	public long partitioningAnalysisRandomSorceAndDest(int networkWidth, int transmissionPeriod, int payloadSize, int maxPairs) {
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);
 
 		return this.partitioningAnalysisRandomSorceAndDest(graph, networkWidth, transmissionPeriod, payloadSize, maxPairs);
 	}
 
+	/**
+	 * Get the message transmission time
+	 * The message transmission time is determined in speed analysis 
+	 * @return message transmission time
+	 */
 	public long getMsgTransmissionTime() {
 		return msgTransmissionTime;
 	}
 
+	/**
+	 * Get the Energy costs for propagate the network structure
+	 * You have to run first the cost analysis to get a correct value
+	 * @return energy costs for propagate the network structure
+	 */
 	public long getEnergyCostsForPropagationNetworkStructure() {
 		return energyCostsForPropagationNetworkStructure;
 	}
 
+	/**
+	 * Get the Energy costs for propagate periodic updates
+	 * @return
+	 */
 	public long getEnergyCostsForPeriodicUpdate() {
 		return energyCostsForPeriodicUpdate;
 	}
 
+	/**
+	 * Perform lifetime analysis without any transmission of payload messages
+	 * @param networkWidth
+	 * @return network lifetime without any transmission of payload messages
+	 */
 	public double lifetimeAnalysisWithoutPayloadMessageTransmission(int networkWidth) {
 		
 		DsdvNetworkGraph graph = new DsdvNetworkGraph(networkWidth);

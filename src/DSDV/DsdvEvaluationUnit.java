@@ -15,16 +15,24 @@ import AODVM.AodvmSimulator;
 import OLSR.OlsrSimulator;
 import Simulator.EvaluationUnit;
 
+/**
+ * Class includes functions for evaluating the DSDV routing method
+ * @author Christoph Bergmann
+ *
+ */
 public class DsdvEvaluationUnit extends EvaluationUnit {
 
-	// private static final int networkWidth[] = {2, 3, 4, 5, 6, 7, 8, 9, 10,
-	// 11, 12, 13, 14};
+
 	private static final int networkWidth[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
+	// Dimensions of graphics
 	private static final int CHART_HIGHT = 300;
 	private static final int CHART_WIDTH = 280;
 
-	@Override
+	/**
+	 * Performs the speed analysis for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	public void evaluateSpeedAnalysis() {
 		System.out.println("Start DSDV spped anylsis.");
 		DsdvSimulator simulator = new DsdvSimulator();
@@ -126,6 +134,11 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	
+	/**
+	 * Performs the speed analysis when network starts for the given networkWidths and visualize 
+	 * the simulation results in graphs
+	 */
 	public void evaluateSpeedAnalysisWhenNetworkStarts() {
 		System.out.println("Start DSDV speed anylsis when network starts.");
 		DsdvSimulator simulator = new DsdvSimulator();
@@ -191,7 +204,11 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 
 	}
 
-	@Override
+	/**
+	 * Performs the cost analysis for the given networkWidths and visualize the #
+	 * simulation results in graphs
+	 * 
+	 */
 	public void evaluateCostAnalysis() {
 		DsdvSimulator simulator = new DsdvSimulator();
 		long networkLifetime = 0L;
@@ -348,6 +365,12 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network lifetime without transfer of payload messages. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeWithoutPayloadMessageTransmission() {
 		System.out.println("\nAODV Lifetime analysis");
 
@@ -393,6 +416,12 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths and payload size. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize 	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkLivetimeStaticSendBehaviorOneDestination(int payloadSize) {
 		System.out.println("\nAODV Lifetime analysis");
 
@@ -468,6 +497,13 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network lifetime for the given networkWidths, payload size and max pairs. 
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Maximum number of communication pairs
+	 */
 	public void evaluateNetworkLivetimeRandomSorceAndDest(int payloadSize, int maxPairs) {
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 
@@ -538,6 +574,12 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 		}
 	}
 
+	/**
+	 * Performs the analysis of network partitioning for the given networkWidths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 */
 	public void evaluateNetworkPartitioningAnalysis(int payloadSize) {
 		System.out.println("Start partitioning analysis");
 
@@ -748,6 +790,13 @@ public class DsdvEvaluationUnit extends EvaluationUnit {
 
 	}
 
+	/**
+	 * Performs the analysis of network partitioning for the given networkWidths and payload size.
+	 * Visualize the simulation results in graphs.
+	 * 
+	 * @param payloadSize	Size of the messages to be transmitted
+	 * @param maxPairs		Max number of communication pairs
+	 */
 	public void evaluateNetworkPartioningAnaylsisRandomSorceAndDest(int payloadSize, int maxPairs) {
 		System.out.println("\nFlooding Lifetime analysis random source and destination node");
 

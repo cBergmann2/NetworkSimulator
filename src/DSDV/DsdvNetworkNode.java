@@ -6,6 +6,11 @@ import Simulator.Message;
 import Simulator.NetworkNode;
 import Simulator.PayloadMessage;
 
+/**
+ * Specializes the NetworkNode class for DSDV routing scheme
+ * 
+ * @author Christoph Bergmann
+ */
 public class DsdvNetworkNode extends NetworkNode{
 	
 	private static final long UPDATE_INTERVAL = 9*60000;	//in ms
@@ -18,7 +23,10 @@ public class DsdvNetworkNode extends NetworkNode{
 	private boolean propagateNetworkStructure;
 	UpdateMessage incrementalUpdateMessage;
 	
-	
+	/**
+	 * Creates network node with given id
+	 * @param id	The ID from the new network node
+	 */
 	public DsdvNetworkNode(int id) {
 		super(id);
 		lastUpdate = UPDATE_INTERVAL;
@@ -30,6 +38,9 @@ public class DsdvNetworkNode extends NetworkNode{
 		this.propagateNetworkStructure = true;
 	}
 	
+	/**
+	 * Performs time dependent tasks. E.g. generate and send incremental update messages
+	 */
 	protected void performeTimeDependentTasks(long executionTime){
 		if(propagateNetworkStructure){
 			if(this.lastUpdate >= UPDATE_INTERVAL){
@@ -51,6 +62,10 @@ public class DsdvNetworkNode extends NetworkNode{
 		
 	}
 	
+	/**
+	 * Check if a new neighbor is turned off since last check
+	 * @return true if a new turned off neighbor is detedcted
+	 */
 	private boolean isNeighborTurnedOff(){
 		boolean newTurnedOffNodeDetected = false;
 		
@@ -82,6 +97,9 @@ public class DsdvNetworkNode extends NetworkNode{
 		return newTurnedOffNodeDetected;
 	}
 
+	/**
+	 * Send forward table update to neighbors
+	 */
 	private void sendForwardTableUpdate() {
 		UpdateMessage updateMessage = new UpdateMessage();
 
@@ -106,7 +124,9 @@ public class DsdvNetworkNode extends NetworkNode{
 		
 	}
 
-	@Override
+	/**
+	 * process a received message
+	 */
 	public void processRecivedMessage() {
 		Message receivedMsg = inputBuffer.removeFirst();
 		if (receivedMsg instanceof UpdateMessage) {
@@ -124,6 +144,10 @@ public class DsdvNetworkNode extends NetworkNode{
 		}
 	}
 
+	/**
+	 * process a received payload message
+	 * @param msg received message
+	 */
 	private void receivePayloadMessage(PayloadMessage msg) {
 		if(msg.getPayloadDestinationAdress() == this.id){
 			this.numberRecivedPayloadMsg++;
@@ -138,13 +162,14 @@ public class DsdvNetworkNode extends NetworkNode{
 		}
 	}
 
+	/**
+	 * process a received update message
+	 * @param msg received update message
+	 */
 	private void receiveUpdateMessage(UpdateMessage msg) {
 		boolean brokenLinkDetected = false;
 		boolean newDestinationDetected = false;
 		incrementalUpdateMessage = new UpdateMessage();
-		
-		
-		
 		
 		for(UpdateMessageEntry entry: msg.getUpdates()){
 			
@@ -169,6 +194,11 @@ public class DsdvNetworkNode extends NetworkNode{
 		//}
 	}
 	
+	/**
+	 * Check if a entry of a update message contains a new destination for this node
+	 * @param updateMsgEntry
+	 * @return	true if a new destination is detected
+	 */
 	private boolean checkForNewDestination(UpdateMessageEntry updateMsgEntry){
 		for(ForwardTableEntry forwartTableEntry: this.forwardTable){
 			if((forwartTableEntry.getDestination() == updateMsgEntry.getDestination()) && 
@@ -180,6 +210,12 @@ public class DsdvNetworkNode extends NetworkNode{
 		return true;
 	}
 	
+	/**
+	 * Update the forward table based on the given parameter
+	 * @param updateMessageEntry
+	 * @param senderID
+	 * @return true if a broken link is detected
+	 */
 	private boolean updateForwardTable(UpdateMessageEntry updateMessageEntry, int senderID){
 		
 		boolean brokenLinkDetected = false;
@@ -223,6 +259,12 @@ public class DsdvNetworkNode extends NetworkNode{
 		return brokenLinkDetected;
 	}
 	
+	/**
+	 * Find a message in the waiting buffer that can now be send
+	 * This method should be called if a new destination is reachable from this node
+	 * @param destinationID	new reachable destination
+	 * @param metric	cost metric to the destination
+	 */
 	private void findMessageToSend(int destinationID, int metric){
 		
 		LinkedList<PayloadMessage> msgToSend = new LinkedList<PayloadMessage>();
@@ -249,6 +291,9 @@ public class DsdvNetworkNode extends NetworkNode{
 		
 	}
 	
+	/**
+	 * send the given Message
+	 */
 	public void sendMsg(Message msg){
 		
 		msg.setSenderID(this.id);
@@ -287,14 +332,26 @@ public class DsdvNetworkNode extends NetworkNode{
 		}	
 	}
 
+	/**
+	 * Get number of transmitted update messages
+	 * @return number of transmitted update messages
+	 */
 	public long getNumberTransmittedUpdateMsg() {
 		return numberTransmittedUpdateMsg;
 	}
 
+	/**
+	 * Get the forwared table
+	 * @return forward table
+	 */
 	public LinkedList<ForwardTableEntry> getForwardTable() {
 		return forwardTable;
 	}
 
+	/**
+	 * 
+	 * @return true if the network structure has been propagated
+	 */
 	public boolean isPropagateNetworkStructure() {
 		return propagateNetworkStructure;
 	}
@@ -303,6 +360,9 @@ public class DsdvNetworkNode extends NetworkNode{
 		this.propagateNetworkStructure = propagateNetworkStructure;
 	}
 
+	/**
+	 * Force this node to send a periodic update message
+	 */
 	public void forceTheNodeToSendPeriodicUpdateMessage() {
 		this.lastUpdate = Long.MAX_VALUE;
 	}
